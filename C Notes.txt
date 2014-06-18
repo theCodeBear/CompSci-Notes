@@ -1,0 +1,1303 @@
+C Notes
+
+
+
+
+
+
+
+
+================================================
+Notes on The C Programming Language book
+================================================
+
+Looks like with any output function you can just straight up put a character array variable in it by
+itself. This at least works for printf and puts. Note that I believe this only works for character arrays
+(strings).
+
+printf
+	printf returns an integer that corresponds to the number of characters printed.
+	printf("%3d\t%6d\n",var1, var2);
+		The above line of code means that:
+			var1 is an int, right justified (I guess by default), and gets a column of 3 spaces.
+			var2 is an int, right justified, and gets a column of 6 spaces.
+			There is a tab between the two variable values.
+
+	printf("%3.0f\t%.2f\n", var1, var2);
+		var1 is a float, right justified, with a column of 3 spaces, and output with 0 decimal places
+		var2 is a float, and output with 2 decimal places
+		a tab is in between the variables
+
+puts(string)
+	Prints to screen with an automatic newline. Use if don't need any formatting but want an endline.
+
+#define
+	Make symbolic constants using the #define expression.
+	Do this above main().
+		Syntax:			#define NAME replacement_text_or_value
+	
+	i.e.			#define LOWER 0
+					#define UPPER 300
+					#define TK "todd"
+
+
+For reading a single character use (if put in a loop it also reads newlines (from pressing Enter):
+		intVar = getchar();					# see the short paragraph directly below for why this is int
+For outputting a single character use:
+		putchar(charVar);2
+
+EOF is a constant in C to use. When using getchar() the variable you put the return value into should be
+an int, not a char, because the constant EOF is an int. And int's can hold characters anyway so there's
+no problem. So always return getchar() to an int. Control-d seems to trigger the EOF in normal stdin
+input. So if you print EOF then on the keypress of Control-d its prints out the EOF value, which is -1.
+
+Single quotes around a character makes C take it as the int value for that character, called its
+character constant. To make C use it as a char value you need to put double quotes.
+For comparisons with between a char value and escape sequences you need to put it in single-quotes,
+otherwise it'll cause an error because doulbe-quotes means it is a string constant that happen to only
+have one character, rather than just a character constant.
+
+A semi-colon by itself is called a null statement.
+A for-loop requires something in it's body so if, for instance, you have nothing to put in it just put
+a null statement.
+
+Can do multiple assignment statements like so:
+					var1 = var2 = var3 = 0;
+
+
+
+
+
+
+
+
+
+================================================
+Notes from CarlHReddit C Tutorial
+================================================
+
+Arrays and Pointers:
+	A String is a type of array in which all the elements are characters and it ends with a null terminator.
+
+ 	A variable identifier both refers to the value held in memory and its location in memory.
+ 	To get the actual memory address of the variable you have to reference it with an asterick "*", like so:   *myVar
+
+ 	Create a pointer Syntax:		dataType *ptrName;
+
+
+ 	The astericks when used to create a variable creates a pointer, but when referencing a pointer the astericks will reference the value the pointer points to (here the astericks is called the dereference operator), and no astericks will reference the actual value of the pointer (the memory address it holds). The "&" symbol gets the memory address of a normal variable, so you can set a pointer to point to another variable like so:    ptr = &var;
+
+ 	int *ptr;			// create an int pointer, points to 0x0 now cuz it's unassigned
+ 	ptr = &myVar;		// ptr points to variable myVar
+ 	&ptr;				// address of pointer
+ 	&myVar;				// address of myVar
+ 	ptr;				// memory address that ptr points to, which is address of myVar
+ 	*ptr;				// value at the memory address pointed to, which is the value of myVar
+
+ 	Pointers are useful to be able to process large data structures, and so having a pointer can let
+ 	you point to the start of that large amount of data, and then you can move through the data using
+ 	the pointer.
+
+ 	Pointer Example:
+ 		int blah = 5;
+ 		int bloop = 10;
+ 		int *ptr = &bloop;			// & means "address of", set ptr to address of bloop
+ 		ptr = &blah;				// set ptr to address of blah
+
+ 	When printing a pointer's value (the memory address it points to) in printf, if the pointer is
+ 	unassigned and therefore points to 0x0 then you need to type cast the pointer to a void pointer
+ 	to get it to print out, but normally (when the pointer has been assigned) you just put the name
+ 	of the pointer to print it out.
+
+ 	i.e.
+ 		printf("value at the memory address: %d", *ptr);
+ 		printf("value of the pointer (mem address): %p", (void *)ptr);		// if pointer unassigned
+ 		prinft("value of the pointer (mem address): %p", ptr);				// if pointer assigned
+
+ 	To make a pointer point to the very next position in memory just increment the pointer. It will
+ 	automatically increment by the number of bytes that the data type that it points to holds. So if
+ 	it's an integer pointer and you increment the points it will point 4 bytes further in memory
+ 	because integers are 4 bytes.
+
+ 	When pointers are of a multi-byte type, that is they are pointers to data types that are more than
+ 	one byte, then when the pointer points to memory location it doesn't just point to what's in that
+ 	one byte of memory, but it poits to the whole data section in memory, so for an integer it points
+ 	to 4 continuous bytes in memory, or for a double it points to 8 continuous bytes in memory. This
+ 	is why when you increment a pointer it skips ahead the number of bytes that the data type holds,
+ 	as mentioned in the last paragraph.
+
+ 	A pointer on my Mac has a size of 8 bytes.
+
+ 	Can create a string by making a char pointer pointing to the first character of the string.
+ 			char *ptr;
+ 			ptr = "Hello World";
+ 	When you print the pointer it will automatically increment the pointer until the null character
+ 	is reached, because that is how the print functions work, after all any string is just an array
+ 	of characters so they always have to increment through the characters. The internals of C for
+ 	strings work as pointers anyway, so when using a pointer manually you are just being explicit.
+ 	Also assigning a string of characters to the char pointer will automatically put a null
+ 	terminator at the end of the string of text, this works because in C you never need to manually
+ 	add a null terminator onto the end of a string of characters, C does this for you when you
+ 	assign the text to the variable or pointer, that is what happens when you use the double-quotes
+ 	in C.
+
+ 	Pointers are used to parse/process data structures.
+
+
+Literals and Constants
+	When you write a string of text in double quotes C creates a string literal in memory somewhere.
+	If you set a char pointer to point to that string literal, and then you set the char pointer to
+	point to another string literal, the new string literal doesn't take the place of the original
+	string because it occupies another place in memory, and you are just setting the pointer to that
+	different memory location.
+	Do not directly change a string literal in memory using a char pointer.
+
+	Use the "const" keyword to make a constant variable.
+
+
+Character Arrays (strings)
+	Syntax:
+		char string[size] = "string";			i.e.	char string[7] = "string";
+		char string[] = "string";
+	If you directly assign a string value during declaration of the character array then you don't
+	need to include the size of the array in the declaration, C will automatically set the size
+	based on the string assigned to the array.
+	When you create a string the null character is automatically put at the end, but you need to
+	include the null terminator when specifying the size of the array.
+
+	A character array internally works by setting a pointer to point to the beginning of the array.
+	But the difference between creating a string as a character array or with a character pointer is
+	that when using the pointer you create a string literal that you cannot change, while when
+	creating an array the string is placed in read/write memory so you can change the contents of
+	the string.
+
+	You can set a character pointer to a character array and then use the pointer to do stuff with the
+	array. Note when assigning the pointer to the memory location of the array you DON'T use the &
+	character because the array is itself a pointer, so using the & would give the value of the
+	memory location of the array, not the value that the array points to (the start of the array).
+		char string[] = "yo man";
+		char *ptr = string;					// don't use & cuz array string is itself a pointer
+
+	Since an array is a pointer to the beginning of the array you can use it like a pointer by not
+	including an index, like so:		*(array)		*(array+4) 		<-- points to index 4
+			array[1]   =     *(array +1)
+	So you can use the array bracket syntax or the pointer offset syntax to reach elements in an array.
+	That will print a single element of an array, or a single character in a string, but if you want
+	to print an entire string from some point in the character array you just don't include the
+	dereference operator (*).
+			(array +4)		<- refers to the whole array starting at index 4
+
+Bitmasking
+	Bitwise logical operators are "&" for AND and "|" for OR.
+	Bitwise operators compare each individual bit of the two operands. 
+
+	All uppercase letters in a string start with 010 in binary, all lowercase letters in a string
+	start with 011, and all numbers represented as characters (not the actual number itself, but
+	when the number is in a string) start with 0011.
+	
+	For example, to check if a character is uppercase:			if (character & 0b00100000 == 0)
+	The 0b signifies the following number as binary. All uppercase letters start with 010, while all
+	lowercase letters start with 011, so the third bit is the difference. So by comparing a
+	character with that lowercase character bitmask with an "&" operator since only one bit in the
+	bitmask is one, every other bit will automatically result in a zero, and so the whole result of
+	the comparison will just come down to that one bit (the flag for lowercase letters).
+	If the character in question is uppercase it won't have a 1 in that bit and therefore the result
+	of the if-statement will be all zeroes, or 0 (false), if the character is lowercase it will have
+	a 1 in that bit and the result of the if-statement will be all 00100000, 1 (true).
+	Using hex is a bit easier, 0b00100000 in hexadecimal is 0x20.
+
+	Can use bitmask to change data using the bitwise OR operator.
+	Using bitwise OR will add the 1's in the bitmask to whatever bits in the piece of data aren't
+	already a 1.
+			0011 0010  <- original value, the binary number on the second line is the bitmask
+		OR 	0011 0000 	 <--->    (0b00110010 | 0b00110000)    <--->    (0x32 | 0x30)
+	The above statement (shown with 3 equivalent forms) will produce the binary number 0011 0010
+	because everything thing will stay the same except in bits where the bitmask has a 1 and the value
+	being altered has a zero.
+
+	To change a number digit to a character use the bitmask 0011 0000 because 0011 is the bitmask for
+	a number represented as a character. So any number will get 0011 added to it and it can now be
+	represented as a character of that number. If it is already a character representation of a
+	number then it will stay that way.
+	i.e.		0000 0101 		<-- number digit 5
+			OR 	0011 0000 		<-- bitmask   (0b00110000, 0x30)
+			-------------
+				0011 0101 		<-- character '5'
+
+	i.e. (in code)
+					char myNum = 2;				// myNum = 0000 0010, whatever that is as a character
+					myNum = 2 | 0b00110000;		// myNum will now be the character '2' (0011 0010)
+
+	To toggle between two states you use an XOR operator, because 1 XOR 1 = 0.
+	^ is the bitwise XOR operator in C.
+
+	~ is the bitwise NOT operator.
+
+
+Multi-Dimensional Arrays
+	Each array in a two-dimensional array is of the same size, so if they are character arrays, all
+	the arrays that aren't as long as the longest array are going to just have however many bytes
+	extra of empty space between the end of them and the beginning of the next array. It is this way
+	to make going through the 2D array easier, rather than having each array in the 2D array be of
+	different lengths.
+	Can use pointer offset syntax or array bracket syntax.
+	array[x][y] means *(array + (SIZE * x) + y), where SIZE is the size of each array.
+
+
+Memory Allocation
+	Dynamic memory allocation refers to the process of allocating memory while a program is running.
+	Allocate memory with the function:		malloc()
+	Dynamically allocated memory can be more useful than say an array because you can decide how
+	much memory you need at runtime, rather than at compile time in which you have to put in the
+	size in code when the array is declared.
+	Need to include this library to use malloc():		stdlib.h
+	malloc() will grab however many bytes you tell it to. You use malloc with a pointer, which
+	points at the memory that has been allocated by malloc.
+			Syntax:			char *ptr =	malloc(#ofBytes);
+
+	You can put data into the allocated memory in several ways. One way is to use pointer offsets
+	to directly write to the bytes like so:		*(ptr + offset) = value;
+	So you can make an array, or anything, in memory using malloc() instead of using the array, or
+	whatever.
+
+	When you are done using that memory you need to free it like so:		free(ptr);
+
+
+Data Structures
+	A data structure is a collection of data elements.
+	All file formats are data structures.
+	Syntax for Data Structure definition:
+											struct structName {
+												// data declarations (but not initializations)
+											};
+
+	To create an instance of a data structure you use a pointer, malloc(), and the sizeof() function.
+	You create the actual data structure in memory by allocating memory that matches the size of the
+	data structure and assigning the memory address for it to a pointer, the pointer is of the data structure type that you are using. It's a bit confusing because to get the size of the data structure
+	you call sizeof() with the argument being the very (dereferenced) pointer you are as allocating the
+	memory to in the same line, but C can look at the structure type of the pointer that is being declared
+	and use it to figure out the size even before C declared the pointer. See syntax below.
+
+	Syntax to create an instance of a Data Structure:
+													struct structName *ptr = malloc(sizeof(*ptr));
+	
+	Use the data structure pointer and a dot operator to get at data structure elements:
+													(*dataStruct_ptr).element_name
+	Shorthand for accessing data structure elements using "->":
+													dataStruct_ptr->element_name
+
+	Typedef:
+	Instead of creating data structures in the above way you can use the typedef keyword to create
+	a new data type out of the data structure.
+	To create a new data type from the data structure:
+						typedef struct structName {
+							// data declarations (but not initializations)
+						} data_type_name;
+	And to create a variable of the new data type:
+						data_type_name *ptr = malloc(sizesof(*ptr));
+
+	The main reason to make a data structure in this way as opposed to the previous way is in order
+	to be able to use the data structure in functions, returning that data type from a function or
+	sending it as a parameter to a function.
+
+
+
+
+
+
+================================================
+Notes from TutorialsPoint C tutorial
+================================================
+
+
+Keywords:
+
+auto
+	the default storage class (scope) of a variable
+else
+	else in an if statement
+long
+	long integer (same thing as int). Can end a number with L. i.e. 255L
+switch
+	switch-case branching statement
+break
+	breaks a loop
+enum
+	???????????????????
+register
+	makes a variable be stored in a register on the CPU rather than in RAM
+typedef
+	gives a data type a new alias to be referenced by
+case
+	part of switch-case statement
+extern
+	used to access a global variable from another source code file in the program. i.e. extern int num
+return
+	return from a function
+union
+	allows multiple variables of different data types to use the same memory location (at separate times)
+char
+	character integer (can also be signed or unsigned, because it is really an integer type)
+float
+	floating-point integer
+short
+	a short int (only 2 bytes)
+unsigned
+	unsigned integer (meaning only positive numbers). Can end a number with U. i.e. 255U
+const
+	a constant value identifier
+for
+	for-loop
+signed
+	signed integer (negative or positive)
+void
+	function returns nothing, no arguments to function, or pointer to void, can be caste to any type
+continue
+	skip to the next iteration of a loop
+goto
+	bad practice to use goto’s
+sizeof
+	sizeof(type) gives the storage size of the object or type in bytes
+volatile
+	??????????????????????
+default
+	the default case in a switch-statement
+if
+	if-statement
+static
+	makes a local function variable still exist locally for function after function ends.
+	makes a global variable have scope only within the file in which it was declared.
+	makes a class variable have only one copy shared amongst all objects of the class.
+while
+	while-loop
+do
+	do-loop
+int
+	integer variable (4 bytes)
+struct
+	defines a data structure
+_Packed
+	???????????????????????
+double
+	double length floating-point number variable (8 bytes) (long double 10 bytes)
+
+
+
+Types:
+
+	char
+	int
+	float
+		3.545, 342E-5L  <— 342x10^-5 as a long floating point
+	double
+	void
+
+
+
+Escape sequence characters:
+	\\   \’   \”   \?   \a   \n
+	\b	<- backspace
+	\f	<- form feed
+	\r	<- carriage return
+	\v	<- vertical tab
+	\ooo	<- octal number of one to three digits
+	\xhh	<- hex number of one or more digits
+
+
+
+Constants:
+	#define NAME value
+		used to define global constants outside of main
+		a preprocessor action
+	const type NAME = value
+		use to declare constants of a specific type
+
+
+
+
+Storage Classes:
+	Storage classes define the scope of variables and functions.
+	auto
+		Default storage class, just declaring variable is same as using “auto type name”.
+		Can only be used within functions (local variables)
+	register
+		Defines local variables that are stored in the register instead of in RAM. Variable
+		is limited to the register size.
+	static
+		Creates a local variable to exist for the lifetime of the program, instead of creating and
+		destroying it each time it goes into and out of scope. The allows the variable to be retained
+		for the next time the function is called (variable only exists in that function’s scope). If static
+		is applied to a global variable that variable’s scope is restricted to only that file. When static
+		is used on a class data member it causes only one copy of that member variable to be
+		shared by all objects of its class.
+	extern
+		Global variables or functions can be referenced from other files using extern so that their
+		scope is ALL the program files. The extern keyword is only used for those other files where
+		the variable/function was not declared. So extern only gives a reference to the fact that the
+		variable/function referenced is from another file in the program. Use it like: 
+		extern type name;
+
+
+
+Bitwise Operators:
+	&
+		(AND) copies a bit to the result if it exists in both operands (A & B)
+	|
+		(OR) copies a bit if it exists in either operand (A | B)
+	^
+		(XOR) copies the bit if it is set in one operand but not both (A^B)
+	~
+		(NOT) is unary and flips the bits (~A)
+	<<
+		(Left Shift) is unary and shifts bits left by specified number (A << 3)
+	>>
+		(Right Shift) is unary and shifts bits right by specified number (A >> 3)
+
+	Can have bitwise and assignment operators together:
+		<<=		C <<= 2   is same as   C = C << 2
+		>>=
+		&=
+		|=
+		^=
+
+Miscellaneous operators:
+	sizeof()	returns size of a variable in bytes
+	&var		returns address of variable
+	*var		pointer to variable
+	? :		if Condition is true ? Then value X : Otherwise value Y  (a = 3 ? b = 4 : b = 0)
+
+
+
+
+Switch Statement:
+	The expression in a switch statement must have an integral or enumerated type, or be of a class
+	type in which the class has a single conversion function to an integral or enumerated type. Can’t
+	use a string as the expression.
+f
+	switch(expression) {
+		case constant-expression:
+			statement(s);
+			break;
+		etc.
+		default:
+			statement(s);
+
+
+
+Functions:
+	In a function declaration/prototype you don’t need to put the argument names:
+		i.e.		int myFunc(int, int, char);
+	Function declarations should take place at the top of the source code file.
+	
+	Call-by-value arguments:
+		Copies the value of the argument into the formal parameter, but the argument itself
+		can’t be affected by what goes on in the function. Default way to pass arguments.
+	Call-by-reference arguments:
+		Copies the address of the argument into the formal parameter so that it is the actual
+		variable itself that is being used in the function, therefore it can be affected by the
+		actions taking place on the parameter in the function. Use call-by-reference arguments
+		by making the parameter a pointer and passing in the argument with a ‘&’ sign prefixed
+		to the argument name.
+
+
+
+Scope:
+	Global variables are initialized to 0 (number), ‘\0’ (char), or NULL (pointer) automatically, but local
+	variables are not automatically initialized.
+
+
+
+Arrays:
+	type arrayName[arraySize];
+		double myArr[10];
+		int myArr[3] = {3, 34, 1};
+		int myArr[] = {23, 34, 110};
+
+	Pass an array to a function by using a pointer and the arrayName.
+	To return an array from a function the return type of the function must be a pointer of the array
+	type, and you simply return the arrayName.
+		i.e.	int * myFunc() {
+				int arr[] = {1,2};
+				return arr;   }
+
+	An array is just a pointer to a list of data, so the array name is just a pointer to the first element
+	in the array. So to create a pointer to the first element in an array simply use the arrayName by
+	itself with no indices.		i.e.	double *p = myArray;
+	You can then access array elements using *p, *(p+1), *(p+2), etc.
+
+
+	Multi-Dimensional Arrays:
+		To initilialize a 2D array do:
+
+			int a[2][3] = {
+				{0,1,2},
+				{4,5,6}
+			};
+
+
+
+Pointers:
+	A pointer is a variable whose value is the address of another variable.
+	Pointer Declaration:
+		type *varName;
+	Use:
+		int var = 30;
+		int *ptr;
+		ptr = &var;
+		printf(“%x”, &var);		<— the address of var, which the pointer holds
+		printf(“%x”, ptr);		<— access hexadecimal address of var (note: use %x)
+		printf(“%d”, *ptr);		<— access value of the variable pointed to
+
+	Can create a NULL pointer by initializing a pointer to NULL when it is declared. It is good practice
+	to assign a pointer to NULL until you have a variable for it to point to.   i.e.	 int *ptr = NULL;
+
+	Using a ptr in an if-statement returns true if the pointer is not a NULL pointer, and returns false
+	if the pointer is a NULL pointer.   i.e.   if(ptr) {…}
+
+	Note that a pointer, an array (without the indices), and a call-by-reference variable are all
+	equivalent and interchangeable when it comes to using them as arguments and whatnot. So if
+	a parameter to a function is a pointer, you can put a pointer, call-by-reference variable of that type,
+	or an array as the argument. Same thing with returning a pointer from a function.
+
+	Can make an array of pointers:	int *ptr[SIZE];
+	Can store an array of strings using an array of pointers:
+		char *names[] = {“Todd”, “Kronenberg”, “AliciaMarie”};
+
+	Pointer Arithmetic:
+		Can use +, -, ++, - -  with pointers. Note that the units of arithmetic done on the memory
+		addresses are the size of type being pointed to. So on a char pointer ptr++ would
+		increment the pointer 1 byte (which is 1 char). But ptr++ on an int pointer would increment
+		it by 4 bytes (1 integer). So can increment through an array by setting an pointer equal
+		to the array (ptr = arr) and then incrementing the pointer.
+
+		Pointers can be compared using ==, <, >. These can be used to see an element pointed
+		to in an array comes before or after another element pointed to in the array.
+
+	Pointers to Pointers:
+		To make a pointer that points to a pointer, use more than one asterisks.
+		i.e.		int var = 100;
+				int *ptr;
+				int **ptr2;
+				ptr = &var;
+				ptr2 = &ptr;
+				printf(“%x”, ptr2);		<— gets the value of ptr2 (the address of ptr)
+				printf(“%x”, *ptr2);		<— gets the value of ptr (the address of var)
+				printf(“%d”, **ptr2);		<— gets the value of var
+
+
+
+
+Strings:
+	Strings are a one-dimensional array of characters terminated by a null character ‘\0’.
+		char yo[6] = {‘H’, ‘e’, ‘l’, ‘l’, ‘o’, ‘\0’};
+		char yo[] = {‘H’, ‘e’, ‘l’, ‘l’, ‘o’, ‘\0’};
+		char yo[] = “Hello”;
+	Use %s as the placeholder in I/O statements.
+
+	Some String functions from the <string.h> library:
+		strcpy(s1,s2);	<- copies s2 into s1
+		strcat(s1,s2);		<- concatenates s2 onto end of s1
+		strlen(s1);		<- returns length of s1 (without null terminating character)
+		strcmp(s1,s2);	<- returns 0 if s1 and s2 are the same, < 0 if s1 < s2, > 0 if s1 > s2
+		strchr(s1,ch);		<- returns a pointer to first occurrence of ch in s1
+		strstr(s1,s2);		<- returns a pointer to first occurrence of s2 in s1
+
+
+
+
+Structs:
+	Data structures allow combining several variables of whatever data type into a single data
+	structure.
+		struct structName
+		{
+			member definition;
+			member definition;
+			…
+		}; 		<- [optional creation of one or more structure variables, end with semicolon]
+
+	i.e.
+		struct Person
+		{
+			int age;
+			char name[20];
+			char gender;
+			float weight;
+		} Todd;						<- Todd; was optional
+
+	Note that structures don’t need a name if all the struct variables that will ever use it are declared
+	at the end of the struct definition.
+
+	To declare a struct variable do:
+		struct structName varName;
+	i.e.	struct Person Todd;
+	Use the dot operator to access members of a struct. Like in the example above do:
+		Todd.age = 5;
+		strcpy(Todd.name, “Todd Kronenberg”);
+		printf(“Person’s name: %s\n”, Todd.name);
+
+	To pass structs as arguments to functions the parameter will be:
+		void myFunc(struct Person Todd);
+	and simply put the name of the struct (Person) in as the argument in the function call.
+
+	Pointers to structures:
+		struct structName *strctPtr;
+		strctPtr = &var1;
+	i.e.
+		struct Person *strctPtr
+		strctPtr = &Todd
+
+	To access members of a structure using a pointer to that structure use the -> operator instead of
+	the dot operator.
+		strctPtr->weight;
+
+
+Bit Fields in Structs:
+	Can make memory compacted variables by using Bit Fields in a data structure. Specify the
+	bit length of a variable  by putting :bitLength after the variable name.
+	i.e.		unsigned int myInt:2		<- myInt is 2 bits
+	Can make one-bit flags in this way.
+	Can make a structure of Bit Fields like so:
+	i.e.	
+		struct packed_struct {
+			unsigned int blah:1;
+			unsigned int bleh:1;
+			unsigned int bloop:4;
+			unsigned int bleep:9;
+		} pack;
+	This can be used to pack several objects into a single byte, or for reading non-standard
+	file formats, like reading in 9-bit integers for example.
+
+	The variable types that can be used in a Bit Field struct are int, signed int and unsigned int. The
+	width (size in bits of the member variable) of the Bit Field must be less than or equal to the size of
+	the data type being used.
+
+
+
+Unions:
+	A union is a special kind of data type that allows multiple variables of different types to be stored
+	in the same memory location, but only one of those variables in the union can have a value at
+	any given time. It is a way to save memory space by having a multi-purpose memory location.
+	i.e.
+		union myUnion
+		{
+			int i;
+			float f;
+			char str[10];
+		} aUni, uniTime;					<- optional union variables declarations
+
+	Note that Unions don’t need a name if all the Union variables that will ever use it are declared
+	at the end of the Union definition.
+
+	You can use any data type (built-in or user-defined) in a union. The memory occupied by the union
+	will be large enough to hold the largest member of the union. Doing a sizeof(unionVar); will return
+	the size of the largest member of the union, which is the size of the union variable.
+
+	To access any member variable of a Union use the dot operator:		myUnion.str
+	Remember that whenever a Union member value is assigned it writes over the value that was
+	there before.
+
+
+
+Typedef:
+	Use the typedef keyword to give a data type a new name.
+		typedef datatype newName
+	i.e.
+		typedef unsigned char BYTE;
+		BYTE b1, b2;
+
+	By convention typedef names use upper case letters. Can also use typedef on structs.
+
+	Differences between typedef and #define:
+		- Typedef is limited to given symbolic names to types only where as #define can be used to
+			define alias for values as well, like you can define 1 as ONE etc.
+		- Typedef interpretation is performed by the compiler where as #define statements are
+			processed by the pre-processor.
+
+	#define TRUE 1
+	#define FALSE 0
+
+
+
+Input & Output:
+	Standard Files:
+		stdin		<- keyboard input
+		stdout		<- screen output
+		stderr		<- standard error output to screen
+
+	For Input should generally use fgets(), or getchar() to get a single character.
+	For Output should generally use printf, or putchar() to print a single character.
+	
+	int getchar(void)
+		function reads the next available character from the screen and returns it as an integer.
+		Use in a loop to read more than on character.
+			i.e.	myChar = getchar();
+
+	int putchar(int c)
+		function puts the character in the argument to the screen. Use in loop to display more than
+		one character.
+			i.e.	putchar(myChar);
+
+	char *gets(char *s)
+		function reads a line from stdin into the buffer pointed to by *s until either a terminating
+		newline or an EOF (end of file).
+			i.e.	gets(str);
+
+	char *fgets(char *str, int n, FILE *stream)
+		function reads a line from the specified stream (which can be stdin to get input from
+		keyboard) and stores it in the string pointer *str. The size is given by int n. The third parameter
+		is the stream to read from, whether file or stdin. It will read up to a newline characters, or
+		the end of file, or n-1 characters, whichever comes first. On success it returns the same str
+		pointer, on failure or if no characters are read a NULL pointer is returned, so you can check
+		for fgets() == NULL.
+			i.e.	if (fgets(str, 80, stdin) != NULL) {  // process the input  }
+
+	int puts(const char *str)
+		function writes the string str and a trailing newline to stout.
+			i.e.	puts(str);
+
+	int scanf(const char *format, …)
+		function reads input from the stdin and scans that input according to the format provided.
+		The scant() function treats each space as a break between inputs. If you put in the wrong
+		types of inputs then it will be assumed as wrong input.
+			i.e.	scanf(“%s %d”, str, i);
+
+	int printf(const char *format, …)
+		function writes output to stdout and produces output according to format provided.
+			i.e.	printf(“You entered %d”, myInt);
+
+
+
+File I/O:
+	Use the <stdio.h> library for file I/O.
+
+	fopen():
+		FILE *fopen(const char *filename, const char *mode);
+		i.e.		myFile = fopen(“Todd’s File”, “r”);
+		The first argument is a string literal used to name the file. Second argument is the access
+		mode:
+			r		read only
+			w		write only (writes over data from beginning), create if doesn’t exist
+			a		write only (appends to end of file)
+			r+		reading and writing
+			w+		reading and writing, truncates file to length zero if exists, else creates it
+			a+		reading and writing, creates if doesn’t exist, reading starts from
+					beginning, but writing is appended to end of file
+		Binary files access modes are: “rb”, “wb”, “ab”, “rb+”, “r+b”, “wb+”, “ab+”, “a+b”
+		If you want to specify a path for the File to be created or opened at just write the path in the
+		first argument, if only a file name is given it opens/creates it from the current directory.
+
+	fclose():
+		int fclose(FILE *fp);
+		Returns zero on success, or EOF if there is an error in closing the file. To close a file simply
+		use fclose function with the FILE name. This function flushes any data still in the buffer to
+		the file, closes the file, and releases any memory used for the file.
+
+	Writing to a file:
+		fputc():
+			int fputc(int c, FILE *fp);
+			Writes the first argument character value to the output stream references in the
+			second argument (which can be stdout or a file, etc). Returns the written character
+			on success, or EOF on error.
+		fputs():
+			int fputs(const char *s, FILE *fp);
+			Write the first argument string to the output stream referenced by the second
+			argument (could be stdout or a file that is being written to that’s been opened).
+			Returns a non-negative value on success, otherwise returns EOF.
+		fprintf():
+			int fprintf(FILE *fp, const char *format, …);
+			Can also be used to write a the second argument string to a file (the first argument).
+
+
+	Reading a file:
+		fgetc():
+			int fgetc(FILE *fp);
+			Read a character from the input file referenced by the argument. The return value is
+			the character read, or on failure EOF.
+		fgets():
+			char *fgets(char *buf, int n, FILE *fp);
+			Reads a string, up to n-1 characters from the input stream referenced by the third
+			argument. “n” is specified in the second argument. And a character buffer is given
+			as the first argument, as a character array which specifies the size of the buffer to
+			read. If function encounters a newline character of EOF it returns number of
+			characters read including the newline.
+			i.e.	char buff[255];
+				FILE *fp
+				fgets(buff, 255, (FILE*) fp);
+		fscanf():
+			int fscanf(FILE *fp, const char *format, …);
+			Reads strings from files but stops reading after the first space character it
+			encounters.
+
+	Binary I/O:
+		fread():
+			size_t fread(void *ptr, size_t size_of_elements, size_t num_of_elements, FILE *a_file);
+		fwrite():
+			size_t fwrite(const void *ptr, size_t sizeOfElem, size_t numOfElem, FILE *a_file);
+
+
+
+Preprocessors:
+	A C Preprocessor is not part of the compiler but a part of the compilation process. Essentially it is a
+	text substitution tool and instructs the compiler to do the required pre-processing before the
+	compilation.
+	All preprocessor commands begin with the pound symbol (#). It must be the first nonblank character
+	on the line. Pre-processor commands should be above the main function, and not be indented at all.
+
+	Preprocessor commands:
+		#define
+				substitutes a preprocessor macro
+		#include
+				inserts a particular header from another file
+		#undef
+				undefines a preprocessor macro
+		#ifdef
+				returns true if this macro is defined
+		#ifndef
+				returns true if this macro is not defined
+		#if
+				tests if a compile time condition is true
+		#else
+				the alternative for #if
+		#elif
+				#else and #if in one statement
+		#endif
+				ends preprocessor conditional
+		#error
+				prints error message on stderr
+		#pragma
+				issues special commands to the compiler, using a standardized method
+
+	Examples:
+		#define TRUE 1
+		#include <stdio.h>
+		#undefine TRUE				// undefined TRUE as 1
+		#define TRUE 42				// redefines TRUE as 42
+		#ifndef MESSAGE
+			#define MESSAGE “You wish!”
+		#endif
+		#ifdef DEBUG
+			/* debugging statements here */
+		#endif
+
+	Pre-defined Macros:
+		__DATE__
+				the current date as a character literal “MM DD YYYY” format
+		__TIME__
+				current time as a character literal “HH:MM:SS” format
+		__FILE__
+				contains the current filename as a string literal
+		__LINE__
+				contains the current line number as a decal constant
+		__STDC__
+				defined as 1 when the compiler compiles with the ANSI standard
+
+	Preprocessor Operators:
+		These help in creating macros.
+
+		Macro Continuation (\)
+			Allows a macro to continue on the next linen
+		Stringize (#)
+			When used with a macro definition it converts a macro parameter into a string
+			constant. Can only be used in a macro that has a specified argument/parameter list.
+
+			Ex.
+				#define message_for(a, b) \
+					printf(#a “ and “ #b “: We love you!\n”)
+
+		Token Pasting (##)
+			Combines to arguments in a macro definition be allowing two separate tokens to be
+			joined into a single token.
+
+			Ex.
+				#define tokenpaster(n) printf (“token” #n “ = %d”, token##n)
+				int main(void) {
+					int token34 = 40;
+					tokenpaster(34);
+					return 0;	}
+				[ This prints:	token34 = 40 ]    - literally combines token and n into one token
+
+		defined() Operator
+			An operator used in constant expressions to determine if an identifier is defined using
+			#define. If it is defined, value is true (non-zero).
+
+			Ex.
+				#if !defined (MESSAGE)
+					#define MESSAGE “You wish!”
+				#endif
+
+		Parameterized Macros
+			Simulates functions. This is shown above in the \ and # example. Macros with
+			arguments must be defined using the #define directive. No space is allowed between
+			macro name and the parentheses.
+
+			Ex.
+				#define square(x) ((x) * (x))
+				#define MAX(x,y) ((x) > (y) ? (x) : (y))
+
+
+
+Header File:
+	A header file is a file with the extension “.h” which contains C function declarations and macro
+	definitions and to be shared between several source files. There are two types of header
+	files, ones that the programmer writes and ones that come with the compiler.
+	Use the #include directive to request header files. Equivalent to copying the contents of the
+	header file into the source code.
+	Practice in C and C++ is to keep all constants, macros, system wide global variables, and
+	function prototypes in header files and include that header file.
+
+	#include <file>
+		Used for system header files. It searches for the file in a standard list of system
+		directories. You can prepend directories to this list with the “-l” option when compiling
+		source code.
+
+	#include “file”
+		Used for programmer-created header files. It searches for the file in the directory
+		containing the current file. You can prepend directories in the same manner as above.
+
+	The #include directive scans the specified file as input and copies directly into that spot of
+	the source code file.
+
+	To keep a header file from being included twice by accident enclose the entire contents of the
+	header file in an #ifndef wrapper like so:
+				
+			#ifndef HEADER_FILE
+			#define HEADER_FILE
+			…entire contents of header file…
+			#endif
+
+	Can specify different header files to include for, say, different operating systems like so:
+			#if SYSTEM_1
+				#include “system_1.h”
+			#elif SYSTEM_2
+				#include “system_2.h”
+			…
+			#endif
+
+	But better way to do this is use a computed include which offers the ability to use a macro for
+	the header name. Like so:
+			#define SYSTEM_H “system_1.h”
+			…
+			#include SYSTEM_H
+	Here SYSTEM_H could be defined by your Makefile with a -D option.
+
+
+
+Type Casting:
+	A way to convert a variable from one data type to another. Use the cast operator as follows:
+
+		(type name) expression
+
+	Ex.
+		(double) 17;
+
+	Integer Promotion happens sometimes, which is when a value of integer type that is smaller
+	than int or unsigned int is converted either to int or unsigned int automatically. Since
+	characters are stored as integers adding a character to an integer is an example of integer
+	promotion because the character’s number value is converted to an integer type before doing
+	the calculation.
+	If integer promotion doesn’t give the different elements the same type then they are both
+	converted to long double, which is the largest number data type. Or something like that.
+
+
+
+Error Handling:
+	The C language does not provide direct support for error handling but because it’s a system
+	programming language it provides access at a lower level in the form of return values.
+	Usually an error returns -1 or NULL and C will set an error code, errno, which is a global
+	variable.
+
+	Error codes are defined in the <error.h> header file.
+
+	To display the text message associated with errno:
+
+	perror()
+		displays the string you pass to it, followed by a colon, a space, and then the textual
+		representation of the current errno value.
+	strerror()
+		returns a pointer to the textual representation of the current errno value.
+
+	Need to use the stderr file stream to output all the errors.
+
+	Ex.
+		fprintf(stderr, “Value of errno: %d\n”, errno);
+		perror(“Error that was printed by perror is“);
+		fprintf(stderr, “Error opening file: %s\n”, strerror(errnum));
+
+
+
+Variable Arguments:
+	Can make a function take a variable number of arguments by making the first parameter be
+	an int and the second parameter be an ellipses (…). The first parameter, the int, represents
+	the total number of variable arguments passed (you don’t actually explicitly give an argument
+	for that parameter - just put the variable arguments   <— I think, although below it looks like
+	the first argument is explicitly stated as the number of arguments after it).
+
+		void char(int, …)
+
+	Need to use the stdarg.h header file which provides function and macros to implement the
+	functionality of variable arguments. Need to follow these steps:
+		- Define a function with variable arguments.
+		- Create a va_list type variable in the function definition, this type is defined in stdarg.h
+		- Use int parameter and va_start macro to initialize the va_list variable to an argument
+		   list.
+		- Use va_arg macro and va_list variable to access each item in the argument list.
+		- Use macro va_end to clean up the memory assigned to va_list variable.
+
+	Ex.
+		void func(int num, …) {
+			va_list valist;
+			va_start(valist, num);
+			for (int i=0; i < num; i++)
+				here use va_arg(valist, int);
+			va_end(valist);
+		}
+
+
+
+Memory Management:
+	Use the <stdlib.h> library for the memory management functions. Allocate memory when
+	you are unsure how much memory will be needed (unlike with an array where you have to
+	specify the size.
+
+	Note that the calloc(), malloc(), and realloc() all return a void pointer which means it can be
+	a pointer to any type of memory.
+
+	calloc()
+		void *calloc(int num, int size);
+		Allocates an array of num elements each of which’s size in bytes will be size argument.
+	free()
+		void free(void *address);
+		Releases a block of memory specified by address argument.
+	malloc()
+		void *malloc(int num);
+		Allocates an array of num bytes and leaves them initialized.
+	realloc()
+		void *realloc(void *address, int newsize);
+		Re-allocates memory extending it upto newsize argument.
+
+	Ex.  — allocate 200 bytes of memory
+		mems = malloc(200 * sizeof(char));
+		mems = calloc(200, sizeof(char));
+
+	Re-allocate memory like so:
+		mems = realloc(mems, 500 * sizeof(char));
+
+	Use free() to free all memory allocated in a program, or give it an address to only free specific
+	memory - the argument is the return value from the memory allocation function, in the	example above it’d be free(mems);
+	Need to always free memory that was allocated at the end of a program. Should free it as
+	soon as the memory isn’t needed anymore.
+
+	Use realloc() to increase or decrease the size of an allocated memory block.
+
+
+
+Command Line Arguments:
+	int main(int argc, char *argv[]) {}
+
+	int argc
+		This holds the number of command line arguments sent to the program.
+		The first argument is the name of the executable file itself, so there will always be at
+		least one argument.
+	char *argv[]
+		This holds all the command line arguments in an array, with the first element at index 0
+		being the filename of the program.
+
+
+
+
+
+=================================================================================
+=================================================================================
+				Other Notes on C (from “Learn C the Hard Way”)
+=================================================================================
+=================================================================================
+
+
+
+
+
+C NOTES
+
+/* comments are only these, although on Mac I guess // works too. */
+
+C has no classes, no 'new' and 'delete' memory management keywords, no stream
+operators << >>, no boolean data type (instead just use 0 and non-zero for
+false and true), no // comment character, no casting operators like dynamic_cast
+and static_cast, it has different standard libraries (like no iostream), and
+other stuff different from C++.
+
+
+I/O
+
+Output:
+Use the functions printf, fprintf, fgets, and fputs for I/O.
+Output:
+printf, fprintf, fputs
+printf() always prints to stdout, if you want to print to something
+else, like stderr, use fprintf(), which takes as its first argument
+the stream you're printing on, otherwise it is the same as printf().
+i.e.        fprintf(stderr, "fatal error in blah\n");
+
+standard in, out, and error C++ vs. C:
+C++     C
+cin     stdin
+cout    stdout
+cerr    stderr
+
+fputs() allows writing to a stream, like printf() does, but you have
+to specify the stream like in fprintf, but unlike them it doesn't
+do any formatting, but this also makes it a bit faster.
+        int fputs(const char *str, FILE *stream);
+fputs() takes a null-terminated string 'str' and writes it to
+'stream'. It omits the null character when it does this. It returns
+a non-negative integer of how many bytes it wrote (I think) or an EOF on error.
+i.e.
+        if ((fputs("Hello world", stdout)) == EOF) {
+            fprint(stderr, "Whoops, something went wrong");
+        }
+
+Input:
+Input is a bit trickier. To read an entire line you probably want to use
+fgets(). The prototype for fgets() is:
+            char *fgets(char *buffer, int size, FILE *stream);
+So fgets() reads up to size-1 characters from stream and stores them in buffer.
+fgets() stores the \0 after the last character read and returns 'buffer' if
+everything works fine, or NULL on error or end of file.
+i.e.            input = fgets(buffer, 256, stdin);
+                if (input != NULL) {
+                    printf("you typed: %s\n", input);
+                }
+
+
+FORMATTING (conversion characters)
+
+%d or %i  int
+    %ld means print the int as a long decimal
+    %u means unsigned int
+%f  float or double (used for both of them)
+%c  char
+%s  char *array (string)
+%e  print in scientific notation
+%x  int in hexidecimal notation
+%p  void * (prints as a pointer)
+%%  prints the percent sign once (this is how you 'escape' %)
+
+
+MEMORY ALLOCATION
+
+Use the malloc() function to allocate memory. Prototype of malloc is:
+        void * malloc(int nbytes)
+malloc() takes an int indicating the number of bytes you want allocated and it
+returns a void pointer to the start of the allocated memory.
+For example to allocate space to hold an integer:
+        blah = (int *) malloc(sizeof(int));
+        *blah = 5;
+The above two lines type casts the allocated space from a void pointer to an
+int pointer, then we assign the value of 5 to the int pointer. Can also use
+malloc() to allocate memory for structures like arrays:
+        blah = (int *) malloc(sizeof(int) * 5);
+        blah[0] = 23;
+        blah[4] = 100;
+Freeing memory is done with free(). Its prototype is:       void free(void *);
+Ex:     free(blah);
+Note that it is disastrous to free a piece of memory that's already been freed.
+
+
+VARIABLE DECLARATION
+
+In C variables must be declared at the beginning of a function and must be
+declared before any other code. This includes loop and counter variables, which
+means you can't do this: for (int i=0; i<200; i__)
+
+
+CONSTANTS
+
+The standard way to declare a constant in C is to use #define.
+i.e.        #define MAX_LEN 512
+
+
+Structs
+
+C has no classes but does have the struct keyword to make data structures.
+i.e.        struct blah {
+                int x;
+                int y;
+            }
+            struct blah myDS;
+            myDS.x = 0;
+            myDS.y = 0;
+Can refer to a data structure object in the above way, but the preferred
+approach is to use pointers when using structures, like so:
+            struct blah *myDS;
+            myDS = (struct blah *) malloc(sizeof(struct blah));
+            myDS-> = 0;
+            myDS-> = 0;
+Notice that you still always have to refer to the data structure as
+"struct identifier", that is to say you always have to include the struct
+keyword when referring to it, this is different from C++. But you can get
+rid of this use of the struct keyword by using typedefs. The typedef keyword
+essentially created an alias. So you can do the following to make it so
+you only have to use "Point":
+            typedef struct point Point;
+            Point *myDS;
+            myDS = (Point *) malloc(sizeof(Point));
+            myDS->x = 0;
+
+
+LIBRARIES
+The only difference in including a library in C, in contrast to C++, is that
+you have to include the ".h" at the end of the library name. And of course
+the libraries are different. Some useful libraries:
+    stdio.h         prinf, fprintf, sprintf, fgets, fputs
+    string.h        strcpy, strcmp, strncmp, strtok, strlen
+    stdlib.h        utility functions, atoi, atol
+    assert.h        useful in debugging: assert
+
+
+FOR MORE NOTES READ:
+        THE C PROGRAMMING LANGUAGE BY KERNIGHAN AND RITCHIE
+        EXPERT C PROGRAMMING BY PETER VAN DER LINDEN
+
+OTHER NOTES
+
+To specify a literal long int in an equation (not in a variable), type L at the end
+of the number, ex:   13L      1092019101L
+
+The null byte is the character '\0', will represent zero in numerical operations
+
+C treats strings as arrays of bytes and nothing more. Only the printing functions can
+tell a difference.
+
+Different ways of initializing a character array:
+    int areas[] = {10, 1, 23, 43};
+    char name[] = "yo man whats up";
+    char myName[] = {'t', 'o', 'd', 'd'};
+
+With an int array you can initialize all elements to zero by just doing "= {0};", this
+doesn't work with character arrays though.
+A null byte is automatically placed at the end of a character array, in the last index,
+so you don't ever want to put something in the last index of a char array.
+
+When assigning a string literal to a variable name should use pointer style instead of array
+style, like so:
+Use        char *myString = "whatever"      instead of          myString[4] = "whatever"
+That way you don't have to specify the size of the character array, and a null byte is
+automatically inserted at the end of the char array pointed to by the pointer.
+
+sizeof() function:
+sizeof(int) gives number of bytes in an int
+sizeof(myArray) gives the number of bytes (not elements) in the array
+sizeof(myArray) / sizeof(int) would give the number of elements in an int array
+
+Use command line arguments with argv[index], and the number of arguments is argc. The first
+argument in argv[0] in C is the executing file itself.
+
+To make a 2D array in C, an array of char arrays/strings that is, do:
+            char *my2dArray[] = {"yo", "man", "howsitgoing"};
+
+
+ON EXERCISE 13 IN LEARN C THE HARD WAY
+
+
+
+

@@ -1,0 +1,1343 @@
+Cascading Style Sheet (CSS) Notes
+
+
+CSS is used to define how to display HTML elements. Whereas the HTML itself merely defines the content.
+
+
+
+
+************ WAYS TO IMPLEMENT STYLING ************
+
+
+Three ways to use CSS:
+    External Style Sheets can be used and linked in the head of an HTML document using the
+            <link rel="stylesheet" type="text/css" href="cssFileName.css">
+
+    Internal Style Sheets can be used by defining the styling in the <head> tag of the HTML
+    document by putting CSS code in between the <style> </style> tags.
+            <head>
+                other header code...
+                <style>
+                    css code...
+                </style>
+            </head>
+
+    Inline Styles can be used inside HTML element tags by using the "style" attribute and setting
+    it equal to some CSS code:
+            <p style="backround-color:blue; color:white;">
+
+
+Multiple Styles will Cascade into one.
+The cascading order is:
+    1. Browser Default
+    2. External StyleSheet                // assuming this comes in code before internal styling
+    3. Internal StyleSheet (in the head section)
+    4. Inline Style (inside an HTML tag)
+
+So if a style for an HTML element is defined in an external stylesheet, internal stylesheet, and
+and inline style is used, any properties defined in the Internal StyleSheet will overwrite
+values that were defined for that property in the External StyleSheet, but properties defined
+in the Inline Style will overwrite values defined in both the External and Internal StyleSheets.
+
+Basically whatever code is executed last overwrites previously executed CSS code. So if the link
+to the External StyleSheet comes in the <head> element after the Internal StyleSheet has been
+defined then it is the External Styling that overwrites the Interal Styling.
+
+
+
+
+************ BASIC SYNTAX ************
+
+
+CSS Syntax:
+
+    Selector {                      // the Selector is an HTML tag
+        property: value;            // property is an attribute of the style
+        property: value;
+        etc.
+    }
+
+i.e.
+    h1 {
+        color: blue;
+        font-size: 12px;            // note: DO NOT add a space between the value and its units
+    }                               // 12px  <-- CORRECT        12 px   <-- WRONG
+
+/* Use this for comments in CSS */
+
+
+
+An HTML tag that is inside another HTML tag means the inner element is a child of the outer
+element. In CSS you can specify to only apply styling to a specific child selector of a
+specific parent select by using the ">" symbol.
+
+Syntax:     parentSelector > childSelector { }
+i.e.        p > i { }                           // only italics in paragraphs will be styled
+
+
+
+
+************ ID AND CLASS ************
+
+
+CSS also allows you to specify your own selectors called "id" and "class".
+
+Id is used to specify the styling for a unique element. Class is used to specify perhaps more
+general styling that will be applied to many HTML tags.
+
+The id Selector:
+    Used to specify a style for a single, unique element.
+    Specify an id by putting a "#" before the custom selector in CSS.
+    Reference the id in an HTML tag with the "id" attribute, the value is the selector name
+    without the "#".
+    Cannot start an ID name with a number.
+
+    i.e.
+        CSS:    #blah { text-align: center;  color:blue;  font-size: 40px; }
+        HTML:   <p id="blah"> ... </p>
+
+
+The class Selector:
+    Used to specify a style for a group of elements.
+    Can set many HTML elements as belonging to the same class, so they have the same styling.
+    Specify a class by putting a "." before the custom selector in CSS.
+    Reference the class in an HTML tag with the "class" attribute, the value is the selector name without the ".".
+    Cannot start a Class name with a number.
+
+    i.e.
+        CSS:    .center { text-align: center; }
+        HTML:   <h1 class="center"> ... </h1>
+                <p class="center"> ... </p>
+
+    Can also specify that a class only be applied to a specific type of HTML tag by including
+    that selector before the "." in the CSS code.
+
+    i.e.
+        CSS:    p.center { text-align: center; }        // can only be used with <p> elements
+        HTML:   <p class="center"> ... </p>
+                <p class="center"> ... </p>
+
+
+Can style <div>'s specifically by doing:
+        div.className { }
+and then in HTML:
+        <div class="className"> ... </div>
+
+
+
+
+************ BACKGROUNDS ************
+
+
+CSS Background properties are used to define the background effects of an element.
+Properties are:
+        background-color
+                    color specified in same ways as in HTML
+        background-image
+                    can specify an image to appear in the background, by default it is repeated
+                    both horizontally and vertically to cover the entire element.
+                    i.e.        background-image: url("blah.png");
+        background-repeat
+                    can specify image to only repeat horizontally or vertically, or not at all.
+                    i.e.        background-repeat: repeat-x;         // repeat only horizontally
+                                background-repeat: repeat-y;         // repeat only vertically
+                                background-repeat: no-repeat;        // image doesn't repeat
+        background-attachment
+                    can specify whether an image is fixed or scrolls off the page. By default
+                    it scrolls off the page. Also can be set to local, initial, and inherit.
+                    i.e.        background-attachment: fixed;       // image fixed on screen
+        background-position
+                    can specify the position in the element that the image shows up on screen.
+                    By default it is in the top left position. Can use the values left, right,
+                    or center, and then top, center, or bottom. Can also specify values as
+                    "x% y%", or as "xpos ypos". "initial" sets the property to its default
+                    value. "inherit" inherits the property from its parent element.
+                    i.e.        background-position: left top;
+                                background-position: 0% 0%;
+                                background-position: 0px 0px;
+
+Can also use a shorthand to define all the background attributes together just using the
+"background" property. The properties must be defined in the following order (it doesn't matter
+if one of the properties is missing as long as the rest are in the correct order):
+        background: color  image  repeat  attachment  position;
+i.e.
+        background: #ff00ff  url("myiamge.png")  no-repeat  fixed  center;
+
+
+
+
+************ TEXT ************
+
+
+Properties of Text styling:
+
+    color
+                sets the color of the text using color values by hex, rgv(#,#,#), or name
+    text-align
+                aligns text using left, right, center, justify
+    text-decoration
+                decorates text using none, overline, line-through, underline
+                Mostly used to remove underlines from hyperlinks.
+    text-tranform
+                used to transform text to uppercase, lowercase, or capitalize (the first letter
+                of each word)
+    text-indent
+                used to indent the text a percentage or a number of units (px,pt,cm,em,etc)
+    text-shadow
+                applies shadow to the text using values for horizontal and vertical shadow,
+                blur distance, color of shadow. Only horizontal and vertical shadow position are
+                required.
+                syntax:     text-shadow: h-shadow v-shadow blur color|none|initial|inherit;
+                i.e.        text-shadow: 2px 2px 4px blue;
+    letter-spacing
+    line-height
+    direction
+    unicode-bidi
+    vertical-align
+    white-space
+    word-spacing
+
+
+
+
+************ FONT ************
+
+
+CSS font properties define the font family, boldness, size, and style of the text.
+
+font-family:
+        Examples: Serif, Sans-Serif, Monospace, Times New Roman.
+        If font family is more than one word double quotes must be used.
+        As shown below, can specify backup font families in case browser doesn't support
+        the chosen one.
+        i.e.    font-family: Sans-Serif, "Times New Roman", serif;
+
+font-style:
+        This property has three possible values:    normal, italic, oblique
+        Oblique means the text is leaning. Similar to italic, but not as well supported.
+        i.e.    font-style: italic;
+
+font-size:
+        Font size can be an absolute or relative value.
+        Absolute size: Sets the text to a specified size, does not allow a user to change
+        the text size in all browsers, absolute size is useful when the physical size of the
+        output is known.
+        Relative size: sets the size relative to the surrounding elements, allows a user to
+        change the text size in browsers.
+        Default size for normal text is 16px (=1em).
+
+        Can set absolute size with pixels or with the "em" size unit. 1 em is equal to the
+        current font size, since default size in broswers is 16px that means 1em = 16px.
+        pixels/16 = em. Using "em" is recommended.
+
+        Best idea is to use a combination of Percent and Em because in some older versions of
+        Internet Explorer there can be problems with using just em. Set the default font-size in
+        percent in the <body> tag, then set font sizes for individual tags with "em".
+
+        i.e.    body {font-size:100%;}
+                h1 { font-size: 2.5em; }
+font-variant:
+        specifies whether the text should be displayed in a small-caps font.
+
+font-weight:
+        specifies the weight of the font.
+
+Shorthand for specifying all the properties in just one property is this:
+    Syntax:     font: font-style font-variant font-weight font-size/line-
+                        height|caption|icon|menu|message-box|small-caption|status-bar|initial|inherit;
+    i.e.
+            font: italic bold 12px/20px Georgia, serif;
+            font: 15px arial, sans-serif;
+
+
+
+
+************ LINKS ************
+
+
+Links can be styled with any CSS property (i.e. color, font-family, background, etc.)
+Links can also be style differently depending on what state they are in.
+There are four link states:
+        a:link      -   a normal, unvisited link
+        a:visited   -   a link the user has visited
+        a:hover     -   a link when the user mouses over it
+        a:active    -   a link the moment it is clicked
+
+When setting the style for several link states a:hover MUST come AFTER a:link and a:visited,
+and a:active MUST come AFTER a:hover.
+
+
+
+
+************ LISTS ************
+
+
+Using CSS on lists lets you set different list item markers for ordered and unordered lists, or
+set an image as the list item marker.
+
+list-style-type:
+            For both kinds of lists this defines the type of marker used for each item in the
+            list. Any marker can be used for either kind of list, so be sure to use ordered
+            markers for ordered lists and non-ordered markers for unordered lists.
+            Some examples of values are: disc (default), circle, square, none, lower-greek,
+            upper-roman, lower-alpha, etc.
+            This webpage has the list of them:
+                        http://www.w3schools.com/cssref/pr_list-style-type.asp
+            i.e.
+                    ul { list-style-type: circle; }
+
+list-style-image:
+            To use an image as the list item marker simply use this property and use the value,
+            url('imageFileName').
+            i.e.
+                list-style-image: url('myImage.png');
+            IE and Opera display the image-markers a little bit higher than Firefox, Chrome, and
+            Safari, for a cross-browser solution do something like this instead:
+                    ul {
+                        list-style-type: none;
+                        padding: 0px;
+                        margin: 0px;
+                    }
+                    ul li {
+                        background-image: url(sqpurple.gif);
+                        background-repeat: no-repeat;
+                        background-position: 0px 5px; 
+                        padding-left: 14px; 
+                    }
+
+list-style-position:
+            Specifies whether the list-item marker should appear inside or outside of content
+            flow. So if there is a border around the items, the item markers will either appear
+            inside or outside of that border.
+            i.e.
+                    list-style-position: inside;    or          list-style-position: outside;
+
+list-style:
+            Shorthand for specifying all list-style properties in a single property. Define
+            properties in the following order:
+                    list-style-type  list-style-position  list-style-image
+            i.e.
+                    list-style: square url("blah.gif");
+
+
+
+
+************ TABLES ************
+
+
+Can improve the look of tables with CSS. Can change the borders, table width and height, text
+alignment, table padding, and color. I believe all of these properties can be used on tables
+or the various table elements like <th>, <td>, etc.
+
+border:
+        Three different values to be used for this property. The property can be split up into
+        three properties but this is the shorthand to include it all in one. Can also specify
+        to only style the top, bottom, left, or right borders. Values are in this order:
+                border-width  border-style  border-color
+        i.e.
+                border: 2px dashed blue;
+                border-top: 3px solid red;
+
+border-collapse:
+        Sets whether the table border are collapsed into a single border or are separated so
+        that each cell has its own border. Values are either "collapse" or "separate".
+        i.e.
+                border-collapse: separate.
+
+width and height:
+        Sets the width and height of the table or table element. Can use percentage or units.
+        i.e.
+                table { width: 100%; }
+                th { height: 50px; }
+
+text-align and vertical-align:
+        Sets the alignment of the text in the table or a table element. Text-align values are
+        things like left, right, center. Vertical-align values are things like top, bottom,
+        middle.
+        i.e.
+                text-align: right;
+                vertical-align: top;
+
+padding:
+        Table padding is used to control the space between the border and the content in the
+        table. Use the padding property on <td> and <th> elements. Can also use direction
+        specific padding by putting a "-direction" in front of the padding.
+        i.e.
+                padding: 15px;
+                padding-right: 20px;
+                padding-bottom: 30px;
+
+background-color and color:
+        Can specify background color and text color of a table and the different table elements.
+
+border-spacing:
+        Define the distance between cells in table. Can use either one or two values. If using
+        one value the length will apply to both vertical and horizontal spacing, if using two
+        values the first is the horizontal spacing, the second is the vertical spacing. Values
+        should be in units of length like px.
+        i.e.
+            border-spacing: 10px;
+            border-spacing: 30px 20px;
+
+caption-side:
+        Can specify where the caption (made with the <caption> <caption> tags) for the table
+        will go in relation to the table. Values can be top, bottom, left, right.
+        i.e.
+            caption-side: top;
+
+empty-cells:
+        Specifies whether a cell without any content should have a border displayed. Values are
+        either show, hide, or inherit.
+        i.e.
+                empty-cells: show;
+                emtpy-cells: hide;
+
+
+
+
+************ BOX MODEL ************
+
+
+All HTML elements can be considered as boxes, and in CSS the "box model" is used to talk about
+the layout and design of the box for an html element. It consists of the content, padding,
+border, and margin. Content is the actual content. Padding is the space between the content and
+the border. Border is the visible border that can be displayed. Margin is the area around the
+border, it is transparent, but doesn't allow any other box elements to enter that space.
+        Marging -- Border -- Padding -- Content
+
+When setting the width and height of an element with CSS you are setting the width and height
+of the content area. Total element width, for example, is:
+width + left padding + right padding + left border + right border + left margin + right margin
+
+
+Borders:
+
+    The border-style, width, and color can be set either on the whole border or on a specific
+    side of the border. Note that the border-style must be defined for any of the other
+    properties to take effect, because the default border is none.
+
+    border-style: none, dotted, dashed, solid, double, groove, ridge, inset, outset
+    border-width: can be set in pixels or with "thin", "medium", or "thick"
+    border-color: set just as any other colors (color name, hex value, or rgc(#,#,#))
+
+    Can style individual sides for any of the properties:
+        i.e.
+            border-top-style: dotted;
+            border-right-color: blue;
+            border-left-style: solid;
+            border-bottom-width: medium;
+    Can specify from one to four values for a border property:
+        i.e.
+            border-style: dotted;               // whole border is dotted
+            border-color: red black;            // top/bottom red, left/right black
+            border-width: 1px 2px 3px;          // top 1px, left/right 2 px, bottom 3px
+            border-color: red blue green black; // top red, right blue, bottom green, left black
+
+    Can use "border" property as shorthand to set all three overall properties at once:
+            border: border-width  border-style  border-color;
+        i.e.
+            border: 4px dashed green;
+
+
+Outline:
+
+    An outline is a line drawn around the border of an element to make it stand out. Can set
+    the width, style, and color of an outline. Or just use the outline property by itself as
+    shorthand to set them all at once.
+
+    Properties are outline-color, outline-style, outline-width.
+    Set their values in the exact same way you set the border properties.
+    Shorthand is:
+        outline: outline-color  outline-style  outline-width;
+
+
+Margin:
+
+    Specifies the space around an element.
+    Can be set by individual side:
+                                    margin-top, margin-bottom, margin-right, margin-left
+    
+    Set in length (px, pt, cm, etc) - default value is 0px, or by percentage (%) of the width
+    of the containing element.
+
+    Just like the border, the shorthand "margin" property can have from one to four values. The
+    ordering is the same as in the border.
+        margin: 10px;                   // whole margin is 10px
+        margin: 10px 20px;              // top/bottom 10px, left/right 20px
+        margin: 10px 20px 30px;         // top 10px, left/right 20px, bottom 30px
+        margin: 10px 20px 30px 40px;    // top 10px, right 20px, bottom 30px, left 40px
+
+
+Padding:
+    Padding specifies the space between the content and the border.
+    Define this in the exact same way as margin, but type padding instead. Can use just padding,
+    or use "padding-" and a direction (top, bottom, right, left).
+
+
+
+
+************ GROUPING AND NESTING ************
+
+
+Grouping selectors refers to the fact that you can style multiple selectors at once in CSS by
+separating the selectors with commas.
+    i.e.
+            h1,h2,p {
+                color:blue;
+            }
+
+Nesting Selectors refers to the fact that you can apply a style for a selector within a
+selector.
+In the example below, the first part applies to all <p> tags, the second for any elements
+that are part of the "marked" class, and the third is only for <p> elements within elements
+with class="marked". Do this by putting:    .class  selector { }
+    i.e.
+        p {
+            color: blue;
+            text-align: center;
+        }
+        .marked {
+            background-color: black;
+        }
+        .marked p {
+            color: white;
+        }
+
+
+
+
+************ DIMENSIONS ************
+
+
+Can control the height and width of any element with the CSS dimensions properties.
+Properties:
+        height
+        width
+        max-height
+        max-width
+        min-height
+        min-width
+
+
+
+
+************ DISPLAY AND VISIBILITY ************
+
+
+Display property specifies if and how an element is displayed, visibility property specifies if
+an element is visible or hidden.
+
+visibility:hidden;      // hides an element but it still takes up space in the layout
+
+display:none;           // hides and element and removes it from the layout
+
+A block element takes up the full width available and ends in a line break, whereas an inline
+element only takes up as much width as necessary. Can change whether an element is a block
+element or inline using the display property. This could for instance make all items of a list
+appear on one line by changing <li> to display:inline.
+
+display: inline;
+display: block;
+
+Can display <span> elements as block instead of inline:
+    span { display:block; }
+
+
+
+
+************ POSITIONING ************
+
+Position property allows you to position an element. Can place it behind another element, and
+specify what happens when the element's contents are too big. Elements can be positioned using
+the top, bottom, left, and right properties. But to use these the position property must be
+set first. Four different kinds of positioning methods. Can use negative values for positioning.
+
+Static Positioning:
+    HTML elements are positioned static by default. They are positioned according to the normal
+    flow of the page, and they are not affected by top, bottom, left, right properties.
+
+Fixed Positioning:
+    Positioned relative to the browser window. It will not move even if window is scrolled. The
+    element is removed from the normal flow of the document.
+    i.e.
+        position: fixed;
+        top: 30px;
+        right: 10px;
+
+Relative Positioning:
+    The element is positioned relative to its normal position (where it would go if static).
+    The content of the element can be moved and overlap other elements, but the space reserved
+    for the element is still preserved in the normal flow. Relatively positioned elements are
+    often used as container blocks for absolutely positioned elements.
+    i.e.
+        position: relative;
+        left: -40px;
+
+Absolute Positioning:
+    Positioned relative to the first parent element that has a position other than static. If
+    no such element is found, the containing block if <html>. Absolute positioned elements are
+    removed from the normal flow - the document and other elements behave like the abolutely
+    position element does not exist. They can overlap other elements.
+    i.e.
+        position: absolute;
+        bottom: 100px;
+
+Overlapping Elements:
+    When elements are positioned outside the normal flow they can overlap other elements. Use
+    the "z-index" property to specify whether an element should be displayed in front or behind
+    other elements when overlapping occurs.
+    The "z-index" specifies the stack order of an element, and it can be positive or negative.
+    An element with a higher z-index value will be shown in front of elements with lower values.
+    If two elements have the same z-index value, then the one that was defined last will be
+    shown on top.
+    Default stack order is 0;
+    i.e.
+        position: absolute;
+        left: 20px;
+        z-index: -1;                // will be shown behind the rest of the elements.
+
+The "overflow" property specifies what happen if content overlows an element's box. Values are
+"hidden", "scroll", "auto", "visible", "inherit".
+
+The "cursor" property specifies what type of cursor to be displayed on the page.
+
+The "clip" property clips an absolutely positioned element, values are "shape", "auto", and
+"inherit". For shape you have to use the value - rect(top,right,bottom,left);
+"auto" is the default, which means that no clipping is applied.
+
+
+
+
+************ FLOAT ************
+
+
+With the float property an element can be pushed to the left or right, allowing other elements
+to wrap around it. Float is often used for images, but can also be useful when working with
+layouts.
+
+Elements are floated horizontally, so an element can only be floated left or right. A floated
+element will move as far to the left or right as it can. Values are left, right, or none.
+
+        float: left;         or          float: right;
+
+By placing several floating elements after each other they will float next to each other if
+there is room, can make an image gallery in such a way.
+
+Elements after the floating element will flow around it, to avoid this use the "clear" property.
+The clear property specifies which sides of an element other floating elements are not allowed
+on. Values are left, right, both, or none.
+
+        clear: right;       or          clear: left;        or      clear: both;
+
+
+
+
+************ HORIZONTAL ALIGN ************
+
+
+Can horizontally align block elements. Use the "margin-left" and "margin-right" properties
+discussed above to do this.
+Setting both margin-left and margin-right to "auto" centers the block element horizontally.
+Center aligning has no effect if the width is 100%.
+
+Another method to horizontally align block objects is to use positioning and set the "right"
+or "left" properties after setting the "position" property.
+
+Another method to horizontally align block objects is to use the "float" property.
+
+
+
+
+************ PSEUDO-CLASSES AND PSEUDO-ELEMENTS ************
+
+
+Pseudo-classes/elements are used to add special effects to some selectors. The difference
+between the classes and elements is technical. Really they are the same thing but the
+pseudo-classes refer to some actual state of an element, whereas the pseudo-elements refer
+to some contrived part of the content to assign special effects to.
+
+Syntax:
+            selector:pseudo-class { property: value; }
+            selector:pseudo-element { property: value; }
+
+Classes can also be used with pseudo-classes and pseudo-elements:
+
+Syntax:
+            selector.class:pseudo-class { property: value; }
+    i.e.    a.red:visited{ color: #FF0000; }
+
+a:link, a:visited, a:hover, and a:active are examples of pseudo-classes.
+
+
+Different Pseudo-Classes:
+
+    :link
+    :visited
+    :active
+    :hover
+
+    :first-child
+            i.e.        p:first-child { }
+            The first-child pseudo-class matches a specified element that is the first child
+            of another element. So the above example would style the first paragraph in the
+            <body> of the HTML document, and any other first <p> within another HTML tag.
+
+
+            i.e  To only style the first <i> inside each <p> parent.
+                p > i:first-child { }
+
+            i.e. To style all the <i>'s in only the first <p> of a parent.
+                p:first-child i { }
+
+    :lang
+            Syntax:     selector:lang(language) { }
+            i.e.    q:lang(no) { quotes: "~" "~" }
+                    <q lang="no"> ... </q>
+            Allows you to define special rules for different languages.
+            In the above example <q> is the HTML tag for quotes, "no" is the name of the
+            language being used, and the opening and closing quotes are styled as ~. To use it in the body of the HTML you need to set the lang="language" inside the opening tag.
+
+    :focus
+            Selects the element which has focus. So if a text field has been clicked in (and
+            therefore has the focus), you can style that text field (i.e. to change color).
+
+Different Pseudo-Elements:
+
+    :first-letter
+            Selects the first letter of an element
+    :first-line
+            Select the first line of an element
+    :before
+            Inserts content before an element
+    :after
+            Inserts content after an element
+
+
+
+
+************ NAVIGATION BARS ************
+
+
+With CSS you can transform HTML menus into good looking navigation bars. Need to build the
+navigation bar in HTML but then design it in CSS. The bar in HTML can be as simple as an
+unordered list.
+
+To make the Menu bar in CSS from an HTML unordered list you want to remove bullets, margins,
+and padding from the list. To make a vertical navigation bar just set the <a> elements to
+"display: block;", or to make a horizontal navigation bar just set the <li> elements to
+"display: inline;". Add some background color if needed. Make each <a> a standard width. Float
+the <li>'s to the left if you want the bar on the left side of the screen. Add the
+"overflow: hidden;" CSS code to the <ul> to keep the list items from going outside the list. By
+making the <a> "display: block" you make the whole menu clickable, rather than just the text,
+and by setting the width you make it so there is a clearly defined area for clicking on each
+menu item.
+
+
+
+
+************ IMAGE OPACITY / TRANSPARENCY ************
+
+
+Can create transparent images with CSS easily. This is a CSS3 property. The property is
+"opacity". Opacity property takes values from 0.0 to 1.0.
+        i.e.        img { opacity: 0.6; }
+
+For Internet Explorer 8 and earlier versions instead of using the opacity property you have to
+use:
+            filter:alpha(opacity=60);           // the value for opacity is from 0 to 100
+
+Can combine pseudo-classes and opacity to make images become more opaque when you mouse over
+them like so:
+                img { opacity: 5.0; }
+                img:hover { opacity: 1.0; }
+
+Can create some text in a transparent box to put over an image. Create a <div> for the image,
+then create a smaller <div> for the text element to go over the picture. Throw some text in
+there and give it a background to make it stand out from the picture, then make it partially
+transparent.
+
+
+
+
+************ IMAGE SPRITES ************
+
+
+Just like with mobile stuff, to reduce the time it takes to load, and also reduce the number
+of server requests, you want to put several images into a single image sprite so the browser
+only has to call one image, and then with CSS you can show just part of the sprite image, the
+part that has the image you want to show.
+
+Do this by making an img.class for each separate image in the image sprite.
+Define the width and height of the image within the image sprite.
+Then use:    background:url(imgfile.png) leftXpx topYpx;      to get where the top left of the
+image is within the image sprite. Note that to the right of the left side of the image sprite
+is -X, and lower than the top of the image sprite is -Y. "0 0" is the top left corner of the
+image sprite.
+
+i.e.
+        img.blah {
+            width: 50px;
+            height: 100px;
+            background: url(imageName.png) -50 -50
+        }
+
+
+
+
+************ @ MEDIA ************
+
+
+Can set up different Styles for different media devices using the @media rule.
+You can use @media with several different media types:
+        all             aural       braille
+        embossed        handheld    print
+        projection      screen      tty
+        tv
+
+Some styles work better for certain media and worse for other types of media. Use the @media
+rule to take into account the different ways in which users might be observing the website.
+
+Syntax:
+            @media mediaType {
+                CSS styling...
+            }
+
+i.e.        @media screen {
+                CSS styling...
+            }
+            @media print,handheld {
+                CSS styling
+            }
+
+
+
+
+************ ATTRIBUTE SELECTORS ************
+
+
+Makes it possible to style HTML elements that have specific attributes, not just class and id.
+
+Syntax:
+        [attribute] { ... }             // style any elements that contain the attribute.
+        [attribute=value] { ... }       // style only elements that have that value for the
+                                        // attribute.
+        [attribute ~= value] { ... }    // style elements that have the attribute and the value
+                                        // can be just part of the whole value of the element
+                                        // as long as it is separated from the rest by a space.
+        [lang |= value] { ... }         // styles elements with a lang attribute that BEGINS
+                                        // with the specified value. This is so you can style
+                                        // all the different dialects of a language the same
+                                        // (i.e. en, en-us, en-gb, etc.)
+
+Attribute Selectors are particularly useful for styling forms without using class or ID.
+
+    i.e.
+        CSS:    input[type="text"] {
+                    width: 100px;
+                    display: block;
+                    background-color: yellow;
+                }
+        HTML:   <form>
+                    Name: <input type="text" blahblah>
+                    Pasword: <input type="text" blahblah>
+                </form>
+
+
+
+
+
+
+************************ CSS 3 ************************
+
+
+Borders
+
+    With CSS3 you can create rounded borders, add shadows to boxes, and use an image as a
+    border - without using a design program like photoshop.
+
+    Three new properties:
+
+        border-radius
+                    can create rounded borders by specifying the number of pixels of the radius
+
+        box-shadow
+                    can create shadows behind boxes.
+                    Syntax:
+                                box-shadow: horizPixels  vertPixels  blurPixels  color;
+                    i.e.
+                                box-shadow: -10px 10px 5px #000000;
+                    The above example will make a black shadow that goes 10 pixels to the left,
+                    10 pixels down, and is frayed/blurred 5 pixels.
+
+        border-image
+                    you can use an image to create a border.
+                    [Need to look up exactly what the syntax for this is.]
+                    Syntax:
+                            border-image: source slice width outset repeat|initial|inherit;
+
+
+--------------------
+
+
+Backgrounds
+
+    CSS3 contains several new background properties.
+
+    background-size:
+        Allows you to change the size of the background image being used. This allows you to re-use
+        background images in different contexts. You can specify the size in pixels or percentages.
+        If you use percentages, the size is relative to the width and height of the parent element.
+        
+        Syntax:     background-size: width height;
+
+    background-origin:
+        Specifies the positioning area of the background images.
+        The background image can be placed within the content-box, padding-box, or border-box area.
+
+        Syntax:     background-origin: content-box;
+
+    background-clip:
+        Specifies the painting area of the background images. Can be content-box, padding-box, or
+        border-box.
+
+        Syntax:     background-clip: padding-box;
+
+
+    CSS allows the use of several background images for an element.
+
+    Syntax:     background: url(filename),url(filename);
+
+
+--------------------
+
+
+Gradients
+
+    Lets you display smooth transitions between two or more specified colors.
+    CSS3 defines two types of gradients:
+        Linear Gradients (goes down/up/left/right/diagonally)
+        Radial Gradients (defined by their center)
+
+    Linear Gradients:
+        To make a linear gradient you must define at least two color stops, which are colors you
+        want to render smooth transitions among. You can also set a starting point and a direction
+        (or an angle) along with the gradient effect.
+        Top to bottom is the default direction if one isn't specified.
+
+        Syntax:
+                background: linear-gradient(direction, color-stop1, color-stop2,...);
+
+        Need to include some browser specific code to handle gradients (top to bottom):
+            background: -webkit-linear-gradient(red, blue); /* For Safari 5.1 to 6.0 */
+            background: -o-linear-gradient(red, blue); /* For Opera 11.1 to 12.0 */
+            background: -moz-linear-gradient(red, blue); /* For Firefox 3.6 to 15 */
+            background: linear-gradient(red, blue); /* Standard syntax */
+
+        Directions:
+            Left to right:
+                webkit      -   left
+                o           -   right
+                moz         -   right
+                standard    -   to right
+
+            Diagonal (top left to bottom right):
+                webkit      -   left top
+                o           -   bottom right
+                moz         -   bottom right
+                standard    -   to bottom right
+
+        Using Angles:
+            To have more control over the direction of the gradient you can define an angle instead
+            of using the predefined directions. Can use negative degree values too. The unit you use
+            is "deg", like:   180deg
+
+            Syntax:     background: linear-gradient(angle, color-stop1, color-stop2);
+
+        Using transparency:
+            Can use colors with alpha values other than 1 by using rgba values instead of color
+            names.
+            i.e.
+                background: linear-gradient(to right, rgba(255,0,0,0.5), rgba(255,0,0,1));
+
+        Repeating a linear-gradient:
+            The repeating-linear-gradient() function is used to repeat the linear gradient across
+            the screen.
+            i.e.
+                background: repeating-linear-gradient(red, blue 10%, green 20%);
+
+
+    Radial Gradients:
+        A radial gradient is defined by its center.
+        You can specify the gradient's center, shape (circle or ellipse), and size. By default the
+        center is center, shape is ellipse, and size is fartest-corner.
+
+        Syntax:     background: radial-gradient(center, shape size, start-color, ..., last-color);
+
+        The size parameter has four different options:
+            closest-side        farthest-side       closest-corner      farthest-corner
+
+        i.e.
+            /* Safari 5.1 to 6.0 */
+            background: -webkit-radial-gradient(60% 55%, closest-side,blue,green,yellow,black); 
+            /* For Opera 11.6 to 12.0 */
+            background: -o-radial-gradient(60% 55%, closest-side,blue,green,yellow,black);
+            /* For Firefox 3.6 to 15 */
+            background: -moz-radial-gradient(60% 55%, closest-side,blue,green,yellow,black);
+            /* Standard syntax */
+            background: radial-gradient(60% 55%, closest-side,blue,green,yellow,black);
+
+        Repeating a radial-gradient:
+            Use the repeating-radial-gradient function.
+
+            i.e.
+                /* For Safari 5.1 to 6.0 */
+                background: -webkit-repeating-radial-gradient(red, yellow 10%, green 15%);
+                /* For Opera 11.6 to 12.0 */
+                background: -o-repeating-radial-gradient(red, yellow 10%, green 15%);
+                /* For Firefox 3.6 to 15 */
+                background: -moz-repeating-radial-gradient(red, yellow 10%, green 15%);
+                /* Standard syntax */
+                background: repeating-radial-gradient(red, yellow 10%, green 15%);
+
+
+--------------------
+
+
+Text Effects
+
+    CSS3 contains several new text effects, including text-shadow and word-wrap.
+
+    Text-shadow:
+        Lets you specify the horizontal shadow, vertical shadow, blur distance, and color of the
+        shadow. The first 3 parameters are in px.
+
+        Syntax:     text-shadow: horzShadow  vertShadw  blur  color;
+
+
+    Word-wrap:
+        If a word is too long to fit within an area, it expands outside. With the word-wrap property
+        you can force the text to wrap, even splitting it in the middle of a word.
+
+        Syntax:     word-wrap: break-word;      // this will split up a word at end of line
+
+    Other CSS3 Text Properties:
+        hanging-punctuation     -   specifies whether a punctuation character may be placed outside
+                                    the line box
+        punctuation-trim        -   specifies whether a punctuation character should be trimmed
+        text-align-last         -   describes how the last line of a block or a line right before
+                                    a forced line break is algiend when text-align is "justify"
+        text-emphasis           -   applies emphasis marks, and the foreground color of the
+                                    emphasis marks, to the element's text
+        text-justify            -   specifies the justification used when text-align is "justify"
+        text-outline            -   specifies a text outline
+        text-overflow           -   specifies what should happen when text overflows the containing
+                                    element
+        text-wrap               -   specifies line breaking rules for text
+        word-break              -   specifies line break fules for non-CJK scripts
+
+
+--------------------
+
+
+Web Fonts
+
+    Web fonts allow web designers ot use fonts that are not installed on the user's computer.
+    Just include the font file on your web server and it will automatically be downloaded to the
+    user when needed.
+
+    You can define your own fonts using the @font-face rule.
+
+
+    @font-face (defining your own fonts):
+
+        See this webpage for more about @font-face:
+                        http://www.w3schools.com/css/css3_fonts.asp
+
+
+--------------------
+
+
+2D Transformations
+
+    A transformation is an effect that lets an element change shape, size, and position.
+    You can move, scale, turn, spin, and stretch elements.
+    You can transform your elements using 2D or 3D transformations.
+
+    There are five different types of 2D transformations:
+        translate()     rotate()        scale()     skew()      matrix()
+
+    Syntax:         transform:  method(values);
+
+    Need to include browser specific code:
+            -ms-transform: translate(50px,100px); /* IE 9 */
+            -webkit-transform: translate(50px,100px); /* Chrome, Safari, Opera */
+            transform: translate(50px,100px);
+
+
+    translate()
+        Moves the element from its current position. Parameters are moving the element horizontally
+        from the left and vertically from the top. Units are pixels.
+        
+        Syntax:         transform: translate(x-axis, y-axis);
+
+
+    rotate()
+        Rotates the element clockwise at a given degree (negative degree goes counter-clockwise).
+
+        Sytnax:         transform: rotate(0deg);
+
+    scale()
+        Increases or decreases the size of the element. The width and height are given in integer
+        factors of the original size, with no units.
+
+        Syntax:         transform: scale(width, height);
+
+    skew()
+        Turns the element at a given angle. The parameters are the degress turned around the X-axis
+        and the degrees turned around the Y-axis. Units are "deg".
+
+        Syntax:         transform: skew(x-deg, y-deg);
+
+    matrix()
+        This method combines all of the 2D transform methods into one. It takes six parameters
+        which allows you to rotate, scale, translate and skew elements.
+
+        Syntax:         transform: matrix()          // not sure what order the parameters are in
+
+
+    Transform Properties:
+        transform           -   applies a 2D or 3D transformation to an element
+        transform-origin    -   allows you to change the position on transformed elements
+
+
+    All 2D Transform methods:
+        matrix(n,n,n,n,n,n)
+        translate(x,y)
+        translateX(n)
+        translateY(n)
+        scale(x,y)
+        scaleX(n)
+        scaleY(n)
+        rotate(angle)
+        skew(x-angle, y-angle)
+        skewX(angle)
+        skewY(angle)
+
+
+--------------------
+
+
+3D Transformations
+
+    All 3D transformation methods:
+        matrix3d(n,n,n,n,n,n,n,n,n,n,n,n,n,n,n,n)
+        translate3d(x,y,z)
+        translateX(n)
+        translateY(n)
+        translateZ(n)
+        scale3d(x,y,z)
+        scaleX(n)
+        scaleY(n)
+        scaleZ(n)
+        rotate3d(x,y,z,angle)
+        rotateX(angle)
+        rotateY(angle)
+        rotateZ(angle)
+        perspetive(n)
+
+    Properties for 3d transformations:
+        transform           -   applied a 2D or 3D transformation to an element
+        transform-origin    -   allows you to change the position on transformed elements
+        transform-style     -   specifies how nested elements are rendered in 3D space
+        perspecitve         -   specifies the perspective on how 3D elements are viewed
+        persepective-origin -   specifies the bottom position of 3D elements
+        backface-visibility -   defines whether or not an element should be visible when not facing
+                                the screen
+
+    rotateX()
+        Element rotates around its X-axis at a given degree.
+        Syntax:     transform: rotateX(0deg);
+
+    rotateY()
+        Element rotates around its Y-axis at a given degree.
+        Syntax:     transform: rotateY(0deg);
+
+
+--------------------
+
+
+Transitions
+
+    Transitions are adding an effect when changing from one style to another, without using Flash
+    animations or JavaScripts. They are effects that let an element gradually change from one
+    style to another.
+    You must specify two things:
+        - the CSS property you want to add an effect to
+        - the duration of the effect
+    The transition effect will start when the specified CSS property changes value. A typical
+    property change would be when a user mouses over an element, using the hover pseudo-element.
+
+    Basically the element has some property changed in CSS from a given event, like a mouse-over,
+    but then you can use transitions to identify that CSS change as needing a transition, which
+    will gradually change the element's current CSS property to the new one specified.
+
+    You can do multiple transition effects in one transition.
+
+    Syntax:         -webkit-transition: cssProperty  duration  timing-function  delay;
+                    transition: cssProperty  duration  timing-function  delay;
+
+    i.e.
+        css(normal)     width: 100px;
+        css(hover):     width: 300px;  -webkit-transform: rotate(180deg);  tranform: rotate(180deg);
+        transition:     -webkit-transition: width 2s, transform 2s;
+
+    Can also use individual transition properties to specify the transition:
+        /* For Safari 3.1 to 6.0 */
+            -webkit-transition-property:width;
+            -webkit-transition-duration:1s;
+            -webkit-transition-timing-function:linear;
+            -webkit-transition-delay:2s;
+        /* Standard syntax */
+            transition-property: width;
+            transition-duration: 1s;
+            transition-timing-function: linear;
+            transition-delay: 2s;
+
+    Transition Properties:
+        transition          -   shorthand property for setting the four transition properties
+        transition-delay    -   specifies when the transition effect will start
+        transition-duration -   specifies how many seconds or milliseconds a transition effect takes
+        transition-property -   specifies the name of the CSS property the transition effect is for
+        transition-timing-function  -   specifies the speed curve of the transition effect. Possible
+                                        values are: ease, linear, ease-in, ease-out, ease-in-out,
+                                        cubic-bezier(n,n,n,n)
+
+
+--------------------
+
+
+Animations
+
+    In CSS3 you can create animations to replace Flash animations, animated images, and JavaScripts.
+
+    @keyframe Rule:
+        This is where the animation is created. Specify a CSS style inside the @keyframes rule and
+        the aniation will gradually change from the current style to the new style.
+
+        Syntax:     @keyframes animationName {
+                        from { cssProperty: value;}
+                        to { cssProperty: value;}
+                    }
+
+        Can also specify when certain animations should take place if several animations are
+        included in the keyframe, by using percentages. And when doing more than a single animation
+        from one value to another you don't use the "from" and "to" keywords.
+
+            Syntax:     @keyframes animationName {
+                            0%  { cssProperty: value;  cssProperty: value; etc.}
+                            33%  { cssProperty: value;  cssProperty: value; etc.}
+                            66%  { cssProperty: value;  cssProperty: value; etc.}
+                        }
+
+
+    When an animation is created in the @keyframe rule, you must bind it to a selector.
+    Use the "animation" property to bind it to a selector.
+    To bind the animation to a selector (element) you need to specify at least two properties:
+            - the name of the animation
+            - the duration of the animation
+
+    Syntax example (changing background from red to yellow over 5 seconds):
+
+            /* calling the animation */
+                div {
+                    -webkit-animation: myfirst 5s;          /* Chrome, Safari, Opera */
+                    animation: myfirst 5s;
+                }
+
+            /* creating the animation with @keyframes */
+                @-webkit-keyframes myfirst {                /* Chrome, Safari, Opera */
+                    from {background: red;}
+                    to {background: yellow;}
+                }
+
+                @keyframes myfirst {                        /* Standard syntax */
+                    from {background: red;}
+                    to {background: yellow;}
+                }
+
+    Can also specify individual animation properties. Here are all the animation properties:
+        @keyframes          -   specifies the animation
+        animation           -   shorthand property for setting all the animation properties, except
+                                the animation-play-state and animation-fill-mode properties
+        animation-delay     -   specifies when the animation will start
+        animation-direction -   specifies whether or not the animation should play iner reverse
+                                on alternate cycles
+        animation-duration  -   specifies how many seconds or milliseconds the animation takes
+        animation-fill-mode -   specifies what styles will apply for the element when the
+                                animation is not playing
+        animation-iteration-count -  specifies the number of times an animation should be played
+        animation-name      -   specifies the name of the @keyframes animation
+        animation-play-state -  specifies whether the animation is running or paused
+        animation-timing-function - specifies the speed curve of the animation
+
+
+--------------------
+
+
+Multiple Columns
+
+    Create multiple columns for laying out text.
+
+    Multiple Column properties:
+
+        column-count    -   Specifies the number of columns an element should be divided into
+        column-fill     -   Specifies how to fill columns
+        column-gap      -   Specifies the gap between the columns
+        column-rule     -   A shorthand property for setting all the column-rule-* properties
+        column-rule-color - Specifies the color of the rule between columns
+        column-rule-style - Specifies the style of the rule between columns
+        column-rule-width - Specifies the width of the rule between columns
+        column-span     -   Specifies how many columns an element should span across
+        column-width    -   Specifies the width of the columns
+        columns         -   A shorthand property for setting column-width and column-count
+
+    Syntax example:
+                    -webkit-column-count: 3;     /* Chrome, Safari, Opera */
+                    -moz-column-count: 3;        /* Firefox */
+                    column-count: 3;
+
+
+--------------------
+
+
+User Interface
+
+    A few new user interface features, like resizing elements, box sizing, and outlining.
+
+    All new CSS# User Interface Properties:
+            appearance  -   Allows you to make an element look like a standard user interface
+                            element
+            box-sizing  -   Allows you to define certain elements to fit an area in a certain way
+            icon        -   Provides the author the ability to style an element with an iconic
+                            equivalent
+            nav-down    -   Specifies where to navigate when using the arrow-down navigation key
+            nav-index   -   Specifies the tabbing order for an element
+            nav-left    -   Specifies where to navigate when using the arrow-left navigation key
+            nav-right   -   Specifies where to navigate when using the arrow-right navigation key
+            nav-up      -   Specifies where to navigate when using the arrow-up navigation key
+            outline-offset - Offsets an outline, and draws it beyond the border edge
+            resize      -   Specifies whether or not an element is resizable by the user
+
+
+
+
+
+**************** Random Notes ****************************
+
+
+To specify what a select is not do this:                selector:not(selector) { }
+You can specify multiple things it is not:              selector:not(selector):not(selector) { }
+You can put selectors, classes, id's, etc, in the "not" part.
+
+
+----------------------------------------------------------------------------------------------------

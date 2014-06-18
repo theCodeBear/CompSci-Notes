@@ -1,0 +1,8 @@
+CSS Tricks
+
+To make the entire box-area around a link clickable, like in a navigation menu, instead of just the text being clickable:
+    Make the <a> display: block, and don't put padding in the <li> selector, instead put padding in the <a>
+    so that it will take up the whole <li> area.
+
+To change the font-size of a Submit button apparently you have to change the background-color of it too, otherwise the
+font size won't change! Bizarre!

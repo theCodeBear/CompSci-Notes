@@ -1,0 +1,1529 @@
+PHP Notes
+
+
+
+
+
+PHP is a server-side scripting language. It stands for PHP Hypertext Preprocessor.
+PHP files can contain text, HTML, CSS, Javascript, and PHP code.
+PHP files are executed on the server, and the result is returned to the browser as plain HTML.
+You can also ouput images, pdf files, XML, any text, etc.
+PHP files have the extension .php
+
+
+
+
+************************ BASIC SYNTAX ************************
+
+
+A PHP script can be placed anywhere in the HTML document.
+A PHP script starts with <?php and ends with ?>
+
+        <?php
+            // php code...
+        ?>
+
+The basic output function is echo:
+            echo "Hello World!";            // this prints to the browser screen
+Can print HTML code to the screen just like in JavaScript.
+
+
+Three ways to make comments:
+        // comment
+        # comment
+        /* multi-line comment */
+
+PHP lines end in a semi-colon, but the last line in a PHP script doesn't need a semi-colon.
+
+
+PHP's functions, classes, and keywords are NOT case-sensitive! But variables are case-sensitive!
+
+
+All the normal operators are used in PHP, including incrementors and decrementors.
+
+Like JavaScript includes a triple equal sign operator:
+
+    ===     -       identical (equal value and same data type)
+    !==     -       not identical (not same value or not same data type)
+    <>      -       inequality (not equal, same as !=)
+
+Array Operators:
+
+    +       -       Union (duplicate keys are not overwritten)
+    ==      -       equality (arrays have the same key/value pairs)
+    ===     -       indentity (arrays have the same key/value pairs in the same order and of
+                    same type)
+    !=      -       not equal
+    <>      -       not equal
+    !==     -       not identical
+
+
+String operators:
+    .       -       concatenation
+    .=      -       concatentation assignment
+
+
+Logical Operators:
+    and
+    or
+    xor
+    &&
+    ||
+    !
+
+
+
+************************ VARIABLES AND DATA TYPES ************************
+
+
+Variables in PHP start with the dollar sign, "$". Variable naming rules are as normal.
+Create a variable like so:          $text = "hello";        $x=5;       $y=8.4;
+
+Just like in JavaScript, PHP is a loosely typed language, so you don't have to declare the
+data type for variables when you declare them, they are just automatically assigned the
+appropriate data type based on the value initialized to them.
+
+PHP has three different scopes for variables. A variable declared outside a function has global
+scope. A variable declared within a function has a local scope to that function. Use the
+"global" keyword to access a global variable from within a function:        global myVar;
+
+All global variables are stored in an array called $GLOBALS[index]. The index holds the name
+of the variable, not a numbered index. Its a key/value pair association, so the index is the
+key which is the name of the variable in quotes. This array can be used in functions to update
+global variables directly.
+
+The "static" keyword, used when declaring a variable inside a function, keeps a variable alive
+once the function ends, that way the next time the function runs that variable will still have
+its same value. The variable is still local to its function:         static $myVar;
+
+Data types in PHP are:  strings, integers, floats, booleans, arrays, objects, and null.
+
+The PHP var_dump(myVar) function returns the data type and value of variables.
+
+Strings can use double or single quotes.
+Booleans can be true or false.
+Can declare arrays like so:         $myVar = array("blah", "bleep", "bloop");
+
+Objects must be explicitly declared. Make a class with the "class" keyword, have to use var
+when declaring variables in a class?? not sure.:
+
+        class myClass {
+            var $memberVar;
+            function myClass($argVar=value) {           // constructor
+                $this->memberVar = $argVar;
+            }
+            function otherFunc() {
+                return $this->memberVar;
+            }
+        }
+
+Declare a new object of a class like so:    $objName = myClass(args);
+The print_vars($objName) function prints the names and values for all member variables of an
+object in this form:     name = value
+
+The null value represents a variable that has no value. The value is actually NULL. This can be
+used to differentiate bewteen empty strings and null values in databases. Setting a variable
+to null will empty it.
+
+
+String Functions:
+
+    strlen(str)
+            returns the length of a string
+    strpos(str, subStr)
+            searches for second argument as a subString of first argument. If match is found it
+            will return the index of the first match, if no match it returns false.
+
+
+Constants
+
+    Constants have no "$" at the beginning of the name. They just start with a letter or
+    underscore. Constants are automatically global. To set a constant use the define() function,
+    which takes three parameters: the name of the constant in quotes, the value of the constant,
+    and an optional parameter that specifies whether the constant name should be
+    case-insensitive (the default is false, so default is case-sensitive, like all variables).
+
+            define("CONSTANT_NAME", value, case_insensitive_boolean);
+
+
+Superglobals
+
+    Superglobals are built-in variables that are always available in all scopes.
+    The superglobals are:
+
+        $GLOBALS
+                the superglobal which is used to access global variables from anywhere in the PHP
+                script. All global variables are stored in the $GLOBALS['globalName'] array. The index holds the name of the variable (its an associative array). You create a
+                global variable like so:        $GLOBALS['myVar'] = value;
+        $_SERVER
+                holds info about headers, paths, and script locations. There's lots of elements
+                in the $_SERVER variable, the most important ones are listed at this webpage:
+                    http://www.w3schools.com/php/php_superglobals.asp
+        $_REQUEST
+                used to collect data after submitting an HTML form. When a user submits a form, the
+                form data is sent to the file specified in the action attribute of the form. In
+                the PHP file that is specified to process the form data, you use the $_REQUEST
+                variable to get the user's input. $_REQUEST is an associative array and each input
+                will be held in it with the name of the input element as the key. So to get data
+                from the form do this in the processing file:      $myVar = $_REQUEST['inputName'];
+                Can be used in place of $_POST or $_GET.
+        $_POST
+                widely used to collect form data after submitting an HTML form with method="post".
+                Also widely used to pass variables. $_POST works the same way as $_REQUEST.
+        $_GET
+                used to collect form data after submitting an HTML form with method="get". Can also
+                collect data sent in the URL. So you can make an HTML link and the link can
+                reference a php file and you can put key:value pairs in the link too, and the
+                referened php file can get those values from the $_GET variable by using their
+                keys as indices like $_GET['keyname']. An example link:
+                    <a href="phpfile.php?keyname=value&phpname2=value2">Click Me</a>
+        $_FILES
+                used in uploading files. See: File Uploading in the SOME ADVANCED PHP STUFF section.
+        $_ENV
+        $_COOKIE
+        $_SESSION
+
+
+
+
+************************ OUTPUT ************************
+
+
+Two basic ways in PHP to get output:    echo and print
+
+    echo    -   can output one or more strings, doesn't return anything
+    print   -   can only output one string, and always returns 1
+
+Echo is marginally faster than print.
+
+Echo and print are both language constructs and can be used with or without parenthesis.
+Both can contain HTML markup. Neither includes an endline at the end of the string - use <br>.
+Echo can contain multiple comma-delimited strings.
+For both to display a variable either put it by itself or in a string between quotes.
+For both to display a value in an array you have to put curly braces around the variable.
+        Displaying an array value:     {$myArray[0]}
+
+
+print_r($array)     -   print_r() will print an array in human-readable form
+
+
+
+
+************************ CONDITIONALS AND LOOPS ************************
+
+
+Conditional statements and loops are all the same as you'd expect, but the for-each loop is a
+bit different so check it out below.
+
+All shown below.
+
+
+if
+
+            if (condition) {
+                //code...
+            }
+
+if-else
+
+            if (condition) {
+                //code...
+            } else {
+                //code...
+            }
+
+if-elseif
+
+            if (condition) {
+                //code...
+            } elseif {
+                //code...
+            } else {
+                //code...
+            }
+
+switch
+
+            switch(myVar) {
+            case label1:
+                //code...
+                break;
+            case label2:
+                //code...
+                break;
+            ...
+            defaut:
+                //code...
+            }
+
+while
+
+            while (condition) {
+                //code...
+            }
+
+do-while
+
+            do {
+                //code...
+            } while(condition);
+
+for
+
+            for (init counter; test counter; increment counter) {
+                //code...
+            }
+
+for-each
+
+            If desired you can specify the name and value for each element in the for-each loop.
+            Note that the array/list and the element/value of the array are reversed from what
+            is expected.
+
+            foreach ($array as $value) {    // note the array/list and the value are reversed
+                //code...                   // from what is normal in other languages
+            }
+
+            foreach ($array as $elementName => $elementValue) { }
+
+
+
+
+************************ FUNCTIONS ************************
+
+
+Function names are case-insensitive.
+
+Create a function:
+
+            function functionName($param1, $param2) {
+                //code...
+            }
+
+Default argument value:
+
+            You can make a default argument value if a function that takes an argument is called
+            without one given.
+
+            function myFunc($myVar=value) { }
+
+Return values with the "return" keyword.
+
+
+
+
+************************ ARRAYS ************************
+
+
+Create an array with:       array();
+
+There are three types of arrays in PHP:
+    indexed arrays
+    associative arrays
+    multi-dimensional arrays
+
+
+Indexed Arrays:
+
+        $myArr = array(value, value, value);
+
+        $myArr[0]=value;
+        $myArr[1]=value;
+        $myArr[2]=value;
+
+        count($myArr) function gets the length of an array.
+        Loop through an indexed array with a for-loop.
+
+
+Associative Arrays:
+
+        Arrays that use named keys that you assign, instead of numbered indices.
+
+        $myArr = array("name"=>"value", "name2"==>"value");
+
+        $myArr['name'] = "value";
+        $myArr['name2'] = "value";
+        $myArr['name3'] = "value";
+
+        Loop through an associative array with a for-each loop.
+        foreach ($myArr as )
+
+
+Sorting functions for arrays:
+
+        sort()      -       sort arrays in ascending order
+        rsort()     -       sort arrays in descending order
+        asort()     -       sort associative arrays in ascending order, according to the value
+        ksort()     -       sort associative arrays in ascending order, according to the key
+        arsort()     -       sort associative arrays in descending order, according to the value
+        krsort()     -       sort associative arrays in descending order, according to the key
+
+        Syntax is just:     sort($myArr);
+
+
+Multi-Dimensional Arrays:
+
+    $blah = array(
+        array(value, value, value),
+        array(value, value, value),
+        etc...
+    );
+
+    echo $blah[1][0];
+
+
+
+
+************************ FORM HANDLNG ************************
+
+
+The PHP superglobals $_GET and $_POST are used to collect form data.
+$_GET is an array of variables passed to the current script via the URL parameters.
+$_POST is an array of variables passed to the current script via the HTTP POST method.
+
+Information sent from a form with the GET method is visibile to everyone - all variables and values
+are displayed in the URL. GET also has a limit on how much information you can send - about 2000
+characters. Because the variables are displayed in the URL it is possible to bookmark the page,
+which may sometimes be useful...not sure how.
+
+    ***GET may be used for sending non-sensitive data, GET should NEVER be used for sending
+        password or other sensitive information!***
+
+Information sent from a form with the POST method is inivisible to others (names/values are
+embedded within the body of the HTTP request) and has no limits on the amount of info to send.
+
+POST supports advanced functionality such as support for multi-part binary input while uploading
+files to the server.
+
+Developers prefer POST for sending form data.
+
+
+--------------------
+
+
+Form Validation
+
+    NOTE: Form validation in PHP is absolutely necessary because form validation in JavaScript is
+          just there for the user's convenience so they can see their mistakes before they submit
+          the form, but then you need to actually validate the form on the server too. Keep in mind
+          also that Javascript can be disabled in the browser.
+
+    Need to validate forms with the PHP processing files for security purposes.
+    Can have errors in the form input be shown on the page itself by submitting the form to the
+    $_SERVER["PHP_SELF"] superglobal. It's element "PHP_SELF" means the current script, so that
+    way the current file will process the form document and you can display errors right on the
+    page to the user, instead of transferring the user to another page. You can send that $_SERVER
+    variable to the htmlspecialchars() function in the action attribute of the form, this function
+    converts special characters to HTML entities. This prevents hackers from exploiting the code by
+    injecting HTML or JavaScript code (Cross Site Scripting Attacks) in forms.
+
+    NOTE:   Only use htmlspecialchars() when echoing the data into HTML. That is, ALWAYS use it when
+            outputting to the webpage (HTML) data that has been user-inputted. This will ensure that
+            the data is interpreted as content and not HTML. If the user included HTML code (tags)
+            in the data then htmlspecialchars() will convert it to a string representation of those
+            tags, like <em> would be interpreted as &lt;em&gt; instead of an html tag.
+
+    i.e.
+        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+
+    But hackers can take advantage of the PHP_SELF by entering a slash "/" and then some Cross
+    Site Scripting (XSS) commands to execute.
+
+    Apparently by entering something different in the URL for a php script that handles form
+    validation using PHP_SELF a hacker can add JavaScript code in the URL and cause the script
+    to run it and that is bad.
+
+    The way to avoid $_SERVER["PHP_SELF"] exploits is to add that htmlspecialchars() function
+    because then any special characters they use to send malicious JavaScript code gets converted
+    to html entities and so the code doesn't work.
+
+
+    What you need to do when a form is submitted:
+
+        When a form is submitted you need to send the variables through the htmlspecialchars()
+        function and also need to strip unnecessary characters (white space, tab, newline) from the
+        user input data using the PHP trim() function, and also remove backslashes "\" from the
+        user input data using the PHP stripslashes() function.
+
+        Then need to create a function that will do all the checking. Here you will check each
+        $_POST:
+
+            Can have code that says if ($_SERVER["REQUEST_METHOD"] == "POST") then you test
+            each form input like $name = myFunc($_POST["name"]);
+            And then the actual myFunc that tests the data takes the data and does trim(),
+            stripslashes(), and htmlspecialchars() <-- again, and then returns the variable that
+            holds the input data.
+
+        To hold error messages for input fields in which the user enters incorrect data make more
+        variables in the PHP script for those errors for each input. Can check to see if an input
+        is empty using the empty() function, like so:      if (empty($_POST["name"]))
+        And if the input field is required but empty then initialize the error variable for that
+        input with an error message to display to the user, otherwise, call the testing input
+        function with that input data.
+        You then need to add a little script after each required field in the HTML form like so:
+        
+                <span class="error"><?php echo $theError'?></span>
+
+        Next you need to check that a field only contains letters and whitespace, and if it's not
+        valid then store and display an error message.
+        Use a regex to do this check. The preg__match() function searches a string for pattern, so
+        use the regex in there, and it returns true if the pattern exists.
+
+                if (!preg_match("/^[a-zA-z ]*$/", $inputName)) { // initialize error variable }
+
+        Can also check for a correct email address, URL address, or whatever else using the
+        preg_match() function. Put these checks inside the if-block that checks for empty input
+        fields, put this stuff in the else-block obviously, after using the testing input function.
+
+        To keep the form from emptying all its field when the user submits the form, you need to
+        st the value of the input fields in the form (inside their HTML tags) to include a little
+        script in their value attributes (for text boxes):       value="<?php echo $inputVar'?>"
+        For a text area you put this script in between the opening and closing tags.
+        For something like a radio button you have to include a little script on its own inside
+        the input tag like so:      <?php if(isset($inputVar) && $inputVar="blah") echo "checked";?>
+        And do this for each radio button or check box (inside the element tag).
+
+
+
+
+************************ SOME ADVANCED PHP STUFF ************************
+
+
+Date
+
+    The date() function is used to format a time and/or date. It formats a timestamp to a more
+    readable date and time.
+
+    Syntax:
+                date(format, timestamp);
+
+    The format is a required parameter, it specifies the format of the timestamp.
+    The timestamp is optional, the default is the current date and time.
+
+    Formatting the date:
+
+        Some characters that can be used in formatting: d - day (01 to 31), m - month (01 to 12),
+        Y - year (in four digits). Lots of other characters can be used.
+
+        A format could be like this:        date("m/d/Y")
+
+
+    Adding a timestamp:
+
+        If you don't put a timestamp the default is the current time and date.
+        Can use the mktime() function which returns the Unix timestamp for a date, which contains
+        the number of seconds between the Unix Epoch (jan 1 1970) and the time specified.
+
+        mktime(hour, minute, second, month, day, year, is_dst);
+
+        To set it for one day in the future for example do this:
+
+            $tomorrow = mktime(0,0,0,date("m"), date("d")+1, date("Y"));
+            echo "tomorrow is" . date("m/d/Y", $tomorrow);
+
+
+--------------------
+
+
+Include Files
+
+    In PHP you can insert the content of one PHP file into another before the server executes it.
+    The "include" and "require" statements are used to insert code written in other files.
+
+    Include and require are identical except upon failure:
+        - include will only produce a warning (E_WARNING) and the script will continue
+        - require will produce a fatal error (E_COMPILE_ERROR) and stop the script
+
+    If it is a key file that doesn't get imported correctly, you'll want to use "require" to avoid 
+    comprising the application's security and integrity.
+
+    Syntax:
+            include 'filename';
+            require 'filename';
+
+    Can say, have a php file that holds a bunch of variables, can include it in say a <div> or
+    something anywhere in an HTML file since you can throw an php script in anywhere.
+
+
+--------------------
+
+
+File Handling
+
+    The fopen() function is used to open files in PHP.
+    Syntax:         $file = fopen("filename", "modes");
+
+    The file may be opened in one of the following modes:
+        r   -   read only
+        r+  -   read/write, starts at beginning of the file
+        w   -   write only. opens and clears content of file, or creates new file if doesn't exist
+        w+  -   read/write, opens and clears conetnet of file, or creates new file if doesn't exist
+        a   -   append, opens and writes to the end of the file or creates new file if doesn't exist
+        a+  -   read/append, preserves the file content by writing to the end of the file
+        x   -   write only, creates a new file, returns FALSE and an error if file already exists
+        x+  -   read/write, creates a new file, returns FALSE and an error if file already exists
+
+    If fopen() is unable to open the specified file, it returns false.
+
+    i.e.
+            $file = fopen("filename", "r") or exit("Unable to open file.");
+
+
+    Closing a file:
+
+        fclose()        i.e.        fclose("$fileVar");
+
+
+    Check End-of-file:
+
+        feof() checks if the end of a file has been reached. Useful for looping through data of
+        unknown length.
+        i.e.
+                if (feof($fileVar)) echo "End of file";
+
+
+    Reading a file line by line:
+
+        fgets() is used to read a single line from a file.
+
+        i.e.
+                while (!feof($fileVar))
+                    echo fgets($fileVar) . "<br>";
+
+
+    Reading a file character by character:
+
+        fgetc() reads a single character from a file.
+
+        i.e.
+                while (!feof($fileVar))
+                    echo fgetc($fileVar);
+
+
+--------------------
+
+
+File Uploading
+
+    Can upload files to the server with PHP using a form.
+    The "enctype" attribute must be used in the opening <form> tag. The enctype attribute specifies
+    which content-type to use when submitting the form. The value "multipart/form-data" is used
+    when a form requires binary data, like the contents of a file, to be uploaded.
+
+    Use the input type="file" for uploading files. This will give browse button next to the input
+    field for the user to use.
+
+    Note: allowing users to upload a file is a big security risk.
+
+
+    Creating the upload php script:
+
+        Use the $_FILES superglobal array to upload files from a client computer to the remote
+        server. It is a 2D array, its two indices are the form's input name, and the second index
+        can be any of the following:       "name", "type", "size", "tmp_name", "error"
+
+        $_FILES["file"]["name"]     -   the name of the uploaded file
+        $_FILES["file"]["type"]     -   the type of the uploaded file
+        $_FILES["file"]["size"]     -   the size in bytes of the uploaded file (in bytes)
+        $_FILES["file"]["tmp_name"] -   name of the temporary copy of the file stored on the server
+        $_FILES["file"]["error"]    -   the error code resulting from the file upload
+
+        Use these value in the $_FILES superglobal array to validate the file being uploaded, like
+        restricting the file to certain file types, and restricting the file size.
+
+        i.e.
+                if ($_FILES["file"]["type"] == "image/gif")
+                if ($_FILES["file"]["size"] < 2000)
+
+        ****look up what explode() and end() do. Check out the code at this site:
+                http://www.w3schools.com/php/php_file_upload.asp
+
+        Saving the Uploaded File:
+            Need to save the uploaded file by copying it to a different location (the uploaded file
+            is originally just saved as a temporary copy in the PHP temp folder on the server, and
+            this temp file will be destroyed when the script ends).
+
+            if (file_exists("upload/" . $_FILES["file"]["name"]))
+                echo $_FILES["file"]["name"] . " already exists.";
+            else {
+                move_uploaded_file($_FILES["file"]["tmp_name"], "upload/" . $_FILES["file"]["name"]);
+                echo "Stores in: " . "upload/" . $_FILES["file"]["name"];
+            }
+
+
+--------------------
+
+
+Cookies
+
+    A cookie is often used to identify a user. A cookie is a small file that the server embeds on
+    the user's computer. Each time the same computer requests a page with a browser, it will send
+    the cookie too. With PHP you can create and retrieve cookie values.
+
+    Create a cookie:
+
+        setcookie() - this function must appear BEFORE the <html> tag.
+        Syntax:     setcookie(name, value, expire, path, domain);      // not all required
+        i.e.
+                setcookie("user", "Todd", time()+3600);     // makes cookie called user, with value
+                                                            // "todd" that will expire in one hour.
+        The value of the cookie is automatically URL encoded and decoded when sent and received.
+        To prevent URL encoding use setrawcookie() instead of setcookie().
+
+
+    Retrieve a cookie:
+
+        Use the $_COOKIE superglobal to retrieve a cookie value, its index is the name of the cookie.
+        Syntax:        $_COOKIE["cookieName"];
+        Can check if cookie is set yet with: if (isset($_COOKIE["cookieName"])
+
+
+    Deleting a cookie:
+
+        Just set the cookie to expire in the past.
+        i.e.        setcookie("cookieName", "", time()-3600);
+
+    If a browser doesn't have cookies you can pass data through a form.
+
+
+--------------------
+
+
+Sessions
+
+    A PHP Session variable is used to store info about, or change settings for, a user session.
+    A Session allows the stores of user info on the server for later use. Session info is temporary
+    and will be deleted after the user has left the website. Permanent storage is what databases
+    are for.
+
+    Sessions work by creating a unique id (UID) for each visitor and store variables based on the
+    UID. The UID is stored in either a cookie or is propagated in the URL.
+
+
+    Starting a Session:
+        session_start() function must appear BEFORE the <html> tag.
+        i.e.        <?php session_start(); ?>
+
+    Storing a Session variable:
+        Use the $_SESSION superglobal to store and retrieve session variables.
+        i.e.        $_SESSION['varName'] = value;
+                    $_SESSION['varName']                // retrieve the session variable
+        A session variable could be used, for instance, to store the number of page views by each
+        person:
+        i.e.        if (isset($_SESSION['views']))
+                        $_SESSION['views'] = $_SESSION['views'] + 1;
+                    else
+                        $_SESSION['views'] = 1;
+
+    Destroying a Session:
+        unset() or session_destroy() functions destroy a session.
+        
+        The unset() function is used to free the specified session variable.
+        i.e.
+                if (isset("$_SESSION["varName"])) { unset($_SESSION['varName']); }
+
+        The session_destroy() function completely destroys the session, which will of course also
+        destroy any session variables:                      session_destroy();
+
+
+--------------------
+
+
+Email
+
+    The mail() function is used to send emails directly from a script.
+
+    Syntax:             mail(to, subject, message, headers, parameters)
+
+    Parameters:
+        to          -   required. specifies the recipient's email address(es)
+        subject     -   required. specifies the email's subject line (cannot contain newline chars)
+        message     -   required. specifies the actual email body. Each line should have a '\n'.
+                        Its a php rule that message lines cannot exceed 70 characters.
+        headers     -   optional. specifies additional headers like 'From', 'Cc', 'Bcc', etc. The
+                        additional headers should be separated by a newline
+        parameters  -   optional. specifies any additional parameters.
+
+    The PHP mail() function requires an installed and working email system. The program used is
+    defined by the configuration settings in the php.ini file.
+
+    Use the $_POST superglobal with indices 'from', 'subject', 'message'.
+
+    There is a security risk in just normally receiving the email input from the user, apparently
+    even if the 'to' parameter is hardcoded in, hackers can still perform email injection to spam
+    other emails. Best way to stop this is to validate the input.
+
+    To stop email injections use two filters using the filter_var() function and the properties
+    FILTER_SANITIZE_EMAIL and FILTER_VALIDATE_EMAIL to check the "from" field of the email. Make a
+    function to check these things.
+
+    FILTER_SANITIZE_EMAIL removes all illegal email characters from a string
+    FILTER_VALIDATE_EMAIL validates a value as an email address
+
+    i.e.
+            $field = filter_var($field, FILTER_SANITIZE_EMAIL);
+            if (filter_var($field, FILTER_VALIDATE_EMAIL))
+                return true;
+            else
+                return false;
+
+
+--------------------
+
+
+Error Handling
+
+    Need to have error handling or else code looks unprofessional (because the user will see error
+    messages instead of the program getting them and printing out some hard coded error message for
+    the user) and is open to security risks.
+
+    Basics error checking using the die() function:         die("error string to user");
+    The die() function displays the argument string to the use and ends the script.
+
+    Custom error handling:
+
+        Syntax:
+                error_function(error_level, error_message, error_file, error_line, error_context);
+
+        error_level     -   required. specifies the error report level for the user-defined error.
+                            Must be a value number.
+        error_message   -   required. specified the error message for the user-defined error.
+        error_file      -   optional. the file name in which the error occured.
+        error_line      -   optional. the line number in which the error occured.
+        error_context   -   optional. an array containing every variable, and their values, in use
+                            when the error occured.
+
+        Error Report Levels:
+        2       -   Constant: E_WARNING     -   non-fatal runtime errors. execution of script is not
+                                                halted.
+        8       -   Constant: E_NOTICE      -   runtime notices. script found something that might
+                                                be an error, but could also happen when running a
+                                                script normally.
+        256     -   Constant: E_USER_ERROR  -   fatal user-generated error. This is like an E_ERROR
+                                                set by the programmer using the PHP function
+                                                trigger_error().
+        512     -   Constant: E_USER_WARNING    -   non-fatal user-generated warning. This is like
+                                                    an E_WARNING set by the programmer using the
+                                                    trigger_error() function.
+        1024    -   Constant: E_USER_NOTICE     -   User-generated notice. This is like an E_NOTICE
+                                                    set by the programmer using the trigger_error()
+                                                    function.
+        4096    -   Constant: E_RECOVERABLE_ERROR   -   Catchable fatal error. This is like an
+                                                        E_ERROR but can be caught by a user defined
+                                                        handle.
+        8191    -   Constant: E_ALL     -   all errors and warnings
+
+
+        i.e. custom function to handle errors:
+
+                function customErr($errno, $errstr) {
+                    echo "<b>Error:<b> [$errno] $errstr<br>";
+                    echo "Ending script";
+                    die();
+                }
+
+
+        To make a custom error function the default error handler do this:
+                        set_error_handler("customErr");
+        The above line handles all errors, if you only wanted to handle a specific eror level you
+        would add a second argument to specify the error level.
+
+
+    Triggering an Error:
+
+        Where users can input data it's useful to trigger errors when an illegal input occurs.
+        Use the trigger_error() function.
+                trigger_error("custom error string to display, OPTIONAL-error_level_number");
+
+        Possible error types to use:    E_USER_ERROR   E_USER_WARNING   E_USER_NOTICE
+
+
+    Error Logging:
+
+        By default, PHP sends an error log to the server's logging system or a file depending on how
+        the error_log configuration is set up in the php.ini file.
+        Use the error_log() function to send error logs to a specified file or a remote destination.
+        i.e.
+                error_log("Error: [$errno] $errstr", 1, "blah@mail.com", "From: blah2@mail.com");
+
+        The above line sends the error log (message) to an email. This should not be used with all
+        errors, regular errors should be logged on the server using hte default PHP logging system.
+
+
+--------------------
+
+
+Exception Handling
+
+    Exception handling is used to change the normal flow of a script if a specified error occurs.
+    When an exception is triggered this is what normally happens:
+        - the current code state is saved
+        - the code execution will switch to a predefined/custom exception handler function
+        - depending on the situation the handler may either resume the execution of the script, 
+          terminate the script, or continue it from a different location in the code
+
+    Exceptions are only used with error conditions.
+
+    When an exception is thrown, the code following it will not be executed and PHP will try to
+    find the matching "catch" block. If an exception is not caught, a fatal error will be issued
+    with an "Uncaught Exception" message.
+
+    Syntax:         throw new Exception("error string to display to user");
+
+
+    Try, throw, catch:
+
+        For a possible error need a try,throw,catch block.
+        Each throw must have at least one catch. A catch blow retrieves and creates an object
+        containing the exception information. The catch block receives the exception that was thrown
+        it its Exception object (the parameter) and you can display the error message by taking the
+        error object variable and doing ->getMessage() which is built-in function to get error
+        message.
+
+        i.e.
+                try {
+                    call function that throws an exception if some specific thing is wrong
+                    code that won't run if an exception is thrown
+                } catch (Exception $e) {                // if there is an exception this code is run
+                    echo 'Message: ' . $e->getMessage();
+                }
+
+        The getMessage(), getLine(), and getFile() functions are all built-in error functions that
+        you can use to get the message, line, and file that the error is in.
+
+
+    Creating a custom exception class:
+
+        Create a class that extens Exception and has functions that can be called when an exception
+        occurs.
+        i.e.
+            <?php
+                class customException extends Exception {
+                    public function errorMessage() {
+                        //error message
+                        $errorMsg = 'Error on line '.$this->getLine().' in '.$this->getFile()
+                        .': <b>'.$this->getMessage().'</b> is not a valid E-Mail address';
+                        return $errorMsg;
+                    }
+                }
+
+                $email = "someone@example...com";
+
+                try {
+                    //check if
+                    if(filter_var($email, FILTER_VALIDATE_EMAIL) === FALSE)
+                    {
+                        //throw exception if email is not valid
+                        throw new customException($email);
+                    }
+                } catch (customException $e) {
+                    //display custom message
+                    echo $e->errorMessage();
+                }
+            ?>
+
+
+    Multiple Exceptions:
+
+        Just have multiple exceptions throw in the 'try' block based on different conditions and
+        have multiple 'catch' blocks to catch those exceptions.
+
+    Can re-throw exceptions in the 'catch' block. So throw the default exception in the try block,
+    but then to give the user a more friendly error message throw a custom Exception in the catch
+    block, and you would then need another catch block with the custom Exception class object as the
+    argument instead of the Exception object. 
+
+    The set_exception_handler() function sets a user-defined function to handle all uncaught
+    exceptions.
+        Syntax:         set_exception_handler('exceptionHandlingFunctionName');
+    Basically this can be used to catch uncaught exceptions, which means this code doesn't have a
+    catch block.
+
+    Rules for exceptions:
+        - code may be surround in a try block to help catch potential exceptions
+        - each try block or 'throw' must have at least one corresponding catch block
+        - multiple catch blocks can be used to catch different classes of exceptions
+        - exceptions can be thrown (or re-thrown) in a catch block or within a try block.
+        - if you throw something you have to catch it
+
+
+--------------------
+
+
+Filters
+
+    PHP filters are used to validate and filter data coming from insecure sources, like user input.
+    To test, validate, and filter user input or custom data is an important part of web applications.
+
+    NOTE: Always filter all external data!
+
+    External data includes input data from a form, cookies, web services data, server variables,
+    database query results.
+
+    Filter Functions:
+        filter_var()            -   filters a single variable with a specified filter
+        filter_var_array()      -   filter several variables with the same or different filters
+        filter_input()          -   get one input variable and filter it
+        filter_input_array()    -   get several input variables and filter them with the same or
+                                    different filters
+
+        i.e.        filter_var($int, FILTER_VALIDATE_INT)
+
+    See this website for list of filter functions and filters:
+                                            http://www.w3schools.com/php/php_ref_filter.asp
+
+
+    Validating and Sanitizing:
+
+        Two kinds of filters, validating filters and sanitizing filters.
+        Validating filters:
+            - used to validate user input
+            - strict formal rules (like URL OR email validating)
+            - returns the expected type on success or false on failure
+
+        Sanitizing filters:
+            - used to allow or disallow specified characters in a string
+            - no data format rules
+            - always returns the string
+
+
+    Options and Flags:
+
+        Used to add additional filtering optionos to the specified filters. Options must be put
+        in an associative array with the name "options" and placed as the third parameter to, for
+        instance, the filter_var() function. Flags don't need to be in an array.
+
+        i.e.
+            $var=300;
+
+            $int_options = array(
+                "options"=>array (
+                    "min_range"=>0,
+                    "max_range"=>256
+                )
+            );
+
+            if(!filter_var($var, FILTER_VALIDATE_INT, $int_options)) {
+                echo("Integer is not valid");
+            } else {
+                echo("Integer is valid");
+            }
+
+
+    Validate Input:
+
+        When validating input you need to confirm that the input data exists, then filter the data
+        using the filter_input() function.
+
+        i.e.
+                if(!filter_has_var(INPUT_GET, "email")) {
+                    echo("Input type does not exist");
+                } else {
+                    if (!filter_input(INPUT_GET, "email", FILTER_VALIDATE_EMAIL)) {
+                        echo "E-Mail is not valid";
+                    } else {
+                        echo "E-Mail is valid";
+                    }
+                }
+
+    Sanitize Input:
+
+        When sanitizing input you need to confirm that the input data exists, then sanitize the data
+        using the filter_input() function. Sanitizing input is taking away the invalid characters.
+
+        i.e.
+                if(!filter_has_var(INPUT_POST, "url")) {
+                    echo("Input type does not exist");
+                } else {
+                    $url = filter_input(INPUT_POST, 
+                    "url", FILTER_SANITIZE_URL);
+                }
+
+    Filter Multiple Inputs:
+
+        Use the filter_var_array() or filter_input_array() functions.
+
+        i.e.
+            $filters = array (
+                "name" => array (
+                    "filter"=>FILTER_SANITIZE_STRING
+                ),
+                "age" => array (
+                    "filter"=>FILTER_VALIDATE_INT,
+                    "options"=>array (
+                        "min_range"=>1,
+                        "max_range"=>120
+                    )
+                ),
+                "email"=> FILTER_VALIDATE_EMAIL
+            );
+
+            $result = filter_input_array(INPUT_GET, $filters);
+
+            if (!$result["age"]) {
+                echo("Age must be a number between 1 and 120.<br>");
+            } elseif (!$result["email"]) {
+                echo("E-Mail is not valid.<br>");
+            } else {
+                echo("User input is valid");
+            }
+
+
+    Filter Callback:
+
+        Can call a user defined function and use it as a filter using the FILTER_CALLBACK filter.
+        This way we have full control of the data filtering. Can create own function or use an
+        existing PHP function. The function you wish to use is specified the same way as an option
+        is specified, in an associative array with the name "options".
+
+        i.e.
+            function convertSpace($string) {
+                return str_replace("_", " ", $string);
+            }
+
+            $string = "Peter_is_a_great_guy!";
+
+            echo filter_var($string, FILTER_CALLBACK,
+            array("options"=>"convertSpace"));
+
+
+
+
+************************ PHP MySQL ************************
+
+
+MySQL is the most popular database system used with PHP.
+PHP combined with MySQL are cross-platform (i.e. you can develop in Windows and serve on Unix).
+
+Security
+    Any input from a user that is going to be put into a database needs to protect from SQL injection.
+    One way to do that is using:            mysqli_real_escape_string($con, $input);
+    to escape any characters in the user input that would be able to alter the SQL query.
+    You can also used prepared statements and binding variables. I'll have to look more into that
+    stuff.
+    The mysqli_real_escape_string() function can only takes a string as an argument. Don't try
+    putting numbers or anything else in it.
+
+
+mysqli_connect()
+    This PHP function is used to open a connection to the MySQL Server.
+    Syntax:
+                mysqli_connect(host,username,password,dbname);
+
+    host    -   optional, either a host name or an IP address
+    username -  optional, the MySQL username
+    password -  optional, the password to log in with
+    dbname  -   optional, the default database to be used when performing queries
+
+    There are more parameters but these are the most important.
+
+    i.e.
+            $con = mysqli_connect("blah.com", "todd", "asdfjkl", "myDB");
+        // check connection
+            if (mysqli_connect_errno())
+                echo "Failed to connect to MySQL: " . mysqli_connect_error();
+
+
+mysqli_close()
+    This is used to close the connection to the MySQL server. The connection will automatically
+    close when the script ends, so only need this if closing the connection before the end of the
+    script.
+    Syntax:     mysqli_close($mySQL_var);
+
+
+mysqli_query()
+    This function performs a query against the database. For successful SELECT, SHOW, DESCRIBE, or
+    EXPLAIN queries it retuns a mysqli_result object. For other queries it returns true if
+    successful, false otherwise.
+
+    Syntax:         mysqli_query(connection, query, resultmode);
+
+    connection  -   required, specifies the MySQL connection to use
+    query       -   required, specifies the query string
+    resultmode  -   optional, a constant, either:
+                    MYSQLI_USE_RESULT (use this if you have to retrieve large amount of data)
+                    MYSQLI_STORE_RESULT (this is default)
+
+    Basically once the MySQL connection is open you just use mysqli_quiry() to call queries on the
+    database using SQL code by putting the SQL queries in as the second argument of the
+    mysqli_query() function. And that's the basics.
+
+
+Creating Databases and Tables:
+
+    The CREATE DATABASE statement is used to create a database in MySQL.
+    Must add the CREATE DATABASE statement to the mysqli_query() function to execute the command.
+
+    So open the connection to MySQL, then check for error and print out error message if it failed
+    to connect, then create database with:
+
+            $sql = "CREATE DATABASE myDB"               // name of database is myDB
+            if (mysqli_query($con, $sql)) {             // creates database, $con is connect var
+                echo "Database created";
+            } else {
+                echo "Error creating database: " . mysqli_error($con);
+            }
+
+    The CREATE TABLE statement is used to create a table in MySQL.
+    Need to add the CREATE TABLE statement to the mysqli_query() function to create the table.
+
+    Syntax:     $sqlTab = "CREATE TABLE tableName(field type, field, type, ...)";
+                mysqli_query($con, $sqlTab);
+
+    MySQL Data Types are:
+        Text Data Types:
+                CHAR(size)
+                VARCHAR(size)
+                TINYTEXT
+                TEXT
+                BLOB
+                MEDIUMTEXT
+                MEDIUMBLOB
+                LONGTEXT
+                LONGBLOB
+                ENUM(x,y,z,etc.)
+                SET
+        Number Data Types:
+                TINYINT(size)
+                SMALLINT(size)
+                MEDIUMINT(size)
+                INT(size)
+                BIGINT(size)
+                FLOAT(size,d)
+                DOUBLE(size,d)
+                DECIMAL(size,d)
+        Date Date Types:
+                DATE()
+                DATETIME()
+                TIMESTAMP()
+                TIME()
+                YEAR()
+
+
+    Primary Keys and Auto Increment Fields:
+        Each table in a database should have a primary key field, which is a field that has a
+        unique value for each record. Also, the primary key field cannot be null because the
+        database engine requires a value to locate the record. The AUTO_INCREMENT setting is often
+        used with the primary key field to increment the value for each new record, creating a
+        primary ID number for each record. Must add the NOT NULL setting to the primary key field
+        in order to make it impossible for it to be null.
+
+        i.e.        CREATE TABLE tablename (PID INT NOT NULL AUTO_INCREMENT, field datatype, etc)
+
+
+INSERT INTO
+
+    i.e.    mysqli_query($con, "INSERT INTO tableName (field, field) VALUES (value, value)");    
+
+    To insert data from a form into a database in the php script that is identified in the 'action'
+    attribute of the HTML form, do something like this:
+        // open MySQL connection
+        // then use INSERT INTO with the $_POST values
+        $sql = "INSERT INTO table(field, field) VALUES ('$_POST[inputName]', '$_POST[inputname]')"
+        if (!mysqli_query($con, $sql))
+            die("error: " . mysqli_error($con));
+        echo "1 record added";
+
+
+SELECT
+
+    Use the mysqli_fetch_array() function to return the first row from the record-set as an array.
+    Each call to mysqli_fetch_arry() returns the next row. A while loop can be used to loop through
+    all the records in the record-set. To print out the data just use the field name as the index
+    to the array that has the returned array value.
+
+    i.e.    $result = mysqli_query($con, "SELECT * FROM tableName"); 
+            while ($row = mysqli_fetch_array($result)) {
+                echo $row['field1'] . " " . $row['field2'];
+                echo "<br>";
+            }
+
+    To display in an HTML table do something like this:
+
+        echo "<table border='1'>
+            <tr>
+            <th>field1</th>
+            <th>field2</th>
+            </tr>";
+
+        while($row = mysqli_fetch_array($result)) {
+            echo "<tr>";
+            echo "<td>" . $row['field1'] . "</td>";
+            echo "<td>" . $row['field2'] . "</td>";
+            echo "</tr>";
+        }
+        echo "</table>";
+
+
+WHERE
+
+    Again use the mysqli_fetch_array() function to get the data that was selected using the WHERE
+    clause. Can output using a while loop and the array function.
+
+    i.e.        $result = mysqli_query($con, "SELECT * FROM tableName WHERE field1='value' ");
+
+
+ORDER BY
+
+    Same deal with using mysqli_fetch_array() in a while loop to print out the data from the query.
+
+    i.e.        $result = mysqli_query($con, "SELECT * FROM tableName ORDER BY field1, field2");
+
+
+UPDATE
+
+    Use update to modify data in a table.
+
+    i.e. mysqli_query($con,"UPDATE tableName SET Age=36 WHERE field1='value' AND field2='value' ");
+
+
+DELETE
+
+    Use delete to delete records in a table.
+
+    i.e.    mysqli_query($con,"DELETE FROM tablename WHERE field1='value' ");
+
+
+Database ODBC
+
+    ODBC is an Application Programming Interface (API) that allows you to connect to a data source
+    (i.e. MS Access database).
+
+    Create an ODBC Connection:
+
+        With an ODBC connection you can connect to any database, on any computer in your network,
+        as long as an ODBC connection is available.
+
+        Look up notes about ODBC some other time if I need it.
+
+
+
+
+************************ PHP XML Expat Parser ************************
+
+
+The built-in Expat parser makes it possible to process XML documents in PHP.
+
+There are two basic types of XML parsers:
+    - Tree-based parser:    This parser transforms an XML document into a tree structure. It
+                            analyzes the whole document and provides access to the tree elements
+                            (i.e. the DOM)
+    - Event-based parser:   View an XML document as a series of events. When a specific event
+                            occurs, it calls a function to handle it.
+
+The Expat parser is an event-based parser. It focuses on the content of the XML documents, not
+their structure. Event-based parsers can access data faster than tree-based parsers.
+
+For the following XML fraction,  <from>Jani</from>,  an event-based parser reports it as a series
+of three events:
+        start element - from
+        start CDATA section, value - Jani
+        close element - from
+
+Expat is a non-validating parser, so it ignores any DTD's. But the XML documents must be
+well-formed or Expat will generate an error.
+As an event-based, non-validating XML parser, Expat is fast and small, and a perfect match for
+PHP web applications.
+
+Installation - The XML Expat parser is part of the PHP core, so no installation is needed.
+
+To use the parser:
+    Initialize the parser:
+            $parser = xml_parser_create();
+    Specify some element handlers for XML events:
+            xml_set_element_handler($parser, functionName, "functionName", etc);
+    Specify some data handlers for XML events:
+            xml_set_character_data_handler($parser, "functionName", etc);
+    Also need to define the functions for the element handlers.
+    Open XML file:
+            $file = fopen("filename.xml", "r");
+    Read in and parse the data:
+            xml_parse($parser, dataVar, feof($file));
+    Free the xml parser:
+            xml_parser_free($parser);
+
+    i.e.
+
+        XML file to parse:
+                <?xml version="1.0" encoding="UTF-8"?>
+                <note>
+                <to>Tove</to>
+                <from>Jani</from>
+                <heading>Reminder</heading>
+                <body>Don't forget me this weekend!</body>
+                </note>
+
+
+
+        PHP script to parse the above file:
+
+                //Initialize the XML parser
+                $parser=xml_parser_create();
+
+                //Function to use at the start of an element
+                function start($parser,$element_name,$element_attrs)
+                  {
+                  switch($element_name)
+                    {
+                    case "NOTE":
+                    echo "-- Note --<br>";
+                    break;
+                    case "TO":
+                    echo "To: ";
+                    break;
+                    case "FROM":
+                    echo "From: ";
+                    break;
+                    case "HEADING":
+                    echo "Heading: ";
+                    break;
+                    case "BODY":
+                    echo "Message: ";
+                    }
+                  }
+
+                //Function to use at the end of an element
+                function stop($parser,$element_name)
+                  {
+                  echo "<br>";
+                  }
+
+                //Function to use when finding character data
+                function char($parser,$data)
+                  {
+                  echo $data;
+                  }
+
+                //Specify element handler
+                xml_set_element_handler($parser,"start","stop");
+
+                //Specify data handler
+                xml_set_character_data_handler($parser,"char");
+
+                //Open XML file
+                $fp=fopen("test.xml","r");
+
+                //Read data
+                while ($data=fread($fp,4096))
+                  {
+                  xml_parse($parser,$data,feof($fp)) or 
+                  die (sprintf("XML Error: %s at line %d", 
+                  xml_error_string(xml_get_error_code($parser)),
+                  xml_get_current_line_number($parser)));
+                  }
+
+                //Free the XML parser
+                xml_parser_free($parser);
+
+
+
+
+************************ PHP XML DOM ************************
+
+
+The built-in DOM parser makes it possible to process XML documents in PHP.
+
+THE DOM provides a standard set of objects for HTML and XML documents, and a standard interface
+for accesing and manipulating them.
+THE DOM is separated into three different parts:    Core DOM, XML DOM, HTML DOM
+
+The DOM parser is a tree-based parser.
+The DOM XML parser functions are part of the PHP core.
+
+To use the DOM XML parser in PHP:
+
+    Initialize the XML DOM parser, load the xml file:
+        $xmlDoc = new DOMDocument();
+        $xmlDoc->load("xmlfile.xml");
+
+    To output XML do either:
+            Output the XML text all in a row with spaces in-between:
+                    echo $xmlDoc->$saveXML();
+
+            Loop through XML and print out node names and values from the XML document:
+                    $x = $xmlDoc->documentElement;
+                    foreach ($x->childNodes AS $item)
+                        echo $item->nodeName . " = " . $item->nodeValue . "<br>";
+
+
+
+
+************************ SimpleXML ************************
+
+
+PHP SimpleXML handles the most common XML tasks and leaves the rest for other extensions. It
+provides a simple way of getting an XML element's name and text.
+
+Compared to DOM or the Expat parser, SimpleXML just takes a few lines of code to read data from XML.
+
+SimpleXML converts the XML document into an object like this:
+        - elements are converted to single attributes of the SimpleXMLElement object. When there's
+          more than one element on one level, they are placed inside an array
+        - attributes are accessed using associative arrays, where an index corresponds to the
+          attribute name
+        - text inside elements is converted to strings. If an element has more than one text node
+          they will be arranged in the order they are found.
+
+SimpleXML is fast and easy to use when performing:
+        - reading/extracting data from XML files/strings
+        - editing text nodes or attributes
+
+SimpleXML is not good with dealing with advanced XML though, in which case you should use the
+Expat parser or the XML DOM.
+
+SimpleXML is part of the PHP core.
+
+    i.e.
+        XML document example to use SimpleXML on:
+                <?xml version="1.0" encoding="UTF-8"?>
+                <note>
+                <to>Tove</to>
+                <from>Jani</from>
+                <heading>Reminder</heading>
+                <body>Don't forget me this weekend!</body>
+                </note>
+
+        Load XML doc to initialize SimpleXML object
+                $xml = simplexml_load_file("file.xml");
+
+        Either:
+
+            Output keys and elements all together (the whole SimpleXMLElement object):
+                print_r($xml);
+
+            Output the data from each element in the XML file:
+                echo $xml->nodeName . "<br>";
+                echo $xml->nodeName . "<br>";
+                echo $xml->nodeName . "<br>";
+                ...
+
+            Output the node names and data for each child node:
+                echo $xml->getName() . "<br>";                  // prints root node name
+                foreach($xml->children() as $child)
+                    echo $child->getName() . ": " . $child . "<br>";
+
+
+
+
+************************ USING AJAX WITH PHP TO GET DATA FROM SERVER ************************
+
+
+All of the examples below are shown on the W3schools website starting at the following link:
+                    http://www.w3schools.com/php/php_ajax_php.asp
+
+Can use AJAX and PHP to suggest completed options while user is typing into text field.
+
+Can use AJAX with PHP and MySQL to get a dropdown list of the options from a database.
+
+Can use AJAX with PHP and XML to get a dropdown list of the options from an XML file.
+
+Can create an AJAX live search to show options from an XML file.
+
+AJAX RSS Reader.
+
+Showing the result of a poll without reloading using AJAX.
+
+
+
+
+----------------------------------------------------------------------------------------------------

@@ -1,0 +1,133 @@
+JavaScript Object Notation (JSON) Notes
+
+
+
+JSON is syntax for storing and exchanging information, like XML.
+JSON is smaller than XML, and faster and easier to parse.
+It is a lightweight text-data interchange format.
+It is language independent (it uses JavaScript for describing objects, but JSON parsers and libraries
+exist for many languages).
+It is self-describing.
+
+
+
+
+************************ BASICS ************************
+
+
+The JSON text format is syntactically identical to the code for creating JavaScript objects.
+Because of this, instead of using a parser, a JavaScript program can use the built-in eval() function
+and execute JSON data to produce native JavaScript objects.
+
+
+Like XML:   JSON is plain text, self-describing (human readable), hierarchical, parsed by JavaScript,
+            and JSON data can be trasported using AJAX.
+
+Unlike XML: No end tag, shorter, quicker to read and write, can be parsed using built-in JavaScript
+            eval(), uses arrays, no reserved words.
+
+For AJAX applications JSON is faster and easier than XML:
+        Using XML
+                - fetch an XML document
+                - use the XML DOM to loop through the document
+                - extract values and store in variables
+        Using JSON
+                - fetch a JSON string
+                - eval() the JSON string
+
+
+File extension for a JSON file is:      ".json"
+MIME type for JSON text is:             "application/json".
+
+
+
+************************ SYNTAX ************************
+
+
+JSON syntax is a subset of JavaScript syntax.
+
+Data is in name/value pairs.
+Data is separated by commas.
+Curly braces hold objects.
+Square brackets hold arrays.
+
+
+Name/Value Pairs        -       "field" : "value"
+
+Values      -   a number (integer or float)
+            -   a string (in double quotes)
+            -   a boolean (true or false)
+            -   an array (in square brackets)
+            -   an object (in curly braces)
+            -   null
+
+JSON Objects
+        i.e.    { "field" : "value", "field1" : "value"}
+
+JSON Array
+        i.e.    {
+                "arrayField" : [
+                    {"field" : "value", "field" : "value"},
+                    {"field" : "value", "field" : "value"},
+                    {"field" : "value", "field" : "value"}
+                ]
+                }
+
+Using JavaScript syntax:
+        Because JSON uses JS syntax you can set a, for example, JSON array as the value of a
+        JS variable:
+                    var blah = [ {"field":"value", etc.},etc.];
+        
+        And you can access its data just like this:
+                    blah[0].field
+        And modify its data like this:
+                    blah[0].field = "blah";
+
+
+Converting a JSON Text to a JavaScript Object:
+
+    One of the most common uses of JSON is to fetch JSON data from a web server (as a file or an
+    HttpRequest), convert it to a JavaScript object, and then use the data in a web page.
+    This can be demonstrated by using a string as input (instead of a file):
+    i.e.
+        var txt = '{ "employees" : [' +
+            '{ "firstName":"John" , "lastName":"Doe" },' +
+            '{ "firstName":"Anna" , "lastName":"Smith" },' +
+            '{ "firstName":"Peter" , "lastName":"Jones" } ]}';
+
+    Use a JS eval() function to parse the JSON txt and produce a JS object (but using eval() isn't
+    that safe, should use a JSON parser instead, notes for that below this section). The text must
+    be wrapped in parenthesis to avoid a syntax error:
+
+        var obj = eval("(" + txt + ")");        // creates a js object of the JSON text
+
+    Then use the JavaScript object to display the data on a webpage:
+
+        First Name: <span id="fname"></span><br>
+        Last Name: <span id="lname"></span><br>
+        document.getElementById("fname").innerHTML=obj.employees[1].firstName;
+        document.getElementById("lname").innerHTML=obj.employees[1].lastName;
+
+
+JSON Parser
+
+    The eval() function can compile and execute any JavaScript, this represents a potential security
+    problem.
+    It is safer to use a JSON parser to convert a JSON text to a JavaScript object. A JSON parser
+    will recognize only JSON text and will not compile scripts.
+
+    In browsers that support native JSON support, JSON parsers are also faster.
+    Native JSON support is included in all major browsers and in the latest JavaScript standard.
+
+    Just use 
+                                obj = JSON.parse(txt);
+    instead of the eval().
+
+    For older browsers a JavaScript library is available at:
+                            https://github.com/douglascrockford/JSON-js
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------

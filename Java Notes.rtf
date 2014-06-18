@@ -1,0 +1,290 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf190
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww11420\viewh16480\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b\fs24 \cf0 \ul \ulc0 Notes on Java
+\b0 \ulnone \
+\
+\
+Define these terms:\
+	Polymorphism\
+	Inheritance\
+	Encapsulation\
+	Abstraction\
+	Classes  -  a blueprint for an object, that describes behaviors/states the objects of its type support.\
+	Objects  -  has states (variables) and behaviors (methods). An instance of a class.\
+	Instance\
+	Method\
+	Message Parsing\
+\
+\
+\
+
+\b General Notes:
+\b0 \
+	Everything in Java is an object.\
+	When compiling Java code it is compiled to a platform independent byte code, rather than compiling\
+	into platform specific machine code. The byte code is interpreted by the Java Virtual Machine (JVM)\
+	on whatever platform it is being run on. This makes Java portable.\
+\
+	Import libraries like:		import java.util.*;\
+	Java source code must be in a class definition. So after any import statements you need to create\
+	a class, and within that class create the main function:\
+\
+		public class MyClass \{\
+			public static void main(String args[]) \{\
+				body\'85\
+			\}\
+		\}\
+\
+	All class names should start with an upper case letter.\
+	All method names should start with a lower case letter.\
+	The name of the file should exactly match the class name in that file.\
+\
+	Java Modifiers:\
+		Modifiers are used to modify classes, methods, etc. There are two categories:\
+			Access Modifiers:		default, public, protected, private\
+			Non-access Modifiers:	final, abstract, strictfp\
+\
+	Java Variables:\
+		Local variables, class variables (static variables), instance variables (non-static variables).\
+\
+	Java Enums:\
+		Enums restrict a variable to have one of only a few predefined values. The values in this\
+		enumerated list are called enums. Enums can reduce the possible number of bugs in your\
+		code. Enums can be declared on their own or inside a class. Methods, variables, and\
+		constructors can be defined inside enums as well.\
+\
+		Ex.\
+			enum FreshJuiceSize \{ SMALL, MEDIUM, LARGE \}\
+\
+
+\b Keywords:
+\b0 \
+\
+	abstract\
+		\
+	byte\
+		Data type for one byte\
+	class\
+		Data type for a class\
+	do\
+		Do loop\
+	extends\
+		\
+	for\
+		For loop\
+	import\
+		To import libraries\
+	long\
+		Long number variable\
+	private\
+		\
+	short\
+		Short number variable\
+	switch\
+		Switch-case branching statements.\
+	throws\
+		\
+	volatile\
+		\
+	assert\
+		\
+	case\
+		Switch-case branching statements.\
+	const\
+		Declaring a constant.\
+	double\
+		Double float data type.\
+	final\
+		\
+	goto\
+		\
+	instanceof\
+		\
+	native\
+		\
+	protected\
+		Protected methods can be called from derived classes, private methods can\'92t.\
+	static\
+		\
+	synchronized\
+		\
+	transient\
+		\
+	while\
+		While loop\
+	boolean\
+		Boolean data type\
+	catch\
+		Used in exceptions (try-catch blocks)\
+	continue\
+		Skip to next iteration of loop.\
+	else\
+		Else in if-else statements.\
+	finally\
+		\
+	if\
+		If statement.\
+	int\
+		Int data type.\
+	new\
+		Used to create a new object of a class\
+	public\
+		\
+	strictfp\
+		\
+	this\
+		\
+	try\
+		Used in exceptions (try-catch blocks)\
+	break\
+		Break out of a loop\
+	char\
+		Character data type\
+	default\
+		Backup case in a switch statement\
+	enum\
+		Declares enumerated data type\
+	float\
+		Float data type\
+	implements\
+		Used to implement an interface\
+	interface\
+		\
+	package\
+		\
+	return\
+		Returns a value to calling function\
+	super\
+		\
+	throw\
+		\
+	void\
+		Void data type\
+\
+\
+\
+
+\b Classes and Objects:
+\b0 \
+	Ex.\
+		public class Dog \{\
+			String breed;\
+			int age;\
+			String color;\
+\
+			void barking() \{\
+			\}\
+			void hungry() \{\
+			\}\
+			void sleeping() \{\
+			\}\
+		\}\
+\
+	Local Variables are defined inside methods, constructors, or blocks.\
+	Instance variables are within a class but outside of any method.\
+	Class variables are declared in a class, outside any method, with the static keyword. All the objects\
+	of that class have the same value for a class variable.\
+	There are also Singleton Classes where you can only have one instance of a class.\
+\
+	Constructors:\
+		Constructors are invoked when a new object of a class is created. They will have the same\
+		name as the class\
+		Ex.\
+			public class Puppy \{\
+				public puppy() \{\
+				\}\
+				public puppy(String name) \{\
+				\}\
+			\}\
+\
+	Three steps to creating an object. Declare the object with a variable name with an object type.\
+	Instantiate by using the \'91new\'92 keyword to create the object. Initialize the object by using a\
+	constructor.\
+	Ex.\
+		Puppy myPup = new Puppy(\'93Adreus\'94);\
+\
+	Use dot operator to access public variables and methods.\
+\
+\
+\
+
+\b Source File Declaration Rules:
+\b0 \
+	- There can be only one public class per source file.\
+	- A source file can have multiple non-public classes.\
+	- The public class name should be the name of the source file as well which should be appended by\
+		.java at the end.\
+	- If the class is defined inside a package, then the package statement should be the first statement in\
+		the shore file.\
+	- If import statements are present then they must be written between the package statement and the\
+		class declaration. If there are no package statement then the import statement should be the\
+		first line in the source file.\
+	- Import and package statements will apply to all the classes present in the source file. It is not\
+		possible to declare different import and/or package statements to different classes in the\
+		source file.\
+\
+	Classes have several access levels and there are different types of classes (abstract, final, etc).\
+	There are also some special classes called Inner classes and Anonymous classes.\
+\
+	Java packages are a way of categorizing the classes and interfaces.\
+\
+\
+\
+
+\b Java Basic Data Types:
+\b0 \
+	Two types of data types in Java:\
+		Primitive Data types\
+		Reference/Object Data types\
+\
+	Primitive Data Types:\
+		byte		-  8 bit signed int\
+		short		-  16 bit signed int\
+		int		-  32 bit signed int\
+		long		-  64 bit signed int\
+		float		-  32 bit floating point\
+		double	-  64 bit floating point\
+		boolean	-  1 bit, true or false (default)\
+		char		-  16 bit Unicode character\
+\
+	Reference/Object Data Types:\
+		Objects I guess.\
+\
+	Octal numbers have a zero in front of them. i.e. 016\
+	Hex numbers have a 0x in front of them. i.e. 0xB49\
+\
+	Escape Characters:\
+		\\n, \\r, \\f, \\b, \\t, \\\'94, \\\'92, \\\\\
+		\\s	<\'97 space\
+		\\ddd	<\'97 octal character\
+		\\uxxxx	<\'97 Hexadecimal UNICODE character\
+\
+\
+\
+
+\b Variables:
+\b0 \
+	Local Variables:\
+		Access modifiers cannot be used with local variables. No default value for local variables so\
+		they need to be initialized or else they contain garbage.\
+\
+	Instance Variables:\
+		Instance variables are declared in a class but outside a method. They are variables assigned\
+		to all objects of that class. Instance variables have default values; for numbers it is zero, for\
+		booleans it is false, and for object references it is null. Access modifiers can be used on\
+		instance variables. They can be accessed directly by calling the variable inside it\'92s class, or to\
+		be more clear by using the \'93this\'94 keyword. But within static methods or in a different class they\
+		should be called using the ObjectReference.VariableName format.\
+\
+	Class/Static Variables:\
+		Declared with the static keyword in a class, but outside a method, constructor, or block. There\
+		is only one copy of a class variable per class. Mostly class variables are declared public for\
+		use by users of the class. Oftentimes a class variable is simply made to be a constant, as\
+		public/private, final and static. Static variables can be accessed by calling with the class\
+		name:		ClassName.VariableName\
+		Ex.\
+			private static }

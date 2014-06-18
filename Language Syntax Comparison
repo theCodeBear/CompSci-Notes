@@ -1,0 +1,196 @@
+Language Syntax Comparison
+
+
+
+Template
+        C               //code
+        C++             
+        Java            
+        Python          
+        JavaScript      
+        PHP             
+
+
+
+Skeleton Program
+        C                       int main(int argc, char *argv[]) {  }
+
+        C++                     using namespace std;
+                                int main(int argc, char *argv[]) {  }
+
+        Java                    public class Filename {
+                                    public static void main(String[] args) {  }
+                                }
+
+        Python (in *nix)        #!/usr/bin/python
+
+        JavaScript(in HTML)     <script>
+                                </script>
+
+        PHP                     <?php
+                                ?>
+
+
+Comments
+        C               // comment      or      /* multi-line comment */
+        C++             // comment      or      /* multi-line comment */
+        Java            // comment      or      /* multi-line comment */
+        Python          # comment       or      ''' docstring, multi-line comment'''
+        JavaScript      // comment      or      /* multi-line comment */
+        PHP             
+
+
+Importing Libraries
+        C               #include <library.h>
+        C++             #include <library>
+        Java            import java.library.section
+        Python          import library              or          from library import section
+        JavaScript      
+        PHP             
+
+
+Command Line Arguments
+
+    How CL Arguments are specified
+        C               number of args:     argc
+                        values of args:     *argv[]
+
+        C++             number of args:     argc
+                        values of args:     *argv[]
+        
+        Java            number of args:     args.length
+                        values of args:     args[]
+        
+        Python          library to use:     import sys
+                        number of args:     len(sys.argv)
+                        values of args:     sys.argv[]
+        
+        JavaScript      
+        PHP             
+
+    Put command line arguments in an int array
+        C               
+
+        C++             string theArgs[argc];
+                        for (i=0; i<argc; i++)
+                            theArgs[i] = atoi(argv[i]);
+
+        Java            
+        Python          
+        JavaScript      
+        PHP             
+
+
+I/O
+
+    Print to screen
+        C               printf("", vars);       or      puts("");
+        C++             cout << " ";
+        Java            System.out.println("");
+        Python          print ""
+        JavaScript      document.write("");
+        PHP             
+
+
+    Get input from keyboard
+        C               
+        C++             cin >> input;
+        Java            
+        Python          raw_input("prompt:")
+        JavaScript      
+        PHP             
+
+
+File I/O
+
+
+
+Strings and Arrays
+
+    Library to use for Strings:
+        C               #include <string.h>
+        C++             #include <string>
+
+    Initialize empty Array
+        C               datatype array[size];
+        C++             datatype array[size];
+        Java            datatype[] array = new datatype[size];
+        Python          array = []
+        JavaScript      
+        PHP             
+
+    Get Value at Array Index
+        C               array[index]
+        C++             array[index]
+        Java            array[index]
+        Python          array[index]
+        JavaScript      array[index]
+        PHP             
+
+    Get Character at String Index
+        C               str[index]
+        C++             str[index]
+        Java            str.charAt(index)
+        Python          str[index]
+        JavaScript      
+        PHP             
+
+    Length of an Array
+        C               (sizeof(array)/sizeof(*a))
+        C++             (sizeof(array)/sizeof(*a))
+        Java            array.length
+        Python          len(array)
+        JavaScript      
+        PHP             
+
+    Length of a String
+        C               strlen(str)
+        C++             str.length()
+        Java            str.length
+        Python          len(str)
+        JavaScript      
+        PHP             
+
+
+Functions
+
+    Function Prototypes
+        C               returnType funcName(type params, ...);
+        C++             returnType funcName(type params, ...);
+        Java            N/A
+        Python          N/A - must put definition above use
+        JavaScript      N/A
+        PHP             
+
+    Function Definitions
+        C               returnType funcName(type params, ...) {  }
+        C++             returnType funcName(type params, ...) {  }
+        Java            public static returnType funcName(type params, ...) {  }
+        Python          def funcName(params, ...):        - code indented
+        JavaScript      function funcName(params, ...) {  }
+        PHP             
+
+
+
+Class and Objects
+
+    Declaring a Class
+        C               N/A
+
+        C++             class ClassName {  }
+        
+        Java            public class ClassName {  }
+        
+        Python          class ClassName:
+                            code indented
+        
+        JavaScript      function ObjectName(constructorParams, ...) {  }
+        
+        PHP             
+
+
+
+
+
+
+

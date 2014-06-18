@@ -1,0 +1,1085 @@
+HyperText Markup Language (HTML) Notes
+
+
+
+syntax:     <openingTag  attribute="..." attribute="..."> blahblah </closingTag>
+
+
+<!DOCTYPE html>             // for html 5 the doctype is made real easy
+<!-- comment -->
+<html> </html>
+
+
+some attributes that can be used on any HTML element:
+    class - specifies 1+ classnames for an element (refers to a class in style sheet)
+    id - specifies a unique id for an element
+    style - specifies an inline CSS style for an element
+    title - specifies extra info about an element (displayed as a tool tip)
+
+
+
+
+************ HEAD ************
+
+
+<head> </head>                 // all of the indented tags here can be used in the head
+        <title> </title>            // title tag is required, is title in browser, search bar, and when added to favorites
+        <style> </style>        // used to define a style sheet in the head to be used in the body
+                <style type="text/css"> ... </style>
+        <meta>              // metadata is data about data. Provides metadata about the HTML document.
+                                 // Meta elements usually specify page description, keywords, author, last modified, etc
+                                 // Metadata isn't displayed, but is parsable by the machine.
+                                 // Can be used by browsers (how to display content or reload page, search engines (keywords), etc.
+                Example:
+                <meta name="keywords" content="HTML, CSS, XHTML, Javascript">
+                <meta name="description" content="Describe what the page is here">
+                <meta name="author" content="Todd Kronenberg">
+                <meta http-equiv="refresh" content="30">        // refresh page every 30 seconds
+                <meta charset="UTF-8">    // specifies the character set as Unicode using UTF-8
+        <link>                // allows document to link to external resource like a style sheet
+                <link rel="stylesheet" type="text/css" href="filename.css">
+        <script> </script>              // used to define a client-side script in the head element
+        <base> </base>      // specifies the base URL/target for all relative URLs in the page
+
+
+
+
+************ BODY ************
+
+
+<body> </body>
+<script> </script>
+<h1> </h1> ... <h6> </h6>
+<p> </p>
+<a href=" "> </a>
+        <a href="webpage to link to.html"> hypertext... <'a>'
+
+    // to link to a specific spot on the current webpage
+        <a href="#LinkToBookmarkedSpot"> </a>
+        <someTag id="bookmarkedSpotOnPage"> hypertext... <someTag>
+
+    // to link to a specific spot on a different webpage
+        <a href="webpage.html#LinkToBookmarkedSpot"> </a>
+
+<img src="URLpathOfFile" alt="Required - Text if image doesn't display" width=" " height=" ">
+        <map>           // defines an image-map
+        <area>           // defines a clickable area inside an image-map
+                    Example:
+                    <img src="blahblah.png" width="blah" height="blah" alt="beebloo" usemap="#themapname">
+                    <map name="themapname">
+                        <area shape="rect" coords="0,0,50,100" href="URLtolinkto" alt="blah">       // coord="left,top,right,bottom
+                        <area shape="circle" coords="90,50,3" href="URLtolinkto" alt="blah">         // coord="centerX, centerY, radius
+
+<br/> in XHTML or just <br> in html     // <br> is a line break (endline)
+                                        // empty elements are closed in the start tag
+<hr>            // horizontal line displayed on screen
+
+<strong> text </strong>     // should be used instead of the <b> (bold) tag, then <strong>'s
+                            // specific attributes can be controlled in CSS
+<em> text </em>             // should be used instaed of the <i> (italic) tag, then <em?'s
+                            // specific attributes can be controlled in CSS
+
+For buttons and links, use the "#" for the value of href or action if you don't yet have the
+thing set up for where they go or what they do. # will make it so clicking them doesn't do
+anything, rather than pulling up a webpage that says it doesn't exist.
+
+
+
+
+************ TABLE ************
+
+
+<table>         // table tag can have attribute border="1" to specify border of 1 pixel
+    <caption> Defines a table caption above the table </caption>
+    <colgroup>                          // colgroup allows applying styling to mutliple columns at once
+        <col span="2" style="background-color:red">     // use span to specify multiple columns
+        <col style="background-color:blue">
+    <thead>                             // thead tag groups header content, used in conjunction with tbody and tfoot
+        <tr>
+            <th> Header 1 </th>
+            <th> Header 2 </th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <td> </td>
+            <td> </td>
+        </tr>
+    </tfoot>
+    <tbody>
+        <tr>
+            <td> </td>
+            <td> </td>
+        </tr>
+        <tr>
+        </tr>
+    </tbody>
+</table>
+    // Notes on table: thead element must go in a table, after any caption element and colgroup elements
+    // and before any tbody, tfoot, and tr elements.
+
+
+
+
+************ LISTS ************
+
+
+<ol>            // numbered list
+    <li>  </li>
+    <li>  </li>
+</ol>
+<ul>            // bulleted list
+    <li>  </li>
+    <li>  </li>
+</ul>
+<dl>            // description list
+    <dt> Pie </dt>              // description term in the list
+        <dd>- apple </dd>     // description of the term
+    <dt> Cake </dt>
+        <dd>- chocolate </dd>
+</dl>
+    
+    
+
+
+************ SOME TAGS FOR FORMATTING TEXT ************
+
+
+<code> </code>      // prints in computery output
+<sub> </sub>        // subscript
+<sup> </sup>        // superscript
+<b> </b>
+<i> </i>
+<em> </em>
+<strong> </strong>
+<small> </small>        // smaller text
+<ins> </ins>            // inserted bext
+<del> </del>            // deleted text
+<mark> </mark>          // marked/highlighted text
+<kbd> </kbd>            // keyboard text
+<samp> </samp>          // sample computer code
+<var> </var>            // variable
+<pre> </pre>            // preformatted text
+<abbr> </abbr>          // abbreviation
+some others...
+
+
+
+
+************ BLOCKS ************
+
+
+HTML elements can be grouped together with <div> and <span>
+HTML elements are defined as block level or as inline elements.
+Block level elements normally start and end with a new line when displayed in the browswer.
+    i.e. <h1>, <p>, <ul>, <table>
+Inline elements are normally displayed without starting a new line.
+    i.e. <b>, <td>, <a>, <img>
+
+<div> </div>        // a block level element that defines a division or a section gropuing other
+                    // html elements. When used with CSS, <div> can be used to set style
+                    // attributes to a large block of content. <div> is also used to specify
+                    // the layout of the document.
+
+<span> <span>       // an inline element used as a container for text. Used with CSS to set
+                    // style to parts of the text.
+
+        Example of <div>:
+            <div>
+                <h2> blahblah </h2>
+                <p> parablahblah </p>
+            </div>
+
+        Example of <span>:
+            I told you to <span style="color:red">leave!</span>
+
+
+
+
+************ LAYOUT ************
+
+
+Use <div> to specify layout in HTML documents.
+
+<div id="value" style="css code"> elements to be grouped in the div </div>
+
+Example:
+    <div id="blahblah" style="background-color:#FF00AA; height:200px; width=100px; float:left;">
+        code and elements to go inside the div
+    </div>
+
+Can also use tables to create layout in an HTML document but it isn't good practice because
+tables are only supposed to be used for displaying tabular data.
+
+
+
+
+************ FORMS AND INPUT ************
+
+
+HTML forms are used to select different kinds of user input.
+They can pass data to a server.
+A form can include input elements like text fields, checkboxes, radio-butons, submit buttons,
+password textboxes, etc. It can also contain select lists, textarea, fieldset, legend, and
+label elements.
+
+Syntax:
+    <form>
+        input element...
+    <form>
+
+<input>     // used in a form to select user information. The "type" attribute specifies the
+            // type of input element being used. The "name" attribute is used to identify the
+            // specific input to get the data later through javascript of on the server.
+
+Text Fields:                // type must be "text"
+    <form>
+        Name: <input type="text" name="firstname">          // default width is 20 characters
+    </form>
+
+Password Field:             // type must be "password"
+    <form>
+        Password: <input type="password" name="thepassword">
+    </form>
+
+Radio Buttons:              // type must be "text"
+    <form>
+        <input type="radio" name="gender" value="male"> Male
+        <input type="radio" name="gender" value="female"> Female
+    </form>
+
+Checkboxes:                 // type must be "checkbox"
+    <form>
+        <input type="checkbox" name="food" value="pie">Pie
+        <input type="checkbox" name="food" value="ice cream"> Ice Cream
+    </form>
+
+Submit Button:
+    Submit button used to send form data to a server. The data is sent to the page specified in
+    the form's "action" attribute. The file defined in the "action" attribute usually does
+    something with data.
+    The type must be "submit" in the input element. The "value" attribute is the text that the
+    button displays.
+    The Form must include the the "name" attribute, the "action" attribute, and the "method"
+    attribute, whose value can be "get" or "post" I think.
+
+    <form name="theinput" action=blahblah.php" method="get">
+        Username: <input type=text" name="user">
+        <input type="submit" value="Submit">
+    </form>
+
+Various other form tags:
+    <form>
+                defines an html form for user input
+    <input>
+                defines an input control
+    <textarea>
+                defines a multiline input control
+    <label>
+                defines a label for an input element
+    <fieldset>
+                groups related elements in a form
+    <legend>
+                defines a caption for a fieldset element
+    <select>
+                defines a drop-down list
+    <optgroup>
+                defines a group of related options in a drop-down list
+    <option>
+                defines an option in a drop-down list
+    <button>
+                defines a clickable button
+    <datalist>
+                specifies a list of pre-defined options for input controls
+    <keygen>
+                defines a key-pair generator field for forms
+    <output>
+                defines the result of a calculation
+
+
+
+
+************ IFRAMES ************
+
+
+An Iframe is used to display a webpage within a webpage.
+
+Iframe stands for "inline frame".
+
+Syntax:
+        <iframe src="URL"> </iframe>      // the URL points to the location of the separate page
+
+<iframe src="blah.html" width="200" height="200" frameborder="0"></frame>
+            // height and width attributes specify the size of the iframe in pixels
+            // frameborder attribute tells whether or not to display a border around the frame
+
+<iframe src="blah.html" name="my_iframe"></iframe>
+<a href="blahbloop.html" target="my_iframe"> blahbloop website </a>
+
+            // in the above code, user the "name" attribute in the iframe tag to identify the
+            // frame with a name. You can then use an <a> link to display a webpage within the
+            // frame when the link is clicked on. Just need to specify the target in the <a>
+            // tag as the name from the iframe.
+
+
+
+
+************ COLORS IN HTML ************
+
+
+Colors in html are defined in RGB hexadecimal format like so:   #00FF00
+or by using 0-255 RGB values like so:                           rgb(0,255,0)
+or by using the color names:                                    green
+
+Black is #000000. White is #FFFFFF.
+
+Shades of gray are made by having equal values of all three colors, the lower the value the
+darker the gray is.
+
+There are 140 colors specified by name, including 17 standard colors. The following webpage
+shows all the colors specified by name:
+        http://www.w3schools.com/html/html_colornames.asp
+
+
+
+
+************ USING JAVASCRIPT ************
+
+
+Javascript makes HTML pages dynamic and interactive.
+
+<script>        // usd to define a client-side script, like JavaScript
+                // <script> either contains script code or points to an external script file
+i.e.
+    <script>
+        Javascript code...
+    </script>
+
+i.e.
+    <script src="javascript_file.js"> </script>
+
+JavaScript is commonly used for image manipulation, form validation, and dynamic content change.
+
+
+<noscript>      // the <noscript> tag specifies content to appear in case the user has scripts
+                // disabled in the broswer. It can contain any element that you can find inside
+                // the <body> element.
+
+i.e.
+    <script>
+        js code...
+    </script>
+    <noscript> Sorry, your browser does not support JavaScript. </noscript>
+
+
+
+
+************ ENTITIES ************
+
+
+Reserved character in HTML must be replaced with character entities, also characters not present
+on your keyboard can be replaced by entities.
+
+The "&" symbol and "&#" are used to specify entities.
+
+Each entity has a name and a number, use "&" to specify the entity's name, use "&#" to specify
+the entity's number. Entity names are easier to remember than their numbers, but its possible
+that not all browsers will support all the entity names, but they will support all entity
+numbers. Entity names are case sensitive.
+
+Syntax:
+            &entity_name;        or          &#entity)number;
+
+i.e.
+    <   =   &lt;
+    <   =   &#60;
+
+Browsers will always truncate white space down to one space, to add real spaces use the entity
+for non-breaking space:         &nbsp;
+
+To add a glyph (diacritical mark) to a letter use entities.
+The following webpage shows some diacritical marks and other entities:
+                    http://www.w3schools.com/html/html_entities.asp
+
+Some mathematical symbols, Greek letters, and other symbols can be used as entities. See the
+following webpage for a list of some of them:
+                    http://www.w3schools.com/html/html_symbols.asp
+
+
+
+
+************ PLUG-INS ************
+
+
+Plug-ins can be added to webpages with the <object> or <embed> tags.
+The best way to embed audio in a webpage is by using the HTML5 <audio> tag.
+The best way to embed video in a webpage is by using the HTML5 <video> tag.
+
+<object>
+            Defines an embedded object within an HTML document.
+            Is used to embed plug-ins like Java applets, ActiveX, PDF, and Flash in webpages.
+            Can also embed another webpage into the webpage.
+            The text between the <object> and </object> is displayed if the broswer doesn't
+                support the tag.
+            The <param> tag is used to pass parameters to the plug-in.
+i.e.
+        <object width="400" height="50" data="fileName of the plugin"></object>
+
+<embed>
+            Defines a container for an external application or interactive content (plug-in).
+            Has no closing tag, and therefore cannot contain alternative text.
+i.e.
+        <embed width="400" height="50" src="fileName of the plugin">
+
+
+Can play a youtube video in HTML by using either an <iframe> or <embed> tag and specify the
+youtube URL for the video as the value for the "src" attribute in either of those elements.
+
+
+
+
+
+
+
+************************ HTML 5 ************************
+
+
+HTML5 was designed to replace both HTML 4.01 and XHTML as the current standard for HTML.
+It was designed to deliver rich content without the need for additional plug-ins.
+HTML5 is cross-platform, it is designed to work on a PC, Tablet, smart phone, or smart tv.
+
+Some new features:
+    - <canvas> element for 2D drawing
+    - <video> and <audio> elements for media playback
+    - support for local storage
+    - new content-specific elements like <article>, <footer>, <header>, <nav>, <section>
+    - new form controls like calendar, date, time, email, url, search
+    - doctype is simplified:  <!DOCTYPE html>
+    - 32 new tags
+    - a few disused tags from HTML 4.01 deleted
+
+
+List of new tags in HTML 5 is inlcuded here:
+                            http://www.w3schools.com/html/html5_new_elements.asp
+
+
+--------------------
+
+
+New Semantic Elements
+
+    Semantic = meaning
+    Semantic elements = elements with meaning
+
+    Semantic elements clearly descibes its meaning to both the browser and the developer.
+
+    Examples of non-semantic elements:
+                        <div>   <span>          // They tell nothing about their content
+
+    Examples of semantic elements:
+            <form>      <table>     <img>       // they clearly define their content
+
+    So basically semantic tags are just container tags for text or other elements but their
+    names make them semantic, with the whole point being you should use them in a manner that
+    relates to their names. So a <header> should be used for a header. An <aside> should be
+    used for a sidebar or side area of content. A <nav> should be used to hold navigation links.
+    Etc. Basically semantic tags just make HTML code more readable, and therefore easier to
+    modify and update.
+
+
+    Some new semantic elements clearly define different parts of a web page:
+                                            |------------------------------------|
+                                            |             <header>               |
+        Areas of a webpage that are         |------------------------------------|
+        now defined by semantic elements:   |              <nav>                 |
+                                            |-----------------------|------------|
+                                            |                       |            |
+                                            |                       |            |
+                                            |      <section>        |            |
+                                            |                       |            |
+                                            |                       |  <aside>   |
+                                            |                       |            |
+                                            |-----------------------|            |
+                                            |                       |            |
+                                            |                       |            |
+                                            |      <article>        |            |
+                                            |                       |            |
+                                            |                       |            |
+                                            |-----------------------|------------|
+                                            |               <footer>             |
+                                            |------------------------------------|
+
+    <section>
+            a section is a thematic grouping of content, typically with a heading
+
+    <article>
+            specifies independent, self-contained content. An article should make sense on its
+            own and it should be possible to distribute it independently from the rest of the
+            website. Should be used in things like a forum post, blog post, news story, comment.
+
+    <nav>
+            Defines a set of navigation links.
+            Intended to be a container element for large blocks of navigation links.
+
+    <aside>
+            defines some content aside from the content it is place in (like a sidebar).
+
+    <header>
+            specifies a header for a document or section.
+            should be used as a container for introductory content
+
+    <footer>
+            specifies a footer for a document or section.
+            should contain info about its containing element.
+            typically contains the author of the coument, copyright info, contact info, etc.
+
+    <figure> and <figcaption>
+            <figure> specifies self-contained content like illustrations, diagrams, photos,
+            code listing, etc. The content of the <figure> element is related to the main flow
+            but its positiin should be independent of the main flow, so if removed it should
+            not affect the document.
+
+            <figcaption> tag defines a caption for a <figure> element.
+            it can be placed as the first or last child of the <figure> element.
+
+    All the above elements except <figcaption> are block elements. To get older browsers to
+    display them properly set the CSS display attribute of all of them to "block":
+                header, section, footer, aside, nav, main, article, figure { display: block; }
+
+    Problems with Interet Explorer 8 and earlier versions:
+        IE8 and earlier doesn't allow styling of CSS elements it doesn't recognize. To get
+        around this you need to download a JavaScript workaround called "HTML5 Shiv". You need
+        to download HTML5 Shiv from:            http://code.google.com/p/html5shiv/
+        Then enable HTML5 Shiv in the <head> element like so:
+                    <!-- [if lt IE 9]>
+                    <script src="html5shiv.js"></script>
+                    <![endif] -->
+
+
+    Other Semantic Elements in HTML5:
+
+        <details>
+                    defines additional details that the user can view or hide
+        <hgroup>
+                    groups heading elements
+        <main>
+                    specifies the main content of a document
+        <mark>
+                    defines the marked/highlighted text
+        <summary>
+                    defines a visible heading for a <details> element
+        <time>
+                    defines a date/time
+
+
+--------------------
+
+
+New Input Types
+
+    HTML5 has some new input types for forms. They allow better input control and validation.
+
+
+    color
+            used for input fields that should contain a color (lets user select a color)
+    date
+            allows user to select a date
+    datetime
+            allows user to select a date and time (with timezone)
+    datetime-local
+            allows user to select a date and time (not timezone)
+    email
+            used for input fields that should contain an email address
+    month
+            allows the user to select a month and year
+    number
+            used for input fields that should contain a numeric value
+            Attributes:     max     min     value(default value)    step(legal interval)
+    range
+            used for input fields that should contain a value from a range of numbers
+            Attributes:     max     min     value(default value)    step(legal interval)
+    search
+            used for search fields (a search field behaves like a regular text field)
+    tel
+            used for input fields that should contain a telephone number
+    time
+            allows user to select a time
+    url
+            used for input fields that should contain a URL address.
+            The value of the URL field is automatically validated when the form is submitted.
+    week
+            allows the user to select a week and year
+
+
+--------------------
+
+
+New Form Elements
+
+    HTML5 has three new form elements. If any browsers don't support these they will just work
+    as normal text fields so it's not a problem.
+
+    <datalist>
+                Specifies a list of pre-defined options for an <input> element.
+                Used to provide an "autocomplete" feature on <input> elements in the form of
+                a dropdown list of pre-defined options as they input data. Use the <input>
+                element's list attribute to bind it together with a <datalist> element.
+                    i.e.
+                            <form>
+                                <input list="listName" name="blahb">
+                                <datalist id="sameAsListNameAbove">
+                                    <option value="whatever">
+                                    <option value="whatevs">
+                                    ...
+                                </datalist>
+                            </form>
+
+    <keygen>
+                The purpose of the <keygen> element is to provide a secure way to authenticate
+                users. The tag specifies a key-value pair generator field in a form.
+                When the form is submitted, two keys are generated, one private and one public.
+                The private key is stored locally, and the public key is sent to the server. The
+                public key could be used to generate a client certificate to authenticate the
+                user in the future.
+                    i.e.
+                            <form>
+                                Username: <input type="text" name="userN">
+                                Encryption: <keygen name="security">
+                            </form>
+
+    <output>
+                represents the result of a calculation (like one performed by a script).
+                Can give a real time result of a calculation. Basically it just outputs a
+                value.
+                    i.e.
+                            <form oninput="x.value=parseInt(a.value)+parseInt(b.value)">0
+                                <input type="range" id="a" value="50">100 +
+                                <input type="number" id="b" value="50">=
+                                <output name="x" for="a b"></output>
+                            </form>
+
+
+--------------------
+
+
+New Form Attributes
+
+    New attributes for <form>:
+
+        autocomplete (a new attribute for <form> and <input>)
+                    Can be turned "on" or "off".
+                    When on, the browser automatically complete values basd on values that the
+                    user has entered before.
+                    This attribute works on <form> and the following <input> types: text, url,
+                    search, tel, email, password, datepickers, range, and color.
+
+        novalidate
+                    A boolean attribute that specifies that the form-data (input) should not
+                    be validated when submitted. It doesn't take value, you simply type it in
+                    to the opening <form> tag. This can be used for example to turn off the
+                    validation in forms that have input types that auto-validate like URL.
+
+
+    New attributes for <input>:
+
+        autofocus
+                    A boolean attribute that, when present, specifies that an <input> element
+                    should automaticaly get focus when the page loads. Doesn't take any value.
+
+        form
+                    Specifies one or more forms an <input> element belongs to. To refer to more
+                    than one form use a space-separated list of form id's. This allows you to
+                    have an input element outside of a <form> tags but still include it in the
+                    form.
+
+        formaction
+                    Specifies the URL of a file that will process the input control when the
+                    form is submitted. It overrides the action attribute of the <form> element.
+                    Use this to have two different submit buttons, one that does the action
+                    the form tag specifies, and one that does its own action according to its
+                    formaction attribute. This attribute can only be used with type="submit"
+                    and type="image"
+
+        formenctype
+                    Specifies how the form-data should be encoded when submitting it to the
+                    server (only for forms with the method="post"). This attribute overrides
+                    the enctype attribute of the <form> element. This attribute can only be
+                    used with type="submit" and type="image".
+
+        formmethod
+                    Defines the HTTP method for sending form-data to the action URL. Overrides
+                    the "method" attribute of the <form> element. This attribute can only be
+                    used with type="submit" and type="image". Values are "post" or "get" just
+                    like with the <form>'s method attribute.
+
+        formnovolidate
+                    A boolean attribute that takes no value. When present it specifies that
+                    the <input> element should not be validated when submitted. It overrides
+                    the novalidate attribute of the <form> element. This attribute can only
+                    be used with type="submit".
+
+        formtarget
+                    Specifies a name or a keyboard that indicate where to display the response
+                    that is received after submitting the form. Overrides the "target"
+                    attribute of the <form> element. This attribute can only be used with
+                    type="submit" and type="image".
+
+        height and width
+                    specify the height and width of an <input> element. This attribute can only
+                    be used with type="image". Always specify both height and width for images.
+                    If you don't specify both the size and width of an image then when the page
+                    loads it won't reserve that space, and once the image loads the layout of
+                    the page will be changed to make space for the image (this is what happens
+                    on btc-e.com! - so annoying).
+
+        list
+                    Refers to a <datalist> element that contains pre-defined options for an
+                    <input> element. You need to set the value of this list attribute to the
+                    same thing as the <datalist>'s id value in order to logically connect them
+                    so that the list holds <datalist>'s value options.
+
+        min and max
+                    Specify the minimum and maximum value for an <input> element. These
+                    attributes work with the following input types: number, range, date,
+                    datetime, datetime-local, month, time, and week.
+
+        multiple
+                    a boolean attribute that takes no value and, when present, specifies that
+                    the user is allowed to enter more than one value in the <input> element.
+                    This attribute only works with the following types: email, file.
+
+        pattern
+                    specifies a regular expression that the <input> element's value is checked
+                    against. The pattern attribute only works with the following types: text,
+                    search, url, tel, email, and password. Use the global "title" attribute
+                    to describe the pattern to help the user.
+
+        placeholder
+                    Specifies a short hint that describes the expected value of an input field.
+                    This could be a sample value or a short description of the expected format.
+                    This attribute works with the following types: text, search, url, tel,
+                    email, and password.
+
+        required
+                    A boolean attribute that takes no value and, when present, specifies that
+                    an input field must be filled out before submitting the form. This
+                    attribute works with the following types: text, search, url, tel, email,
+                    password, date pickers, number, checkbox, radio, and file.
+
+        step
+                    Specifies the legal number intervals for an <input> element. This step
+                    attribute can be used together with the min and max attributes to create
+                    a range of legal values. This attribute works with the following types:
+                    number, range, date, datetime, datetime-local, month, time, and week.
+
+
+--------------------
+
+
+The <canvas> Element
+
+    The <canvas> tag is used to draw 2D graphics, on the fly, on a web page, via JavaScript
+    code. The <canvas> tag is just a container for graphics, the JavaScript code is what
+    actually does the drawing.
+
+    IE8 and earlier version don't support <canvas>.
+
+    Create a canvas:
+            A canvas is a rectangular area on an HTML page which, by default, has no border
+            and no content.
+
+            <canvas id="canvasName" width="200" height="100"></canvas>
+
+            Always specify an id attribute because that's how JavaScript can work with the
+            canvas element. Also always specify the height and width.
+            You can have multiple canvas elements on one HTML page.
+
+            To add a border use some inline CSS code.
+                            i.e.  style="border:1px solid #000000;"
+
+    To learn how to actually draw graphics into the <canvas> go to the JavaScript notes.
+
+
+--------------------
+
+
+Inline SVG (Scalable Vector Graphics)
+
+    HTML5 supports inline SVG.
+    SVG is used to define vector-based graphics for the web. SVG defines the graphics in XML
+    format. SVG graphics don't lose any quality when zoomed or resized. Every element and
+    every attribute in SVG files can be animated.
+
+    Advantages of SVG over other image formats:
+        - SVG images can be created and edited with any text editor
+        - SVG images can be searched, indexed, scripted, and compressed
+        - SVG images are scalable
+        - SVG images can be printed with high quality at any resolution
+        - SVG images are zoomable without degradation
+
+    Embed SVG elements into an HTML page like so:
+
+        <svg width="200" height="200">
+            svg code...
+        </svg>
+
+
+    Differences between Canvas and SVG:
+
+        SVG is a language for describing 2D graphics in XML.
+        Canvas draws 2D graphics on the fly, with JavaScipt.
+
+        SVG is XML based, which means that every element is available within the SVG DOM. You
+        can attach JavaScript event handlers for an element.
+
+        In SVG, each drawn shape is remembered as an object. If attributes of an SVG object
+        are changed the browser can automatically re-render the shape.
+
+        Canvas is rendered pixel by pixels. In Canvas, one the graphic is drawn, it is forgotten
+        by the browser, if its position should be changed, the entire scene needs to be redrawn,
+        including any objects that might have been covered by the graphic.
+
+        Canvas is resolution dependent, SVG is resolution indepenedent.
+        Canvas has no support for event handlers, SVG does.
+        Canvas has poor text rendering capabilities.
+        You can save Canvas images as .png or .jpg.
+        Canvas is well suited for graphic-intensive games.
+        SVG is not suited for game applications.
+        SVG is best suited for applications with large rendering areas (google maps).
+        SVG renders slowly if graphics are complex (anything that uses the DOM a lot is slow).
+
+
+    To learn how to use SVG go to the SVG tutorial in the XML group of tutorials.
+
+
+--------------------
+
+
+The <video> Element
+
+    The <video> element provides a standard way to embed a video or move on a webpage.
+
+    <video width="320" height="240" controls>           // control attribute adds video controls
+        <source src="filename" type="video/videoType">  // i.e. type="video/mp4"
+        <source src="filename" type="video/videoType">  // i.e. type="video/webm"
+        Your browser does not support the video tag.    // text displays if video not supported
+    </video>
+
+    The video element can take multiple <source> elements to provide different sources for
+    the video. The first source that is recognized by the browser is the one that is used.
+    Three different MIME Types for Video formats are:   mp4, WebM, Ogg
+    None of those 3 types are supported by all browsers.
+    Chrome supports all three, IE only supports mp4, Firefox supports all three, Safari only
+    supports mp4, Opera supports WebM and Ogg.
+
+    HTML5 has DOM methods, properties, and events for the <video> and <audio> elements. These
+    allow you to manipulate <video> and <audio> elements using JavaScript.
+    For example, there are methods for playing, pausing, and loading. And properties like
+    duration and volume. There are also DOM events that can notify you when the <video> beings
+    to play, is paused, is ended, etc.
+
+    Can make buttons for play/pause, changing the size of the video, and more. See the example
+    at this webpage for an example of how to do this:
+                http://www.w3schools.com/html/tryit.asp?filename=tryhtml5_video_js_prop
+
+    The HTML5 video tags are <video>, <source>, and <track>.
+    <track> defines text tracks in media elements (<video> and <audio>). Use it to specify
+    subtitles, caption files, or other files containing text that should be visible when the
+    media is playing.
+
+
+--------------------
+
+
+The <audio> Element
+
+    The <audio> element provides a standard way to play audio files on a web page.
+    IE8 and earlier version don't support the <audio> element.
+
+    <audio controls>
+        <source src="filename" type="audio/audioType">
+        <source src="filename" type="audio/audioType">
+        Your browser does not support the audio element.
+    </audio>
+
+    As can be seen by the above code, the <audio> element oworks pretty much exactly like
+    the <video> element in HTML5.
+
+    Three audio formats supports by the <audio> element:    mp3     wav     ogg
+    IE supports mp3.
+    Chrome supports all three.
+    Firefox supports all three.
+    Safari supports mp3 and wav.
+    Opera supports wav and ogg.
+
+
+--------------------
+
+
+Geolocation
+
+    TAKE NOTES ON THIS AT A LATER TIME
+
+
+
+
+--------------------
+
+
+Drag and Drop
+
+    In HTML5 any element can use the drag and drop feature.
+
+    To make an element draggable:
+
+      JavaScript:
+        1.  function allowDrop(ev) { ev.preventDefault(); }
+
+        2.  function drag(ev) { ev.dataTransfer.setData("Text", ev.target.id); }
+
+        3.  function drop(ev) {
+        4.      var data = ev.dataTransfer.getData("Text");
+        5.      ev.target.appendChild(document.getElementById(data));
+            }
+      HTML:
+        6.  <div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+
+        7.  <img id="drag1" src="img_blah.fig" draggable="true"
+            ondragstart="drag(event)" width="300" height="100">
+
+        So, the above code is an example of making an image that can drag and drop into a
+        rectangle (<div> element). It has numbers to mark the lines of code. Here is the
+        explanation of the code above:
+
+        - The image in line 7 is the object to drag, so include an attribute:
+                        draggable="true"
+
+        - Specify what will happen when the element is dragged, using an attribute that takes
+          a function as its value, and the function must take the event as its argument:
+                ondragstart="drag(event)"                // in line 7 still
+
+        - That function - drag(event) - must use the event's property "dataTransfer" and that
+          property's method setData(), to set the data type and value of the dragged data. So in line 2 we have:
+                    function drag(ev) { ev.dataTransfer.setData("Text", ev.target.id); }
+          "Text" is the data type and you specify the value of the dragged data by its id, which you get get by saying event.target.id.
+
+        - Now specify where the dragged data can be dropped by looking at the element where we
+          will drop in line 6. You use the ondragover attribute and set its value as a function
+          that takes the event as an argument:
+                    ondragover="allowDrop(event)
+
+        - The function - allowDrop(event) - needs code to allow something to be dropped into it
+          because by default nothing can be dropped into an element. You need to prevent the
+          default handling of the element by using the preventDefault() method, called from
+          the event. This is line 1:
+                    function allowDrop(ev) { ev.preventDefault(); }
+
+        - Then specify what happens to the element that is getting dropped on by using the
+          ondrop attribute in line 6. This attribute takes a function as its value and the
+          function must have the event as its argument:
+                    ondrop="drop(event)"
+
+        - Finally, code the function for the ondrop event as shown in lines 3 through 5. First
+          get the data that has been transfered by calling the getData() method on the
+          dataTransfer property of the event. The argument for the getData() method is the
+          data type that is being transfered, in this case it is "Text". Save this data in a
+          variable:
+                    var data = ev.dataTransfer.getData("Text");
+          Then append that data as a child onto the event of the element being dropped on:
+                    ev.target.appendChild(document.getElementById(data));
+
+        That's it.
+
+
+--------------------
+
+
+Web Storage
+
+    HTML5 allows web pages to store data locally within the user's browser.
+    This is even better than using cookies because it is more secure and faster. You can also
+    store large amounts of data with affecting the website's performance.
+
+    The data is stored in name/value pairs, and a web page can only access data stored by
+    itself.
+
+    Note: name/value pairs are always stored as strings, will need to convert them later if
+          need to use them as some other type.
+
+    Unlike cookies, the storage limit is far large (at least 5MB) and information is never
+    transferred to the server.
+
+    Not supported by IE7 and earlier versions.
+
+
+    Two new objects are used for storing data on the client:
+        window.localStorage     -       stores data with no expiration date
+        code.sessionStorage     -       stores data for on session (data lost when tab closed)
+
+
+    Before starting to use web storage check browser support for localStorage and
+    sessionStorage:
+            if (typeof(Storage) !== "undefined") {
+                    // code for web storage
+            } else {
+                    // no web storage suppport
+            }
+
+
+    localStorage Object:
+        Stores data with no expiration date.
+        Syntax:
+            // to store
+                localStorage.setItem("key", "value");
+                localStorate.key = "value";        // alternative way to do it
+
+            // to retrieve and insert into an element
+                document.getElementById("id").innerHTML=localStorage.getItem("key");
+                document.getElementById("id").innerHTML=localStorage.key;     // alternate way
+
+            // to remove the localStorage item
+                localStorage.removeItem("key");
+
+
+    sessionStorage Object:
+        Same as localStorage but only stores data for current session, data is then deleted.
+        Syntax is the same, except no need for the removeItem() method.
+
+
+--------------------
+
+
+Application Cache
+
+    With HTML5 you can make an offline version of a web application by creating a cache
+    manifest file.
+
+    SKIPPING THIS SECTION FOR NOW.
+
+
+
+
+
+--------------------
+
+
+Web Workers
+
+    A web worker is a JavaScript running in the backgroun without affecting the performance
+    of the page.
+
+    SKIPPING THIS SECTION FOR NOW.
+
+
+
+--------------------
+
+Server-Sent Events
+
+    Server-Sent Events allow a web page to get updates from a server.
+
+    SKIPPING THIS SECTION FOR NOW.
+
+
+
+-----------------------------------------------------------------------------------------------

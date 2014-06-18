@@ -1,0 +1,858 @@
+*nix Command Line and Shell (Bash) Programming
+
+
+-------------------- Command Line --------------------
+
+
+*nix systems' file structure is always a single tree with a root (/) directory, unlike Windows file
+systems that have each physical hard-drive be a different drive, therefore a different tree.
+
+Most programs are installed in the /usr/bin directory.
+
+Most commands operate like this:        command -options arguments
+
+- vs -- options:
+    Options for a command can come in a shortened form using -option or in long form using --option.
+    This shorthand "-" version is usually used on the command line itself, but for shell scripting
+    it is better to using the long form "--" version because then it will be more clear what the
+    option is when the script is viewed later on.
+
+File Names
+    File names that being with a period are hidden.
+    *nix systems have no concept of file name extensions, the programs used probably do care.
+    *nix systems allow spaces and special characters in file names but you should not use spaces (use
+    underscores instead) and you should limit the special characters to periods, dashes, and underscores.
+
+A note on paths:
+    When you type in a command without specifying a path name then the system does not search the
+    entire computer, it only searches a list of directories it maintains where executable files are
+    kept. If it does not find the program in those directories, it will issue the "command not found"
+    error message. The list of directories is called your path. You can view the directories in your
+    path with "echo $PATH", which outputs a colon-separated list of the path names contains in your
+    path.
+    You can add directories to your path with the command:      export PATH=$PATH:the_directory
+    But a better way is to edit your .bash_profile or .profile file to include the above command, then
+    the command will be done automatically every time you log in.
+    Most Linux distributions encourage a practice of having a bin directory as a subdirectory of your
+    home directory, and putting all the programs you personally use in there. So you can create this
+    bin directory in your home directory, then add that directory to your path in the .bash_profile
+    file. Now any shell scripts you put in there will be executed just by typing in the name of the
+    program at the command prompt, no matter what directory you are in.
+
+
+File System
+    /       root directory
+    /boot   in linux the linux kernel and boot loader files are kept here, kernel is vmlinuz
+    /etc    contains configuration files for the system, all file in here are text files.
+            /etc/passwd - contains essential information for each user, this is where users
+                          are defined
+            /etc/fstab - contains a table of devices that get mounted when your system boots
+                         and defines the disk drives.
+            /etc/hosts - lists the network host names and IP addresses that are intrinsically
+                         known to the system.
+            /etc/init.d - contains the scripts that start various system services typically
+                          at boot time.
+    /bin, /usr/bin      these two directories contain most of the programs for the system.
+                        The /bin directory has the essential program the system requires to
+                        operate. The /usr/bin directory contains applications for the
+                        system's users.
+    /sbin, /usr/sbin    the sbin directories contain programs for system administration,
+                        mostly for use by the superuser.
+    /usr    contains a variety of things that support user applications.
+            /usr/share/x11 - supports files for the X windows system.
+            /usr/share/dict - dictionaries for the spelling checker (commands: look and aspell).
+            /usr/share/doc - various documentation files in a variety of formats.
+            /usr/share/man - the man pages are kept here
+            /usr/src - source code files. If you installed the kernel source code package, you
+                       will find the entire linux kernel source code here (in linux machines).
+    /usr/local      this directory and its sub-directories are used for the installation of
+                    software and other files for use on the local machine. So software that
+                    is not part of the official distribution usually goes here (as opposed to
+                    /usr/bin). When you install programs on the system they should be installed
+                    in one of the /usr/local directories, usually the /usr/local/bin directory.
+    /var    contains files that change as the system is running
+            /var/log - contains log files, these are updated as the system runs. You can view
+                       the files in here from time to time to monitor the health of the system.
+            /var/spool - holds files that are queued for some process, such as mail messages
+                         or print jobs.
+    /lib    the shared libraries (similar to DLLs in Microsoft Windows).
+    /home   this is where users keep their personal work. In general this is the only place
+            users are allowed to write files.
+    /root   this is the superuser's home directory.
+    /tmp    a directory in which programs can write their temporary files
+    /dev    a special directory because it doesn't contain files in the usual sense. It contains
+            devices that are available to the system. On *nix systems devices are treating like
+            files. You can read and write devices as though they were files.
+    /proc   this directory is also special in that it does not contain files, in fact it doesn't
+            really exist at all, the entire directory is virtual. It contains little peep holes
+            into the kernel itself. There are a group of numbered entries in this directory
+            that correspond to all the processes running on the system. (I don't think this is
+            on Macs, or it is named differently).
+    /media, /mnt    the /media directory is normal directory used in a special way, it is used
+                    for mount points. The process of attaching a device to the directory tree
+                    is called mounting. For a device to be available it must first be
+                    mounted. And on systems that require manual mounting of removable devices,
+                    the /mnt directory provides a convenient place for mounting these
+                    temporary devices.
+
+
+Wildcards
+    Wildcards can be used when specifying filenames, they allow you to select filenames based on
+    patterns of characters so that you can rapidly select groups of filenames instead of typing
+    out every single separate file you want to do something with. You can use wildcards with any
+    command that accepts filename arguments.
+
+    *               matches any characters, i.e. *.html refers to all html files in a directory
+    ?               matches any single character
+    [characters]    matches any character that is a member of the set of characters. The set of
+                    characters can also be expressed as a POSIX character class as one of the
+                    following:
+                                    [:alnum:]       alphanumeric characters
+                                    [:alpha:]       alphabetic characters
+                                    [:digit:]       numerals
+                                    [:upper:]       uppercase alphabetic characters
+                                    [:lower:]       lowercase alphbetic characters
+    [!characters]   matches any character that is not a member of the set of characters
+
+    Some examples of using wildcards:
+        *           all filenames
+        g*          all filenames the begin with a "g"
+        b*.txt      all filenames that beging with a "g" and end with ".txt"
+        Data???     any filenames that beings with the characters "Data" followed by exactly three
+                    more characters
+        [abc]*      any filename that begins with an "a", "b", or "c"
+        [[:upper:]]*    any filename that beings with an uppercase letter
+        BACKUP.[[:digit:]][[:digit:]]   any filename that begins with the characters "BACKUP"
+                                        followed by exactly two numerals
+        *[![:lower:]]   any file name that doesn not end with a lowercase letter
+
+
+Commands
+    Commands can be one of 4 different kinds:
+        1. An executable program
+            like all those file in /usr/bin. Within this category, programs
+            can be compiles binaries such as programs written in C and C++ or programs written
+            in scripting languages such as the shell, Perl, Python, etc.
+        2. A command built into the shell itself
+            Bash provides a number of commands internally called shell builtins. The cd command,
+            for example, is a shell builtin.
+        3. A shell function
+            These are miniature shell scripts incorporated into the environment.
+        4. An alias
+            Commands that you can define yourself, built from other commands.
+
+
+----COMMANDS----
+
+
+pwd
+    Print working directory.
+
+
+ls
+    List file and directories in the current directory.
+    You can list the contents of multiple directories at once
+    ls -l                   <- list the files in the working directory in long format
+    ls pathname pathname    <- list contents of multiple directories
+    ls -a                   <- list all files (including hidden files)
+    ls -la                  <- list all files in long format
+    Long format shows the file permissions, the owner, the group, the size in bytes,
+    modification time, and file name.
+    When a file's first character in its file perissions is "l" it means that the file is a
+    symbolic link. Also the filename will show the file (symbolic link) points ("->") to another
+    file (the file that is run by the symbolic link).
+
+
+cd
+    Change the current directory.
+    Syntax:     cd pathname
+    cd, cd ~, cd ~userName      <- these change the working directory to the home directory
+    cd -                        <- this changes the working directory to the previous one
+    The pathname can be an absolute or relative pathname.
+
+
+less
+    View text files starting from the top of the file.
+    Syntax:     less textfile_name
+    Controlling less:
+        Spacebar to scroll down by one full page
+        "b" to scroll up by one full page
+        Enter to scroll down by one line
+        "q" to exit less
+        "G" to go to end of the text file
+        "1G" to go to beginning of the text file
+        "/characters" to search for sequence of characters from current point to end of file
+        "n" to repeat the previous search
+        "h" to display a complete list of less commands and options
+
+
+file
+    Classify a files content's. Tells you what kind of data a file contains.
+    Syntax:     file filename
+    Output of a python file for instance will be:
+            filename: a path script text executable
+    Some file types are:
+        ASCII text
+        Bourne-Again shell script text
+        HTML document text
+        Zip arhive data
+        JPEG image data
+        GNU tar archive
+        etc.
+
+ln
+    Creates a symbolic link.
+    Symbolic links are useful for say a file that the system uses but the system expects it to
+    always have the same filename but say there are different versions of whatever thing it is,
+    and the symbolic link will make it so even if the version changes it will always have the same
+    filename that the system can use, which points to the correct version.
+
+
+cp
+    Copies files and directories.
+    Can be used to copy a file in the same directory, or to copy files to other directories.
+    Syntax:
+                cp file1 file2              copies file1 to a new filename (file2).
+                cp file ... directory       copies multiple files (and/or directories) to a
+                                            different directory.
+    Examples of using cp:
+                cp file1 file2              copies contents of file1 into file2, if file2 does
+                                            not exist, it is created.
+                cp -i file1 file2           same as above except the -i (interactive) option means
+                                            that if file2 already exists, the user is prompted
+                                            before it is overwritten with the contents of file1.
+                cp file1 dir1               copies the contents of file1 into a file named file1
+                                            inside of directory dir1.
+                cp -R dir1 dir2             copies the contents of directory dir1, if dir2 does
+                                            not exsit then it is created. Otherwise it creates a
+                                            directory named dir1 within dir2.
+
+
+mv
+    Moves or renames files and directories depending on how it is used.
+    Syntax to rename a file:                                        mv filename1 filename2
+    Syntax to move files/directories to a different directory:      mv file ... directory
+    Examples of using mv:
+                mv file1 file2              if file2 does not exist then file1 is renamed file2,
+                                            if file2 does exist then its contents are replaced
+                                            with the contents of file1.
+                mv -i file1 file2           same as above except the -i option means that if file2
+                                            exists then the user will be prompted before it is
+                                            overwritten with the contents of file1.
+                mv file1 file2 file3 dir1   file1,file2,and file3 are moved to directory dir1, if
+                                            dir1 does not exists mv will exit with an error.
+                mv dir1 dir2                if dir2 does not exist then dir1 is renamed dir2,
+                                            otherwise the directory dir1 is moved within dir2.
+
+
+rm
+    Removes (deletes) files and directories.
+    To delete directories you have to use the -r option, which stands for recursive and will
+    recursively delete all files and sub-directories within the specified directory. If the
+    directory is empty though you don't need to use the -r option.
+    Syntax to delete a file:            rm file ...
+    Syntax to delete a directory:       rm -r directory
+    Examples of using rm:
+                rm file1 file2              deletes file1 and file2.
+                rm -i file1 file2           the -i (interactive) option gives the user a prompt
+                                            before each filed is deleted
+                rm -r dir1 dir2             directories dir1 and dir2 are deleted along with all
+                                            their contents
+                rm *~                       delete all files in the current working directory that
+                                            end with the "~" character. Some applications create
+                                            backup files using this naming scheme, using this
+                                            command will clean them out of a directory.
+
+    Tip for using rm: You can do massive damage to the system by deleting stuff on accident,
+    especially when using wildcards. One way to safeguard yourself is to construct the command
+    with ls before you use rm, this way you can see all the things listed that will be deleted
+    with the command.
+
+
+mkdir
+    Creates one or more directories.
+    Syntax:                 mkdir directory ...
+
+
+type
+    Displays information about command type.
+    A shell builtin command that displays the kind of command the shell will execute, given
+    a particular command name.
+    Syntax:
+                type command
+    Examples of using type:
+                type type               output: type is a shell builtin
+                type ls                 output: ls is aliased to ls --color=tty
+                type cp                 output: cp is /bin/cp
+
+
+which
+    Locates a command.
+    Syntax:
+                which command
+    Example of using which:
+                which ls                output: /bin/ls
+
+
+help
+    Displays reference page for shell builtin commands.
+    The help command is bash's built-in help facility that is available for each of the shell
+    builtins. You can add the -m option to change the format of the output (I think -m doesn't
+    work on Macs).
+
+    In the description of a command, when it shows syntax for a command, square brackets refer
+    to optional items, and a vertical bar "|" indicuates mutually exclusive items.
+
+    Many executable programs support a "--help" joption that displays a description of the
+    command's supported syntax and options (This maybe doesn't work on Macs, but when you type
+    incorrect options for a command it will print out an error message and then that command's
+    usage syntax, so that works basically the same way).
+
+
+man
+    Displays an on-line command reference.
+    Most executable program intended for command line use provide a formal documentation called
+    a manual or man page. On most systems the "man" command uses the "less" program to display
+    the man page.
+    Syntax:                 man program             <- program is the name of the command
+
+    Other documentation:
+    Many software packages installed on a system have documentation files residing in the
+    /usr/share/doc directory. Most of them are stored in plain text, some in html. If the
+    files have a .gz file extension that means they have been compressed with the gzip
+    compression program. The gzip package includes a special version of less called zless
+    that will display the contents of gzip-compressed text files.
+
+
+
+
+I/O Redirection
+    Most command line programs that display their results do so by sending them to standard
+    output, which displays on screen, but you can redirect standard output to a file using
+    the ">" character to overwrite the file, or ">>" to append to the file. If the file
+    doesn't exist it will be created.
+
+    >
+        Redirects stdout to a file, overwrites the file.
+        Syntax:         command > filename
+        i.e.            ls > myfile.txt
+
+    >>
+        Redirects stdout to a file, appends to the file.
+        Syntax:         command >> filename
+        i.e.            ls >> myfile.txt
+
+
+    To redirect standard input from a file instead of from the keyboard use the "<" character.
+
+    <
+        Redirects stdin from a file.
+        Syntax:         command < myfile.txt
+        i.e.            sort < myfile.txt
+                        sort < filelist.txt > sorted_filelist.txt
+
+        In the last example, sort takes the contents of filelist.txt as its arguments by
+        redirecting stdin to come from that file, and then it redirects stdout to print to
+        the second file instead of printing to the screen. The order of the redirection does
+        not matter, but the redirection operators must appear after any other options and
+        arguments in the commnand.
+
+
+Pipelines
+    The most useful and powerful thing you can do with I/O redirection is to connect multiple
+    commands together with pipelines, a pipeline is the "|" pipe bar character. With pipelines
+    the standard output of one command is fed into the standard input of another.
+
+    |
+        Connects multiple commands together so the standard output of a command is fed as
+        standard input into the next command.
+        Syntax:         command | command | command
+        i.e.        ls -l | less                      // this lets any command have scrolling
+                                                      // output using the less program.
+                    ls -lt | head                   // displays the 10 newest files in the
+                                                    // current directory.
+                    du | sort -nr                   // displays a list of directories and how
+                                                    // much space they consume, sorted from
+                                                    // largest to smallest
+                    find . -type f -print | we -l   // displays the total number of files in
+                                                    // the current working directory and all
+                                                    // of its subdirectories
+
+
+Filters
+    Filters are a kind of program frequently used in pipelines. Filters take standard input
+    and perform an operation upon it and send the results to standard output. The can be
+    combined to process information in powerful ways. Some common programs that can act as
+    filters:
+        sort        Sorts lines of a text file then outputs the result on stdout.
+        uniq        Given a sorted stream of data from stdin, it removes duplicate lines of data.
+        grep        Examines each line of data it receives from stdin and outputs every line that
+                    contains a specified pattern of characters. Basically a search.
+        fmt         Reads text from stdin, then outputs formatted text (neat paragraphs) to stdout.
+        pr          Takes text input from stdin and splits the data into pages with page breaks,
+                    headers, and footers in preparation for printing.
+        head        Outputs the first few lines of its input. Useful for getting the header of a file.
+        tail        Outputs the last few lines of its input. Useful for things like getting the most
+                    recent entries from a log file.
+        tr          Translates characters. Can be used to perform tasks such as upper/lowercase
+                    conversions or changing line termination characters from one type to another (for
+                    example, converting DOS text files into Unix style text files).
+        sed         Stream editor. Can perform more sophisticated text translations than tr.
+        awk         An entire programming langauge designed for constructing filters. Extremely powerful.
+
+        lpr         Accepts stdin and sends it to the printer.
+                    i.e.
+                        cat text.txt | fmt | pr | lpr       // Formats, paginates and prints text.txt
+                        cat unsorted.txt | sort | uniq | pr | lpr   // Sorts, removes duplicates,
+                                                                    // paginates, and prints unsorted.txt
+
+        tar         A gzipped tar file is a traditional Unix style tape archive file (created with tar)
+                    that has been compressed with gzip, it will have file extnesions like ".tar.gz" or
+                    ".tgz". Use the tar command in this example to iew the directory of such a file on
+                    a Linux system.
+                    i.e.            tar tzvf file.tar.gz | less
+
+
+Expansion
+    Expansion is the process of the shell performing several processes upon the text before it carries
+    out the command, like for instance using the * wildcard. Expansion is when you type something and
+    it is expanded into something else before the shell acts upon it.
+
+    An example:
+    The "echo" command outputs whatever is sent as an argument to it. So "echo my name is todd" outputs
+    "my name is todd" to the terminal. But for "echo *" the shell expands the * character to the names
+    of all the files in the current working directory, so echo never sees a "*", it only sees the
+    expanded content. Likewise "echo c*" would list all the files/directories in the current working
+    directory that start with "c".
+    echo *s         <-- would print out all files/directories in current directory ending with an "s".
+
+    Pathname Expansion is the mechanism by which wildcards work.
+    
+    Tilde Expansion is when you use a tile "~" to refer to (and gets expanded to) the name of the
+    home directory.
+        i.e.        echo ~tkrone *          // this outputs all directories/files in my home directory
+
+    Arithmetic Expansion is how the shell allows arithmetic to be performed on the shell prompt, in the
+    form $((expression)).
+        i.e.        echo $((3+4))           // this outputs:  7
+    Arithmetic expansion only supports integers. Its operators are:    +   -   *   /   %   **
+
+    Brace Expansion is a way to create multiple text strings from a pattern containing braces. Patterns
+    to be brace expanded may contains a leading portion called a preamble and a trailing portion called
+    a postscript. The brace expansion itself may contain either a comma-separated list of strings, or
+    a range of integers or single characters, but it can't contain any embedded whitespace. When using
+    echo for a brace expansion each string will be separated by a space.
+    Note in the examples, ".." is used to set a range (inclusive). Notice in the last example you can
+    also nest brace expansions.
+        i.e.    
+            echo Preamble-{A,B,C}-Postscript
+                    // outputs:     Preamble-A-Postscript Preamble-B-Postscript Preamble-C-Postscript
+            echo Number_{1..3}
+                    // outputs:     Number_1 Number_2 Number_3
+            echo {Z..T}
+                    // outputs:     Z Y X W V U T
+            echo a{A{1,2},B{3,4}}b
+                    // outputs:     aA1b aA2b aB3b aB4b
+    The most common application of brace expansions is to make lists of files or directories to be
+    created. For example, if you wanted to make a directory of photos split up into sub-directories by
+    month and year you could do something like this:
+            mkdir 0{1..9}/{2010..2013} {10..12}/{2010..2013}
+
+    Parameter Expansion is basically the use of variables. So it is much more useful in shell scripts
+    than just straight up on the Command Line. Parameter expansion expands a variable name into
+    whatever value is held by the variable. To use it you just put a $ in front of a variable name.
+    Syntax:         $varName
+    There are some environment variables built into the system/shell, like $USER refers to the user
+    name. So for me the command:
+            echo $USER          // outputs:    tkrone
+    The environment variable $HOSTNAME contains the hostname for the system.
+    To see a list of all environment variables use this command:        printenv | less
+    If you use a variable that doesn't exist with the echo command it will just print a blank line.
+
+
+    Command Substitution:
+    Command substitution allows us to use the output of a command as an expansion.
+    Syntax:         $(command)
+    So this allows you to package the output of some command as the argument for some other command.
+        i.e.    echo $(ls)              // expands the output of ls
+                ls -l $(which cp)       // will print the long form of the /bin/cp command
+    You can do any command like this, for example you could do some complex command with pipes in it.
+    An alternate syntax for command substitution in older shell programs, which is also supported in
+    Bash, is to use back-quotes instead of $().
+    Alternate Syntax:           `command`                   // instead of $(command)
+
+
+    Quoting:
+    Without using any quotes the echo command removes and extra whitespace and will automatically
+    expand anything with a $ before it into a variable, and if that variable doesn't exist it doesn't
+    print anything for it.
+    For example:       echo This is a $100.00 dollar bill.
+                                                            outputs: This is a 00.00 dollar bill.
+            The Fix:   echo 'This is a $100.00 dollar bill.'
+                                                            outputs: This is a $100.00 dollar bill.
+    The above case is true because the shell treats $1 as a variable, which doesn't exist, and so it
+    prints nothing for it.
+
+    Using quotes is the fix to the above mentioned problems. Using quotes will make it so any extra
+    whitespace is output, and it will make the shell see anything following a $ as part of a string
+    instead of as a variable. Note that for the variable example double-quotes will not work, only
+    single-quotes will fix it.
+
+    Double Quotes cause most special characters used inside the shell to lose their special meaning and
+    are treating as normal characters.
+    The exceptions are:     $       \       `           <-- dollar sign, backslash, back-quote
+    This means word-splitting, pathname expansion, tilde expansion, and brace expansion are suppresed,
+    but parameter expansion, arithmetic expansion, and command substitution are still carried out.
+        echo $(cal)     // will print out the whole calendar without any newlines because echo would
+                        // treat each space (including newlines_) in the command substitution as
+                        // separate arguments.
+        echo "$(cal)"   // this will print out the calendar as the command cal normally does because
+                        // echo only gets sent one argument, which is the output of $(cal).
+
+    Single Quotes suppress all expansions so that exactly what is written is output in an echo
+    statement.
+
+    Escape characters, using the backslash \, can be used when you only want to suppress a single
+    special character. Often this is done inside double quotes.
+        i.e.    echo "This is \$100.00 dollars."
+    The above example would print the $1 instead of thinking it is a variable, due to escaping the $
+    with the backslash.
+    Escape characters can also be used to suppress the special meaning of a character in a file name.
+    Because it's possible to use characters in a file name that has a special meaning in the shell,
+    you would want to escape any such characters when typing out that file on the command line.
+    Such characters include "$", "!", "&", " ", etc.
+
+    The Backslash characters can also be used to make the shell ignore a newline character, by that I
+    mean it allows a single command to flow onto multiple lines. For this to work the newline must
+    occur immediately after the backslash, you can't have any spaces after the backslash. The reason
+    for this is because the backslash escapes whatever character immediately follows it, so if there
+    is a space after it then it will just escape the space instead of the following newline
+    character.
+        i.e.    echo "Hey Man \
+                      whats happening."              // output:      Hey Man whats happening.
+
+    To use the standard escape sequences with the echo command you need to include the option -e.
+    Common escape characters are:      \n      \t      \a      \\      \f
+        i.e.    echo -e "Print an extra newline\n"
+
+    Side note:  the -n option for echo gets rid of the automatic newline.
+        i.e.    echo -n "No automatic newline at the end of this."
+
+
+Permissions
+    Unix-like systems are different from other operating systems in that they are multi-user, meaning
+    that more than one person can be operating the computer at the same time, like remoting in via
+    ssh (secure shell).
+    Commands dealing with permissions are chmod, su, sudo, chown, chgrp.
+
+    On a *nix system each file and directory is assigned access rights for the owner of the file, the
+    members of a group of related users, and everybody else. Right can be assigned to read, write, and
+    execute a file. The permissions for a file/directory are shown in the long form of the ls command.
+
+    Commands:
+
+        chmod
+            Used to change the permissions of a file or directory.
+                Syntax:     chmod 754 filename
+            There are two ways to specify the permissions, one of them is called octal notation.
+            Octal notation:     1 = execute, 2 = write, 4 = read
+            The 3 different permission sets, for owner, group, and other are each given in 3 binary
+            digits representing all combinations of execute, write, and read. Read, being 4, is
+            controlled by the third (left-most) bit. Write, being 2, is controlled by the second (middle)
+            bit. Execute, being 1, is controlled by the least-significant bit.
+                    1 = 001 = execute
+                    2 = 010 = write
+                    3 = 011 = write,execute
+                    4 = 100 = read
+                    5 = 101 = read, execute
+                    6 = 110 = read, write
+                    7 = 111 = read, write, execute
+            Permissions in the ls -l command are in the following format:  -rwx rwx rwx
+            The first "-" will show the type of item it is, "d" for directory, "l" for link, etc.
+            Each "r", "w", "x" will be shown if it has that permission, or a "-" will be shown wherever
+            it doesn't have that permission.
+            To use chmod you write the command, followed by the decimal number representing the permissions
+            for each set, and then the filename.
+
+            For directories the chmod command is used to set permissions, but the meaning of r,w,x is
+            different than for files.
+                r - allows contents of the directory to be listed if the "x" attribute is also set.
+                w - allows files within the directory to be created, deleted, or renamed if the "x"
+                    attribute is also set.
+                x - allows a directory to be entered.
+            Basically the options for directories each set of users is basically:
+                5 = r-x     can enter directory and list the files
+                7 = rwx     no restrictions on the directory
+                0 = ---     no access to the directory
+
+        su/sudo
+            Allows the user to temporarily become the super user, in order to perform some important
+            system administration tasks.
+            su stands for substitute user.
+            When using the su command you will be prompted for the super user's password.
+            After executing the su command a new shell session will start as the super user. To exit
+            as super user type "exit" in the command shell.
+            Syntax for su:      su              // then enter the superuser's password
+
+            In some distributions, like Linux, you use the sudo command instead of the su command.
+            With sudo, one or more users are granted superuser priviledges on an as needed basis. To
+            execute a command as superuser, the desired command is simply preceeded with the sudo
+            command. After the command is entered, the user is prompted for the user's password rather
+            than the superusers password.
+            The key difference between sudo and su is that using sudo never starts a new shell as the
+            superuser, it merely executes a single command as the superuser, therefore the user is
+            less likely to screw stuff up as the superuser and so sudo is a safer command.
+            Syntax for sudo:        sudo command        // then enter user's password
+
+        chown
+            Changes the owner of a file or directory.
+            Most be the superuser to change ownership of a file.
+                Syntax (using sudo):     sudo chown newOwner filename
+            The chown command works the same way on directories as it does on files.
+
+        chgrp
+            Changes the group ownership of a file or directory.
+            Don't need to be superuser to change group ownership, but you must be the owner of the
+            file or directory to change its group ownership.
+                Syntax:     chgrp newGroup filename
+
+
+Job control
+    *nix systems are also multi-tasking, and you can manipulate the multi-tasking element of the
+    operating system with the command line interface.
+    Multi-tasking is achieved by switching what processes are being executed at intervals so that it
+    appears that several tasks are being performed at once.
+    The commands that are used to control processes are:    ps, kill, jobs, bg, fg
+            ps      list the processes running on the system
+            kill    send a signal to one or more processes to kill it
+            jobs    an alternate way of listing your own processes
+            bg      put a process in the background
+            fg      put a process in the foreground
+
+    Running a program in the background:
+        You can open up graphical programs from the CLI, however, if you do then you can't use the
+        command prompt until the program that was started closes, at which point you can access the
+        command prompt again.
+        In order to open a graphical program but not lose use of the command prompt you can either
+        put "&" after the command to open the program:          command &
+        or if you forget to put the "&" when opening the program on the CLI, you can press Ctrl-z when
+        the terminal has focus and this will suspend the process - it still exists but is idle - at
+        which point you have access to the command prompt, and simply by typing the "bg" command you
+        can then move that process to the background.
+            So do either:       command &
+            or:     command
+                    [press Ctrl-z]
+                    bg
+        To put the process back in the foreground (and thus giving the command prompt back over to it)
+        just type the fg command into the command prompt.
+
+    Listing the processes:
+        jobs
+            Use the jobs command to list all processes running in the background.
+        ps
+            Use the ps command to list all processes.
+            The ps command by itself only lists processes launched from the current terminal. Use
+            the -x option to list all processes, even those not launched from the current terminal.
+
+    Killing a process:
+        You can terminate a process (if it for example becomes unresponsive) using the kill command.
+        For background processes, use the jobs command to find the job number of the process, which is
+        shown between square brackets, or the process ID, which is shown after the job number. Or
+        use the ps command to find the process ID (PID) for the process. Use the kill command in the
+        following way:
+                            kill PID                i.e. kill 25923
+                    or      kill %jobNumber         i.e. kill %1
+
+        While the kill command is used to terminate processes, its real purpose is to send signals to
+        processes. Most of the time the signal is to tell the process to go away, but if can be used
+        for other signals. Programs that are properly written listen for signals from the OS and respond
+        to them, most often to allow some graceful method of terminating. For example, a text editor
+        may listen for signals that indicate the user is logging off or the computer is shutting down.
+        When it receives such a signal it save the work in progress before exiting. The kill command
+        is used to send different signals to processes.
+
+        Typing "kill -l" will give a list of all the signals the kill command supports.
+        Use the different kill signals like so,
+            Syntax:kill -signal           // -signal can be the signal name or number (list in kill -l)
+                    i.e. kill -SIGKILL PID   or     kill -9 PID
+        Some useful signals are:
+            Signal 1: SIGHUP
+                Hang up signal. Programs can listen for this signal and act upon it. This signal is
+                sent to processes running in a terminal when you close the terminal.
+            Signal 2: SIGINT
+                Interrupt signal. This signal is given to processes to interrupt them. Programs can
+                process this signal and act upon it. You can also issue this signal directly by typing
+                Ctrl-C in the terminal window where the program is running.
+            Signal 15: SIGTERM
+                Termination signal. This signal is given to processes to terminate them. Programs can
+                process this signal and act upon it. This is the default signal sent by the kill
+                command when no signal is specified.
+            Signal 9: SIGKILL
+                Kill signal. This signal causes the immediate termination of the process by the kernel.
+                Program cannot listen for this signal, it just automatically kills the process.
+
+        For example, if there is a program that is hopelessly hung up and you want to kill it. First,
+        use the ps command to get the PID for that process ("ps -x | grep processName"), use the
+        command in the parenthesis to output only the process you are looking for. Then, use the
+        SIGTERM, the default kill command, to try to kill the process ("kill -SIGTERM PID" or just
+        "kill PID"), where "PID" is the processes PID. If the process doesn't terminate (it is
+        ignoring the signal) then send a harsher kill signal like SIGKILL ("kill -SIGKILL PID").
+
+
+
+
+
+-------------------- Shell Programming --------------------
+
+
+Shell scripts are written to automate things. A shell script is a file with a series of shell commands.
+The shell reads the file and carries out the commands as though they have been entered directly into
+the command line.
+
+Beyond basic commands, the shell provides a set of programming language features to be used in shell
+scripts to allow those scripts to have the behavior of programs, like branching and looping, etc.
+
+To write a shell script you need to do three things: write the script, give the shell permission to
+execute it, and put it somewhere the shell can find it.
+So first write the script, then use chmod to make it executable, then you must add the program to a
+directory that is in your path, preferably by adding it to the bin directory in your home folder, as
+mentioned at the beginning of these notes in the "A note on paths" section.
+
+
+Basics of Shell Scripting
+    Don't need to save an extension on the filename you use for the shell script.
+    Do need to include a shebang for the shell, in the case a Bash, use:
+                        #!/bin/bash
+    The shebang is given to the shell indicating what program is used to interpret the script.
+    All comments use the # character.
+
+    To let the shell be able to see the program it must be put in a directory that is in your path.
+
+
+The Environment
+    There are some scripts located in your home directory that are used to configure the behavior of
+    your sessions on the computer.
+    During your session, the system holds a number of different facts about the world in its memory,
+    this information is called the environment, which contains things like your path, user name, name
+    of the file where your mail is delivered, etc.
+    The "set" command lets you see what is in your environment.
+    Two types of commands are often contained in the environment: aliases and shell functions.
+
+    The environment is established when you log on to the system, the bash program starts and reas a
+    series of configuration scripts called startup files. These startup files define the default
+    environment shared by all users. This is followed by more startup files in your home directory
+    that define your personal environment. The exact sequence depends on the type of shell session
+    being started. There are two kinds of shell sessions: a login shell session and a non-login shell
+    session. A login shell session is one in which we are prompted for our user name and password, 
+    when you start a virtual console session, for example. A non-login shell seession typically occurs
+    when you launch a terminal session in the GUI.
+
+    Login shells read one or more startup files like:
+        /etc/prorile    -   a global config script that applies to all users
+        ~/.bash_profile -   a user's personal startup file, can be used to extend or override settings
+                            in the global config script.
+        ~/.bash_login   -   if ~/.bash_profile is not found, bash attempts to read this script.
+        ~/.profile      -   if neither of the lsat two files are found, bash attempts to read this file.
+                            This is the default in Debian-based distros, like Ubuntu.
+
+    Non-login shell sessions read the following startup files:
+        /etc/bash.bashrc -  a global config script that applies to all users.
+        ~/.bashrc        -  a user's personal statup file. Can be used to extend of override settings
+                            in the global config scripts.
+
+    In addition to reading the startup files above, non-login shells also inherit the environment from
+    their parent process, usually a login shell.
+
+
+    Aliases:
+        An alias is an easy way to craete a new command which acts as an abbreviation for a longer one.
+        To make an alias, you put a line with the following syntax in a config file like .bash_profile:
+                    alias name='value'
+        Where name is the name of the new command and value is the text to be executed whenever name
+        is entered on the command line. The value must be in single quotes. so name is the alias command
+        while value is the original command that the alias is equivalent to.
+                i.e.    alias lsl='ls -l'           // now "lsl" will call the "ls -l" command
+        The alias command is just another shell builtin. You can create aliases directly at the
+        command prompt, but they will only be in effect for that session.
+
+
+    Shell Functions:
+        Aliases are good for very simle commands, but if you want to create something more complex, you
+        should use shell functions. Shell functions are scripts within scripts, or sub-scripts.
+        Syntax for a shell function:
+                                        functionName() {
+                                            # commands...
+                                        }
+        The () in the shell functioon is actually a shell builtin too.
+        Shell functions can be defined in a script or at the command prompt, but when defined at the
+        command prompt they will only last for the current session.
+
+
+Some Output stuff
+    Using quotation, it is possible to embed carriage returns in text and have the echo command's
+    argument span multiple lines:
+        i.e.    echo "blah blah
+                blah blah
+                blah blah blah"
+    
+    To get around using quotation marks with echo, in case what is being output by echo uses quotation
+    marks and you don't want to have to escape every quotation mark used, you can use a here script.
+
+    Here Documents:
+    A here script, also sometimes called a here document, is an additional form of I/O redirection.
+    It provides a way to include content that will be given to the STDIN of a command.
+        Syntax for a here script:
+                                        command << token
+                                        // content to be used as command's stdin
+                                        token
+        i.e. cat << _EOF_
+                // content...
+             _EOF_
+
+    Using <<- instead of << will causes bash to ignore leading tabs (but not spaces) in here script.
+
+
+Variables
+    To declare a variable you just put the variable named, an equal sign, and its value.
+    NOTE: NO SPACES ARE ALLOWED BETWEEN THE NAME, =, AND THE VALUE.
+        Syntax:     varName=value
+    To use a variable you have to use the "$" with the variable name.
+        Syntax:     $varName
+    Using the "$" character means you are telling the shell to perform parameter expansion (which is
+    how you expand a parameter to gets its value).
+
+        i.e.    yourName="Todd"
+                echo $yourName
+
+    Rules for variable naming:
+        Variables names in bash must start with a letter, cannot contain and embedded spaces (use
+        underscores instead), and cannot have punctuation marks.
+
+
+Command Substitution and Constants
+    Can use command substitution in a shell script just as you would on the command line.
+            Syntax:     $(command)
+    The $(command) will be expanded to the output of that command.
+    You can also assign the results of a command substitution to a variable like so:
+            varName=$(command)
+
+    Constants by convention should be in all uppercase. Apparently there is some way to make a constant
+    in bash programming but generally programmers just make a variable in all uppercase letters to
+    signify that it should be treated as a constant.
+            Constants Syntax:       CONST_NAME=value
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

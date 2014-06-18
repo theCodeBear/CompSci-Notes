@@ -1,0 +1,2137 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww10800\viewh12440\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b\fs24 \cf0 \ul \ulc0 Notes on Android from tutorials point
+\b0 \ulnone \
+\
+\
+When creating a new Android Application, the Application name is the name of the app, the project\
+	name will be the same thing, the package name must be unique from all other apps when the\
+	app enters the google marketplace, and it must have two identifiers separated by spaces.\
+	Standard practice is if you have a website to do the url backwards then the app name.\
+		i.e.	com.toddsblog.helloworld\
+			edu.kronenbergt.myfirstapp\
+\
+\
+The AndroidManifest.xml file describes each application component and how they interact. There are\
+four main components that can be used:\
+	Activities	-	they dictate the UI and handle user interaction to the screen\
+	Services	-	they handle background processing associated with an application\
+	Broadcast Receivers   -	they handle communication between Android OS and applications\
+	Content Providers	-	they handle data and database management issues\
+\
+Activities:\
+	Represents a single screen with a user interface. One of these activities needs to be marked\
+	as the one that is started when the application is launched. An activity is implemented as a\
+	subclass of the Activity class:\
+		public class MainActivity extends Activity \{  \}\
+\
+Services:\
+	A service does background stuff, performing long-running operations. Like it might play music,\
+	or it might fetch data over the network without blocking user interaction with an activity. A\
+	service is implemented as a subclass of the Service class:\
+		public class MyService extends Service \{  \}\
+\
+Broadcast Receivers:\
+	They just respond to broadcast messages from other applications or from the system. Can\
+	also let other applications know that some data has been downloaded that is available for them\
+	to use. A broadcast receiver is implemented as a subclass of the BroadcastReceiver class and\
+	each message is broadcasted as an Intent object:\
+		public class MyReceiver extends BroadcastReceiver \{  \}\
+\
+Content Providers:\
+	Supplies data from one application to others on request. These requests are handles by the\
+	methods of the ContentResolver class. The data may be stored in the file system, the\
+	database, or somewhere else. A content provider is implemented as a subclass of the\
+	ContentProvider class and must implement a standard set of APIs that enable other\
+	applications to perform transactions:\
+		public class MyContentProvider extends ContentProvider \{  \}\
+\
+Additional Components:\
+	Fragments	-	represents a behavior or a portion of user interface in an Activity\
+	Views		-	UI elements that are drawn onscreen including buttons, lists, forms, etc\
+	Layouts	-	View hierarchies that control screen format and appearance of the views\
+	Intents	-	Message wiring components together\
+	Resources	-	External elements, such as strings, constants, and drawable pictures\
+	Manifest	-	Configuration file for the application\
+\
+\
+Folders in the Android package:\
+	src - contains the .java source files, by default includes a MainActivity.java file having an\
+		activity class that runs when the app is launched.\
+	gen - contains the .R file, a computer generated file that references all the resources found\
+		in the project. Don\'92t modify this.\
+	bin - contains the Android package files .apk built by the ADT during the build process and\
+		everything else needed to run an Android app.\
+	res/drawable - holds the drawable objects that are designed for different density screens.\
+	res/layout - hold files that define the app\'92s user interface. Can refer to these files in code as\
+		follows:		R.layout.activity_main    <- refers to the activity_main.xml file\
+	res/values - hold other various XML files that contain a collection of resources, such as strings\
+		and color definitions.\
+	AndroidManifest.xml - the manifest file which describes the fundamental characteristics of the\
+		app and defines each of its components.\
+\
+\
+Main Activity File:\
+	The MainActivity.java file is the application file that gets opened when the app is launched.\
+\
+	Main methods:\
+		public void onCreate(Bundle savedInstanceState) \{\
+			super.onCreate(savedInstanceState);\
+			setContentView(R.layout.activity_main);\
+		\}\
+		public boolean onCreateOptionsMenu(Menu menu) \{\
+			getMenuInflater().inflate(R.menu.activity_main, menu);\
+			return true;\
+		\}\
+\
+The Manifest File:\
+	All components of the application must be declared in the AndroidManifest.xml file. This file\
+	works as an interface between the Android OS and the application.\
+\
+	In the <application> tag of the manifest are included all the components related to the\
+	application. Like the launcher icon - android:icon=\'93@drawable/ic_launcher\'94, the app name\
+	listed on the launcher icon - android:label=\'93@string/app_name\'94, and the theme of the app - \
+	android:theme=\'93@style/AppTheme\'94.\
+	\
+	In the application tag is the <activity> tag which is used to specify an activity through its name\
+	attribute that specifies the fully qualified class name of the Activity subclass by using the\
+	android.name attribute and setting it equal to the package name followed by the main activity -\
+	android:name=\'93edu.kronenbergt.firstapp.MainActivity\'94. Also it holds the string used as the label\
+	for the activity - android:label=\'93@string/app_name\'94.\
+\
+	Inside the activity tag is the <intent_filter> tag which holds the action for the intent filter to\
+	indicate that this activity serves as the entry point for the application, so this is where you\
+	specify what activity starts when the app is launched -\
+		<action android:name=\'93android.intent.action.MAIN\'94 />\
+	Also the category for the intent filter is named to indicate that the application can be launched\
+	from the device\'92s launcher icon -\
+		<category android:name=\'93android.intent.category.LAUNCHER\'94 />\
+\
+	The @string refers to the strings.xml file.\
+\
+	List of rage used in the manifest file to specify different Android application components:\
+		<activity>, <service>, <receiver>, <provider>\
+\
+The Strings File:\
+	The strings.xml file is located in the res/values folder and it contains all the text that the app\
+	uses. So anytime a string of text is to be used, it should be defined in the strings.xml file and\
+	called from there using the @string/ call form. To define a string in the strings.xml file:\
+		<string name=\'93hello_world\'94>Hello fine world out there!</string>\
+\
+The Dimens File:\
+	Under res/values is the dimens.xml file in which you can specify different screen or text block\
+	margins. Can use these in the activity_main.xml file under the <TextView> tag by using -\
+		android:padding=\'93@dimen/blah\'94\
+\
+The R File:\
+	The gen/com.example.helloworld/R.java file is the glue between the activity java files and the\
+	resource files. It is generated automatically and should never be modified.\
+\
+The Layout File:\
+	The activity_main.xml is a layout file available in the res/layout directory. It is referenced by the\
+	application when building its interface. This file will be modified frequently to change the layout\
+	of the app. It can have either a Relative Layout or Linear Layout using their respective tags,\
+	and the <Textview> tag is an Android control used to build the GUI and it has various attributes\
+	to set the layout attributes of the text?\
+	In the <Textview> tag, when using a <RelativeLayout>, to make something appear in the\
+	middle of the screen use:\
+		android:layout_centerHorizontal=\'93true\'94\
+		android:layout_centerVertical=\'93true\'94\
+	and to change the size of the text (to let\'92s say 30 pixels) use:\
+		android:textSize=\'9330sp\'94\
+\
+\
+Resources:\
+	All the resources used in the app are held in the res/ directory of the project. Different kinds of\
+	resources should be organized into their own specific folders in under the res/ directory.\
+	Use these folder names for various kinds of resources:\
+		anim/  -	xml files that define property animations. Accessed via the R.anim class.\
+		color/  -	xml files that define a state list of colors. Accessed via the R.color class.\
+		drawable/  -	image files accessed from the  R.drawable class.\
+		layout/  -	xml files that define a user interface layout. Accessed via R.layout class.\
+		menu/  -	xml files that define application menus, accessed via the R.menu class.\
+		raw/  -		arbitrary files to save in their raw form. To get them call the\
+				Resources.openRawResource() method with the resource ID, which is\
+				R.raw.filename to open the raw file.\
+		values/  -	xml files that contain simple values, like strings, integers, colors. Here are\
+				some file name conventions for using in this folder:\
+					arrays.xml	-	accessed via R.array class\
+					integers.xml	-	accessed via R.integer class\
+					bools.xml	-	accessed via R.bool class\
+					colors.xml	-	accessed via R.color class\
+					dimens.xml	-	accessed via R.dimen class\
+					strings.xml	-	accessed via R.string class\
+					styles.xml	-	accessed via R.style class\
+		xml/  -		arbitrary xml files can be read at runtime by calling Resources.getXML().\
+				Can save various config files here which will be used at runtime.\
+\
+\
+Alternative Resources:\
+	Should use alternative resources to support specific device configurations, like different\
+	drawable resources for different screen resolutions, and alternative string resources for\
+	different languages. At runtime, Android detects the current device configs and loads the\
+	appropriate resources from the application.\
+	To make config-specific resource alternatives create a new directory in the res/ directory in the\
+	form: resoure_name-config_qualifier. The qualifier will specify an individual config for which \
+	those resources are to be used. Check official documentation for a complete lis of qualifiers\
+	for different types of resources.\
+		i.e.	layout-ar/			<- this specifies a layout for arabic language\
+				main.xml\
+\
+Accessing Resources:\
+	Accessing resources in code:\
+		When the Android app is compiled, an R class gets generated, which contains resource\
+		IDs for all the resources in the res/ directory. You use the R class to access that\
+		resource using sub-directory and resource name or directly resource ID.\
+		i.e. To access res/drawable/myimage.png and set an ImageView:\
+			ImageView imageView = (ImageView) findViewById(R.id.myimageview);\
+			imageView.setImageResource(R.drawable.myimage);\
+		i.e.\
+			TextView msgTextView = (TextView) findViewById(R.id.msg);\
+			msgTextView.setText(R.string.helloworld);\
+		i.e.   in the onCreate() method:\
+			super.onCreate(savedInstanceState);\
+			setContentView(R.layout.activity_main);	    <\'97 sets content to activity_main.xml\
+\
+	Accessing resources in XML:\
+		To access resources in an xml file, say to access a color, do this:\
+			android:textColor=\'93@color/colorName\'94\
+		To access a string:\
+			android:text=\'93@string/stringName\'94\
+\
+\
+Android Activities:\
+	The Main Activity initiates a program with the onCreate() method. Below is an Activity Lifecycle\
+	Diagram:\
+		\
+onCreate \'97> [CREATED] \'97> onStart() \'97> [STARTED] \'97> onResume() \'97> [RESUMED (visible)]\
+							^					^               /\
+					   onRestart() , onStart()			onResume()     onPause()\
+							^					^               /\
+		onDestroy() <\'97 [STOPPED (hidden)]  <\'97 onStop() <\'97 [PAUSED (partially visible)]\
+			/\
+		[DESTROYED]\
+\
+	Each of these is called a Callback, they are listed below:\
+		onCreate()	-	the first callback and called when the activity is first created\
+		onStart()	-	called when the activity becomes visible to the user\
+		onResume()	-	called when the user starts interacting with the application\
+		onPause()	-	the paused activity does not receive user input and cannot execute\
+					code, called when the current activity is being paused and the\
+					previous activity is being resumed\
+		onStop()	-	called when the activity is no longer visible\
+		onDestroy()	-	called before the activity is destroyed by the system\
+		onRestart()	-	called when the activity restarts after stopping it\
+\
+\
+Android Services:\
+	A service is a component that runs in the background to perform long-running operations\
+	without needing to interact with the user. A service can take two states:\
+		Started	-	a service is started when an application component, such as an\
+					activity, starts it by calling startService(). Once started, it can run in\
+					the background indefinitely, even if the component that started it\
+					is destroyed.\
+		Bound		-	a service is bound when an application component binds to it by\
+					calling bindService(). A bound service offers a client-server\
+					interface that allows components to interact with the service, send\
+					requests, get results, and even do so across processes with\
+					interprocess communication (IPC).\
+\
+	Service Lifecycle Diagram:\
+		Call to startService():\
+			startService() \'97> onCreate() \'97> onStartCommand() \'97> [SERVICE RUNNING]\
+			\'97> onDestroy()\
+\
+		Call to bindService():\
+			bindService() \'97> onCreate() \'97> onBind() \'97> onUnbind() \'97> onDestroy()\
+\
+	To create a Service you create Java class that extend the Service base class or one of its\
+	existing subclasses. The service base class defines the callback methods.\
+\
+	Service callback methods:\
+		onStartCommand()  -  the system calls this method when another component, such as\
+					   an activity, requests that the service be started, by calling\
+					   startService(). If you implement this method, it is your\
+					   responsibility to stop the service when its work is done, by calling\
+					   stopSelf() or stopService().\
+		onBind()  - 	the system calls this method when another component wants to bind with\
+				the service by calling bindService(). If you implement this method, you\
+				must provide an interface that clients use to communicate with the service,\
+				by returning an IBinder object. You ust always implement this method, but\
+				if you don\'92t want to allow binding, then you should return null.\
+		onUnbind()  -  the system calls this method when all clients have disconnected from a\
+				  particular interface published by the service.\
+		onRebind()  -  the system calls this method when new clients have connected to the\
+				  service, after it had previously been notified that all had disconnected in\
+				  its onUnbind(Intent).\
+		onCreate()  -  the system calls this method when the service is first created using\
+				  onStartCommand() or onBind(). This call is required to perform one-time\
+				  setup.\
+		onDestroy()  -  the system calls this method when the service is no longer used and is\
+				   being destroyed. Your service should implement this to clean up any\
+				   resources such as thread, registered listeners, receivers, etc.\
+\
+\
+Android Broadcast Receivers:\
+	Broadcast receivers respond to broadcast messages from other applications of from the\
+	system itself. These messages are sometimes called events or intents. There are two\
+	important steps to make BroadcastReceiver work for the system broadcasted intents:\
+		Creating the Broadcast Receiver\
+		Registering the Broadcast Receiver\
+\
+	Creating the Broadcast Receiver:\
+		It\'92s implemented as a subclass of BroadcastReceiver class and overriding the\
+		onReceive() method where each message is received as an Intent object parameter.\
+		i.e.\
+		public class MyReceiver extends BroadcastReceiver \{\
+			@Override\
+			public void onReceive(Context context, Intent intent) \{\
+				Toast.makeText(context, \'93Intent Detected.\'94, Toast.LENGTH_LONG.show();\
+			\}  \}\
+\
+	Registering a Broadcast Receiver:\
+		Registered in the AndroidManifest.xml file, like so in the <application tag:\
+			<receiver android:name=\'93MyReceiver\'94>\
+				<intent-filter>\
+					<action android:name=\'93android.intent.THE_INTENT_NAME\'94>\
+				</action>\
+				</intent-filter>\
+			</receiver>\
+\
+	There are several system generated events defined as final static fields in the Intent class,\
+	here are a few of the important ones:\
+		android.intent.action.BATTERY_CHANGED  -  sticky broadcast containing charging\
+									state, level, and other battery info.\
+		android.intent.action.BATTERY_LOW  -  indicates low battery\
+		android.intent.action.BATTER_OKAY  -  indicates battery is now okay after being low\
+		android.intent.action.BOOT_COMPLETED  -  this is broadcast once, after the system\
+									has finished booting.\
+		android.intent.action.BUG_REPORT  -  shows activity for reporting a bug.\
+		android.intent.action.CALL  -  performs a call to someone specified by the data.\
+		android.intent.action.CALL_BUTTON  -  the user pressed the \'93call\'94 button to go to the\
+								dialer or other appropriate UI for placing a call.\
+		android.intent.action.DATE_CHANGED  -  the date has changed\
+		android.intent.action.REBOOT  -  have the device reboot.\
+\
+	Can have the application send custom intents by using the sendBroadcast() method inside the\
+	activity class. If you use the sendStickyBroadcast(Intent) method then the intent is sticky,\
+	meaning the Intent being sent stays around after the broadcast is complete.\
+	i.e.\
+		public void broadcastIntent(View view) \{\
+			Intent intent = new Intent();\
+			intent.setAction(\'93com.example.CUSTOM_INTENT\'94);\
+			sendBroadcast(intent);\
+		\}\
+\
+	The intent must also be registered in a similar way as the register system generated intent in\
+	the <application tag of the AndroidManifest.xml file. The only different is you change the line:\
+		<action android:name=\'93com.example.CUSTOM_INTENT\'94>\
+\
+\
+Android Content Providers:\
+	A content provider component supplies data from one application to others on request. The\
+	requests are handled by the method of the ContentResolver class. A content provider can\
+	store data in a database, in files, or over a network. Content providers are only used to share\
+	data across applications. They let you centralize content in one place and have many different\
+	application access it as needed. It behaves much like a database, you can query it, edit its\
+	content, add or delete using insert(), update(), delete(), and query(). In most cases the data\
+	is stored in an SQLite database. A content provider is implemented as a subclass of\
+	ContentProvider and must implement a standard set of APIs that enable other applications to\
+	perform transactions.\
+		public class MyContentProvider extends ContentProvider \{  \}\
+\
+	To query a content provider you specify the query string in the form of a URI which has the\
+	following format:\
+			<prefix>://<authority>/<data_type>/<id>\
+\
+	Parts of the URI:\
+		prefix  -	this is always set to content://\
+		authority  -	this specifies the name of the content provider, for example, contacts,\
+				browser, etc. For third-party content providers, this could be the fully\
+				qualified name, such as com.example.statusprovider.\
+		data_type  -	this indicates the type of data that this particular provider provides. For\
+				example, if you are getting all the contacts from the Contacts content\
+				provider, then the data path would be people and the URI would like like:\
+				content://contacts/people\
+		id  -		this specifies the specific record requested. For example, if you are\
+				looking for contact number 5 in the Contacts content provider then the\
+				URI would look like this:		content://contact/people/5\
+\
+	To create a content provider a number of simple steps are involved:\
+		- Create a Content Provider class that extends ContentProvider base class.\
+		- Define the content provider URI address which will be used to access the content.\
+		- Create a database to keep the content. Usually Android uses SQLite and the\
+		   framework needs to override onCreate() method which will use SQLite Open Helper\
+		   method to create or open the provider\'92s database. When the application is launched\
+		   the onCreate() handler of each of its Content Providers is called on the main\
+		   application thread.\
+		- Implement Content Provider queries to perform different database specific operations.\
+		- Register the Content Provider in the AndroidManifest.xml file using the <provider> tag.\
+\
+	List of methods you need to override in Content Provider class:\
+		onCreate()	-	called then the provider is started\
+		query()	-	receives a request from a  client, result is returned as a Cursor\
+					object\
+		insert()	-	inserts a new record into the content provider\
+		delete()	-	deletes an existing record from the content provider\
+		update()	-	updates an existing record from the content provider\
+		getType()	-	returns the MIME type of the data at the given URI\
+\
+\
+Android Fragments:\
+	A Fragment is a piece of an application\'92s user interface or behavior that can be placed in an\
+	Activity which enables more modular activity design. A fragment is a kind of sub-activity.\
+	A fragment has its own layout and ties own behavior with its own lifecycle callbacks.\
+	You can add or remove fragments in an activity while the activity is running.\
+	You can combine multiple fragments in a single activity to build a multi-pane UI.\
+	Fragment life cycle is closely related to lifecycle of its host activity so when the activity is\
+	paused, all fragments available in the activity will also be stopped.\
+	A fragment can implement behavior that has no user interface component.\
+	Create a Fragment by extending the Fragment class, insert a fragment into an activity layout\
+	by declaring the fragment in the activity\'92s layout file, using the <fragment> tag.\
+\
+	Fragment Life Cycle:\
+		Phase 1: When a fragment gets created:\
+			onAttach() \'97> onCreate() \'97> onCreateView() \'97> onActivityCreated()\
+		Phase 2: When the fragment becomes visible:\
+			onStart() \'97> onResume()\
+		Phase 3: When the fragment goes into the background mode:\
+			onPaused() \'97> onStop()\
+		Phase 4: When the fragment is destroyed:\
+			onPaused() \'97> onStop() \'97> onDestroyView() \'97> onDestroy() \'97> onDetach()\
+\
+	Using Fragments:\
+		Decide how many fragments to use in an activity. For example, two fragments can be\
+		used to handle landscape and portrait views of the device.\
+		Create the appropriate number of classes to extend the fragment class. Override any\
+		of the fragment callback functions based on your requirements.\
+		Corresponding to each fragment you will need to create layout XML files.\
+		Finally, modify the activity file to define the actual logic of replacing fragments based on\
+		your requirements.\
+\
+	List of important methods to override in a fragment class:\
+		onCreate() - system calls this when creating the fragment. You should initialize essential\
+				components of the fragment that you want to retain when the fragment is\
+				paused or stopped, then resumed.\
+		onCreateView() - system calls this when it\'92s time for the fragment to draw its UI for the\
+					first time. To draw a UI for the fragment, you must return a View\
+					component from this method that is the root of the fragment\'92s\
+					layout. You can return null if the fragment does not provide a UI.\
+		onPause() - system calls this method as the first indication that the user is leaving the\
+				fragment. This is usually where you should commit any changes that\
+				should be persisted beyond the current user session.\
+\
+\
+Android Intents and Filters:\
+	Intents are basically used to call another activity. \
+	An Android intent is an object carrying an intent, i.e. like a message from one component to\
+	another component within the application or outside the application. Intents can communicate\
+	messages among any of the three core components of an application - activities, services, and\
+	broadcast receivers. An intent object is a passive data structure holding an abstract description\
+	of an operation to be performed.\
+\
+	i.e. For an activity to launch an email client and send an email using the Android device, the\
+		activity would send an ACTION_SEND along with the appropriate chooser, to the\
+		Android Intent Resolver. The specified chooser gives the proper interface for the user\
+		to pick how to send the email data.\
+	i.e. For an activity that needs to open URL in a web browser on the Android device, the activity\
+		will send ACTION_WEB_SEARCH intent to the Android Intent Resolver to open the\
+		given URL in the browser. The Intent Resolver parses through a list of activities and\
+		chooses the one that would best match your Intent, in this case, the web browser\
+		activity. The Intent Resolver then passes the web page to the web browser and start the\
+		web browser activity.\
+\
+	There are separate mechanisms for delivering intents to each type of component:\
+		Context.startActivity() - intent object passed to this method to launch a new activity or\
+						get an existing activity to do something\
+		Context.startService() - intent object is passed to this method to initiate a service or\
+						deliver new instructions to an ongoing service\
+		Context.sendBroadcast() - intent object is passed to this method to deliver the message\
+						to all interested broadcast receivers\
+\
+	Intent Objects:\
+		An intent object is a bundle of info which is used by the component that receives the\
+		intent plus info used by the Android system. An intent object can contain the following\
+		components based on what it is communicating or going to perform:\
+			Action, Data, Category, Extras, Flags, Component Name\
+	\
+		Action:\
+			This is a mandatory part of the intent object and is a string naming the action to\
+			be performed, or in the case of broadcast intents - the action that took place and\
+			is being reported. The action largely determines how the rest of the intent object\
+			is structured. The intent class defines a number of action constants\
+			corresponding to different intents. An action in an intent object can be set by the\
+			setAction() method and read by the getAction() method.\
+\
+		Data:\
+			The URI of the data to be acted on and the MIME type of that data. For example,\
+			if the action field is ACTION_EDIT, the data field would contain the URI of the\
+			document to be displayed for editing.\
+			The setData() method specifies data only as a URI, setType() specifies it only as\
+			a MIME type, and setDataAndType() specifies it as both a URI and a MIME type.\
+			The URI is read by getData() and the type by getType().\
+\
+		Category:\
+			An optional part of the intent object, it\'92s a string containing additional info about\
+			the kind of component that should handle the intent. The addCategory() method\
+			places a category in an intent object, removeCategory() delete a category\
+			previously added, and getCategories() gets the set of all categories currently in\
+			the object.\
+\
+		Extras:\
+			This will be in key-value pairs for additional info that should be delivered to the\
+			component handling the intent. The extras can be set and read using the\
+			putExtras() and getExtras() methods.\
+\
+		Flags:\
+			These flags are option part of intent object and instruct the Android system how\
+			to launch an activity, and how to treat it after it\'92s launched.\
+\
+		Component Name:\
+			Optional field, the ComponentName object, representing either Activity, Service,\
+			or BroadcastReceiver class. If it is set, the intent object is delivered to an\
+			instance of the designated class otherwise Android uses other info in the intent\
+			object to locate a suitable target. The component name is set by\
+			setComponent(), setClass(), or setClassName() and read by getComponent().\
+\
+	Types of Intents:\
+		Explicit Intents:\
+			These designate the target component by its name and they are typically used\
+			for application-internal messages, such as an activity starting a subordinate\
+			service or launching a sister activity.\
+		Implicit Intents:\
+			These do not name a target and the field for the component name is left blank.\
+			Implicit intents are often used to activate components in other applications. The\
+			target component which receives the intent can use the getExtras() method to\
+			get extra data sent by the source component.\
+\
+	Intent Filters:\
+		Intent filters are used to pinpoint the set of Activites, Services, and Broadcast Receivers\
+		that can handle the intent with the help of specified set of action, categories, and data\
+		schemes associated with the intent. You use the <intent-filter> tag in the manifest file\
+		to list down actions, categories, and data types associated with any activity, service, or\
+		broadcast receiver.\
+		Once the activity is defined with filters, other activities will be able to invoke this activity\
+		using with either the android.intent.action.VIEW, or using\
+		com.example.intentedemo.LAUNCH action provided their category is\
+		android.intent.category.DEFAULT.\
+		The <data> element specifies the data type expected by the activity to be called.\
+		A filter must contain at least one action element. A filter may list zero, one, or more\
+		categories. If more than one category is mentioned then every category in the intent\
+		object must match a category in the filter. Each <data> element can specify a URI and a\
+		data type (MIME media type). There are separate attributes like scheme, host, port, and\
+		path for each part of the URI. For an intent object that contains both a URI and a data\
+		type, the data type must match a type lister in the filter.\
+		\
+		i.e.\
+			<activity android:name=\'93blah\'94\
+				android:label=\'93@string/blah\'94>\
+				<intent-filter>\
+					<action android:name=\'93android.intent.action.VIEW\'94 />\
+					<action android:name=\'93com.example.intentdemo.LAUNCH\'94 />\
+					<category android:name=\'93android.intent.category.DEFULAT\'94 />\
+					<data android:scheme=\'93http\'94 />\
+				</intent-filter>\
+			</activity>\
+\
+\
+Android UI Layouts:\
+	The basic building block for UI is a View object, which is created from the View class and\
+	occupies a rectangular area on the screen and is responsible fro drawing and event handling.\
+	View is the base class for widgets, which are used to create interactive UI components like\
+	buttons, text fields etc.\
+	The ViewGroup is a subclass of View and provides invisible containers that holds other Views\
+	or other ViewGroups  and defines they layout properties.\
+	On the third level there are different layouts which are subclasses of the ViewGroup class. A\
+	typical layout defines the visual structure for Android UI and can be created either at runtime\
+	using View/ViewGroup objects or you can declare your layout using simple XML file\
+	main_layout.xml which is located in the res/layout folder of the project.\
+	A layout maybe contain any type of widgets like buttons, text boxes, etc.\
+	Once the layout is defined, you can load the layout resource from the application code, in the\
+	Activity.onCreate() method like so:\
+		public void onCreate(Bundle savedInstanceState) \{\
+			super.onCreate(savedInstanceSate);\
+			setContentView(R.layout.activity_main);    \}\
+\
+	Layout Types:\
+		Different layout types provide different view, look and feel:\
+\
+		Linear Layout - a view group that aligns all children in a single direction - vertically or\
+					horizontally.\
+		Relative Layout - a view group that displays child views in relative positions.\
+		Table Layout - groups views into rows and columns.\
+		Absolute Layout - enables you to specify the exact location of its children.\
+		Frame Layout - a placeholder on screen that you can use to display a single view.\
+		List View - a view group the displays a list of scrollable items.\
+		Grid View - a view group that displays items in a two-dimensional, scrollable grid.\
+\
+	Layout Attributes:\
+		These are the things in the XML file that follow the \'93android:\'94, like id, layout_width, etc.\
+		The define the properties of the layout.\
+\
+		dp: density-indepent pixels\
+		sp: scale-independent pixels\
+		pt: points, which is 1/72 of an inch\
+		px: pixels\
+		mm: millimeters\
+		in: inches\
+\
+		Width and heigh are usually specified with the constants: wrap_content or fill_parent.\
+		wrap_content tells the view to size itself to the dimensions required by its content.\
+		fill_parent tells the view to become as big as its parent view.\
+		The gravity attribute play an important role in positing the view object and it can take\
+		one or more constants, separated by \'93 | \'94, it takes constants like top, bottom, left, fill,\
+		center_vertical, clip_horizontal, start, end, etc.\
+\
+	View Identification:\
+		A view object may have a unique ID assigned to it which will identify it uniquely within\
+		the tree. Syntax:		android:id=\'93@+id/my_button\'94\
+\
+		The @ symbol indicates that the XML parser should parse and expand the rest of the\
+		ID string and identify it as an ID resource.\
+\
+		The + symbol means that this is a new resource name that must be created and added\
+		to the resources. To create an instance of the view object and capture it from the layout,\
+		use this:\
+			Button myButton = (Button) findViewById(R.id.my_button);\
+\
+\
+Android UI Controls:\
+	A UI is everything the user can interact with. A View is an object that draws something on the\
+	screen that the user can interact with, and a ViewGroup is an object that holds other Views and\
+	ViewGroup objects in order to define the layout of the UI. Basically a View is a widget.\
+	Examples:\
+		<TextView>, <Button>, <EditText>, <ImageButton>, <CheckBox>, <ToggleButton>,\
+		<AutoCompleteTextView>, <RadioButton>, <RadioGroup>, <ProgressBar>, <Spinner>,\
+		<TimePicker>, <DatePicker>\
+\
+	Create UI Controls:\
+		Can create a View with a unique ID to identify it from everything else in the tree of\
+		Views:		android:id=\'93@+id/text_id\'94\
+\
+		i.e. To create a Text box to display to the user:\
+			XML file (put this inside a layout type:\
+				<TextView android:id\'94@+id/textblah\'94\
+					android:attributeblah=\'93blah\'94\
+					android:text=\'93blahblah\'94 />\
+			In Code:\
+				TextView myText = (TextView) findViewById(R.id.textblah);\
+\
+\
+Event Handling:\
+	Events are a way to collect data about the user\'92s interaction with interactive components of the\
+	app, like button presses or screen touches. The Android framework maintains an event queue\
+	into which events are placed as they occur and then each event is removed from the queue on\
+	a FIFO basis. You can capture these events in your program and take appropriate action.\
+\
+	There are three concepts related to the Android Event Management:\
+		Event Listeners - The Event Listener is the object that receives notification when an\
+				       event happens. The View class is mainly involved in building up a\
+				       GUI. That same View class provides a number of Event Listeners.\
+		Event Listeners Registration - this is a process by which an Event Handler gets\
+						     registered with an Event Listener so that the handler is\
+						     called when the Event Listener fires the event.\
+		Event Handlers - When an event happens and we have registered an event listener for\
+				      the event, the event listener calls the Event Handlers, which is the\
+				      method that actually handles/operates on the event.\
+\
+	\ul Event Handlers\ulnone 		\ul Event Listener and Description\ulnone \
+	onClick()			OnClickListener() - called when the use either clicks or touches or\
+							          focuses upon any widget like a button, text,\
+								image, etc.\
+	onLongClick()		OnLongClickListener() - called when the user clicks, touches, or\
+								       focuses on any widget for one or more\
+								       seconds.\
+	onFocusChange()		OnFocusChangeListener() - called when the widget looses its focus\
+									  (user goes away from the View item).\
+	onKey()			OnFocusChangeListener() - called when user is focused on the\
+									   item and presses or releases a\
+									   hardware key on the device.\
+	onTouch()			OnTouchListener() - called when the user presses, releases, or\
+								makes any gesture on the screen.\
+	onMenuItemClick()		OnMenuItemClickListener() - called when the user selects a menu\
+									    item.\
+\
+	There are many more event handlers available as part of the View class.\
+\
+	Event Listeners Registration:\
+		Event Registration is the process by which an Event Handler gets registered with an\
+		Event Listener so that the handler is called when the event listener fires the event.\
+		There are several ways to register an event listener for any event, but here are the top\
+		three ways:\
+			Using an Anonymous Inner Class\
+			Activity class implement the Listener Interface\
+			Using Layout file activity_main.xml to specify the event handler directly\
+\
+Styles and Themes:\
+	Use styles and Themes in the activity_main.xml file to stylize Views in the form;\
+			android:attribute=\'93value\'94\
+	You define styles in an XML resource in the res/values/styles file, in the form:\
+			<style name=\'93StyleName\'94>\
+				<item name=\'93android:attribute\'94>value</item>\
+				\'85\
+			</style>\
+	Use styles in the activity_main.xml file inside a View tag like so:\
+			<ViewTag\
+				\'85\
+				style=\'93@style/StyleName\'94\
+				\'85  />\
+\
+	Style Inheritance:\
+		For inheriting custom style:\
+		Android supports style inheritance similar to CSS. Use this to inherit properties from an\
+		existing style and then change only the properties you want different. To do this use the\
+		following form:\
+			<style name=\'93ParentName.thisName\'94>\
+				<item \'85\
+			</style>\
+		Can do as many generations as you want using dots:\
+		i.e.	<style name=\'93GGrandParentName.GrandParentName.ParentName.thisName\'94>\
+		i.e.	<style name=\'93CustomFontStyle.LargeFont.Blue.BlackBckgrnd\'94>\
+\
+		For inheriting Android built-in styles you must do things a little differently:\
+			<style name=\'93thisStyleName\'94 parent=\'93@android:style/ParentName\'94>\
+				<item \'85\
+			</style>\
+\
+	Android Themes:\
+		A theme is just a style applied to an entire Activity or application, rather than to an\
+		individual View. When a style is applied as a theme, every View in the activity of app will\
+		apply each style property that it supports.\
+		To set a theme you edit the AndroidManifest.xml file.\
+		To set a theme for the entire app you edit the <application> tag:\
+			<application\
+				android:theme=\'93@style/blah\'94\
+				\'85\
+		To set a theme for one activity in an app you edit the <activity> tag:\
+			<activity\
+				android:theme=\'93@style/blah\'94\
+				\'85\
+\
+		The Android platform provides a large collection of styles and themes, found in the\
+		R.style class. To use style listed there, replace all underscores in the style name with a\
+		period, so that applying \'93Theme_NoTitleBar\'94 would be\
+		\'93@android:style/Theme.NoTitleBar\'94.\
+\
+\
+Android Custom Components:\
+	Android provides the means for creating custom widgets/Views/components. If you just need\
+	to make small changes to an existing widget or layout you can simply subclass the widget or\
+	layout and override its methods.\
+\
+	So the simplest way to make a custom View is to make a subclass of a built-in View. You need\
+	to write constructors corresponding to all the constructors of the base class. To implement\
+	custom drawing/sizing of the View then you need to override the\
+	onMeasure(int widthMeasureSpec, int heightMeasureSpec) and the\
+	onDraw(Canvas canvas) methods.\
+	The onMeasure() method coordinates with the layout manager to report the widget\'92s width and\
+	height, and you need to call setMeasuredDimension(int width, int height) from inside this\
+	method to report the dimensions.\
+	You can implement a custom drawing of the View inside the onDraw(Canvas canvas) method,\
+	where android.graphics.Canvas is pretty similar to its counterpart in Swing, and has methods\
+	like drawRect(), drawLine(), drawString(), drawBitmap(), etc.\
+\
+	Instantiating a Custom View (2 ways):\
+		Using code inside Activity class:\
+			Basically same way as instantiating a built-in View. In the onCreate() method of\
+			an Activity use this form:\
+				CustomViewType ObjectName = new CustomViewType(this);\
+				setContentView(ObjectName);\
+\
+		Using Layout XML File:\
+			Same way as instantiating a built-in View in the activity_main.xml file except the\
+			tag you use is the app\'92s package name followed by a period and the name of the\
+			custom View:\
+				<com.example.firstapp.CustomViewType\
+					android:attribute=\'93value\'94\
+					\'85\
+				/>\
+			You can use all the attributes that are used by the Parent built-in View.\
+\
+	Custom Components with Custom Attributes (using attars.xml):\
+		You can make custom attributes for your custom Views.\
+		1. You have to define the custom attributes in a new xml file under res/values and\
+		call it attars.xml:\
+			<resources>\
+				<declare-styleable name=\'93CustomViewType\'94>\
+				<attr name=\'93attributeName\'94 format=\'93datatype\'94 />\
+				<attr name=\'93fancyText\'94 format=\'93boolean\'94 >\
+				</declare-styleable>\
+			</resources>\
+		2. Need to read these attributes from the layout XML file and set them for the\
+		component. This logic will go in the constructors that get passed on AttributeSet, which\
+		is what contains the XML attributes. To read the values in the XML, you need to create\
+		a TypedArray from the AttributeSet, then use that to read and set the values as shown:\
+			TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CstmViewType);\
+			final int N = a.getIndexCount();\
+			for (int i=0; i<N ++i) \{\
+				int attr = a.getIndex(i);\
+				switch (attar) \{\
+					case R.styleable.CstmViewType_attrName:\
+						String delimiter = a.getString(attr);\
+						\'85do something with delimiter\'85\
+						break;\
+					case R.styleable.CstmViewType_anotherAttrName:\
+						boolean fancyText = a.getBoolean(attr, false);\
+						\'85 do something with fancyText\'85\
+						break;\
+				\} \}\
+			a.recycle();\
+		3. Finally you use your defined attributes in your layout xml file in the custom View in the		form:\
+			custom:attrName=\'93value\'94\
+		And make sure inside the Layout tag that you add the line:\
+			xmlns:custom=\'93http://schemas.android.com/apk/res/package name\'94\
+		i.e.\
+			xmlns:custom=\'93http://schemas.android.com/apk/res/com.example.firstapp\'94\
+\
+\
+Drag and Drop:\
+	Moving data from one View to another using drag and drop gesture. The framework includes\
+	three important elements to support the functionality:\
+		Drag event class\
+		Drag listeners\
+		Helper methods and classes\
+\
+	The Drag/Drop Process:\
+		Four steps or states in the drag and drop process.\
+		Started:\
+			This event occurs when you start dragging an item in a layout, your app calls\
+			startDrag() method to tell the system there is a drag. The arguments inside the\
+			startDrag() method provide the data to be dragged, metadata for this data and a\
+			callback for drawing the drag shadow. The system first responds by calling back\
+			to the app to get the draw shadow. Next the system sends a drag event with\
+			action type ACTION_DRAG_STARTED to the registered drag event listeners for\
+			all the View objects in the current layout. To continue to receive drag events,\
+			including drop events, a drag event listener must return true. If the drag event\
+			listener returns false then it will not receive drag events for the current operation\
+			until the system sends a drag event with the action type\
+			ACTION_DRAG_ENDED.\
+		Continuing:\
+			The user continues to drag. System sends ACTION_DRAG_ENTERED action\
+			followed by ACTION_DRAG_LOCATION action to the registered event listener\
+			for the View where dragging point enters. The listener mate choose to alter its\
+			View object\'92s appearance in response to the event or can react by highlighting its\
+			View.\
+		Dropped:\
+			The user releases the dragged item within the bounding box of a View. The\
+			system send the View object\'92s listener a drag even twitch action type\
+			ACTION_DROP.\
+		Ended:\
+			Just after the action type ACTION_DROP, the system sense out a drag event\
+			with action type ACTION_DRAG_ENDED to indicate the drag operation is over.\
+\
+	DragEvent Class:\
+		The DragEvent represents an event that is sent out by the system at various times\
+		during a drag and drop operation. This class provides a few constants and methods to\
+		use during the drag/drop process.\
+		Constants:\
+			ACTION_DRAG_STARTED\
+			ACTION_DRAG_ENTERED\
+			ACTION_DRAG_LOCATION - if drag shadow is within the View\'92s bounding box\
+			ACTION_DRAG_EXITED - when user has moved drag shadow out of the View\
+			ACTION_DROP\
+			ACTION_DRAG_ENDED\
+		Methods:\
+			int getAction() - inspect the action value of this event.\
+			ClipData getClipData() - returns the ClipData object sent to the system as part of\
+							the call to startDrag()\
+			ClipDescription getClipDescription() - returns the ClipDescription object\
+									contained in the ClipData.\
+			boolean getResult() - returns an indication of the result of the drag/drop operation\
+			float getX() - gets the x-coordinate of the drag point\
+			float getY() - gets the y-coordinate of the drag point\
+			String toString() - returns a string representation of this DragEvent object.\
+\
+	Listening for Drag Event:\
+		For a View to respond to a drag event the View needs to implement\
+		View.OnDragListener or setup onDragEvent(DragEvent) callback method. When the\
+		system calls the  method or listener it passes them to a DragEvent object.\
+		To start a drag event, you start by creating a ClipData and ClipData.Item for the data\
+		being moved. As part of the ClipData object, supply metadata that is stored in a\
+		ClipDescription object within the ClipData. For a drag and drop operation that does not\
+		represent data movement you probably just wanna use null instead of an actual object.\
+		Next either extend View.DragShadowBuilder to create a drag shadow for dragging the\
+		View or just use View.DragShadowBuilder(View).\
+\
+\
+Android Notifications:\
+\
+Location Based Services:\
+\
+Android Sending Email:\
+\
+Android Sending SMS:\
+\
+Android Phone Calls:\
+\
+\
+\
+
+\b \ul Notes from Google\'92s Android Developer Training:
+\b0 \ulnone \
+\
+When referencing a method by putting it in a View\'92s xml code (i.e. android:onClick=\'93sendMessage\'94)\
+that method in the Activity source code, must be public, have a void return value, and have a View as\
+the only parameter.		i.e.	public void sendMessage(View view) \{ \}\
+\
+An intent is an object that provides runtime binding between separate components (such as two\
+activities). The intent represents an app\'92s \'93intent to do something\'94.\
+\
+Every activity is invoked by an Intent. You can get the Intent that started the activity by calling\
+getIntent(), which returns an Intent object, and retrieve the data contained within it using\
+intent.getblah().\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 Action Bar:
+\b0 \
+An Action Bar gives a dedicated space for giving an app an identity and indicating the user\'92s location\
+in the app, access to important actions (like search bar), and support for navigation and view\
+switching. In its most basic form the action bar displays the title for the activity and the app icon on\
+the left. To have an Action Bar the app has to use an activity theme that enables the action bar. The\
+default theme, Theme.Holo, includes the action bar automatically. All action buttons and those\
+available in the Action Overflow are defined in an XML menu resource, at res/menu. Declare action\
+buttons with the <item> tag.\
+When the attribute showAsAction equals \'93ifRoom\'94 that action button will be displayed if there is room\
+in the action bar. When it equals \'93never\'94, it will only show in the Action Overflow. All action buttons\
+show in the Action Overflow by default unless you specify them to be shown in the action bar I think.\
+The icon attribute requires an image in a res/drawable folder.\
+To place the menu items on the action bar you need to implement the onCreateOptionsMenu()\
+method in the activity to inflate the menu resource in the given Menu object.\
+\
+Style the Action Bar using Android\'92s style and theme resources. Android includes two baseline activity\
+themes that dictate the color of the action bar: Theme.Holo for a dark theme, and Theme.Holo.Light\
+for a light theme. Apply these to an entire app or to specific activities in the AndroidManifest.xml using\
+the android:theme attribute in the <application> or <activity> tags.\
+Create a themes.xml file in the res/values directory of the application package.\
+Gotta make sure you make your custom action bar theme inherit from a parent to have use of all the\
+normal attributes.\
+\
+NEED TO LOOK BACK INTO STYLING THE ACTION BAR CUZ IT ISN\'92T WORKING CORRECTLY.\
+\
+By default the action bar lays on top of the activity, but you can hide it and show it using hide() and\
+show() on the action bar, but this causes the device to recompute and redraw the layout based on its\
+new size, which is bad. To avoid resizing which action bar hides and shows you can enable Overlay\
+Mode for the action bar. This makes the activity use the entire screen and the action bar is overlaid\
+on top of the activity, blocking that area, but when the action bar hides and shows up it doesn\'92t\
+change the sizing of the screen. Can also make it so the action bar is partially transparent when it is\
+there, by styling the action bar.\
+To enable overlay mode for the action bar you need to create a custom theme that extends an\
+existing action bar theme and set the android:windowActionBarOverlay property to true.\
+\
+
+\b Supporting Different Languages:
+\b0 \
+To work with additional languages create additional values resource files with strings.xml in them\
+(i.e. values-es/strings.xml   for spanish). You can use the locale qualifier to choose the correct\
+language given the user\'92s locale. You can do this for any resource files, in case language isn\'92t the\
+only thing you want to change for different locales.\
+\
+To use a string resource in source code:		R.string.stringName\
+To use a string resource in an XML file:		\'93@string/stringName\'94\
+\
+
+\b Supporting Different Screens:
+\b0 \
+Android categorizes screens using two properties: size and density. Need to include alternative\
+resources that optimize the app\'92s appearance for different screen sizes and densities.\
+Four Sizes:		small, normal, large, large\
+Four Densities:	low (ldpi), medium (mdpi), high (hdpi), extra high (xhdpi)\
+Also may need to revise layout based on screen orientation landscape or portrait.\
+Will need to place images in the different drawable resource folders, and also make different layouts\
+for different screens.\
+Need to create a unique layout XML file for each screen size you want to support. Each layout should\
+be put in an appropriate resources directory, for example:	res/layout-large/\
+Android does automatically scale the layout in order to properly fit the screen, but the reason for\
+creating different layouts is in case the layout structure needs to change based on the screen size.\
+The file names in each respective layout-size folder must be exactly the same. Don\'92t need to do\
+anything in the source code itself as Android automatically chooses the layout files for the user\'92s\
+screen size.\
+Might need to make different layout files for landscape vs. portrait. Portrait is the default layout style.\
+Make a new folder for landscape in the res/ directory like so:			layout-land/\
+Need to combine orientation and screen size layout files like so:		layout-large-land/\
+\
+To create different bitmaps for different screen densities you should do this by starting with the raw\
+bitmap resource in vector format?? (to be held in the res/raw folder) and generate images for each\
+density using this scale:\
+	xhdpi: 2.0\
+	hdpi: 1.5\
+	mdpi: 1.0 (baseline)\
+	ldpi: 0.75\
+This means that if you generate a 200x200 image for xhdpi devices, you should generate the same\
+resource in 150x150, 100x100, and 75x75, and place all of them in the appropriate folders. Anytime\
+you reference the drawable image the system will automatically pick the correct bitmap based on the\
+user\'92s screen density. Note: low-density (ldpi) resources aren\'92t always necessary because the system\
+automatically scales hdpi resources down by one half to fit ldpi screens.\
+\
+
+\b Supporting Different Android Platforms:
+\b0 \
+In the AndroidManifest.xml file you can choose the minSDKVersion and the targetSDKVersion in the\
+<uses-sdk> tag. The target SK version should always be the newest version of Android.\
+Android provides a unique code for each platform version in the Build constants class. Use these\
+codes in the source code to build conditions that ensure the code that depends on higher API levels is\
+only executed when those API\'92s are available on the system. This is what the if-statement was in the\
+ActionBar thing where it said do the action bar if the sdk version is 11 or up. In XML though you can\
+safely use attributes that are only available on higher sdk versions because Android ignores XML\
+attributes that aren\'92t supported by the current device.\
+Android provides UI themes for each of its OS versions. By using these build in styles and themes\
+you can make an app naturally follow the latest look and feel of Android with each new release. Do\
+this in the AndroidManifest.xml file by doing the following:\
+To make the activity look like a dialog box:\
+		<activity android:theme=\'93@android:style/Theme.Dialog\'94>\
+To make the activity have a transparent background:\
+		<activity android:theme=\'93@android:style/Theme.Translucent\'94>\
+To apply your own custom theme defined in /res/values/sytles.xml:\
+		<activity android:theme=\'93@style/CustomTheme\'94>\
+To apply a theme to the entire app:\
+		<application android:theme=\'93@style/CustomTheme\'94>\
+\
+
+\b Activity Life Cycle:
+\b0 \
+An activity can exist in only three states of the Activity life cycle for any extend period of time. These\
+are the Resumed, Paused, and Stopped state. Resumed is when the activity is in the foreground and\
+the user can interact with it - the running state. Paused is when the activity is partially obscured by\
+another activity, the other activity that is in the foreground is semi-transparent or doesn\'92t cover the\
+entire screen. The paused activity doesn\'92t receive user input and cannot execute any code. The Stopped state is when the activity is completely hidden and not visible. In this state the activity\
+instance and all its state info such as member variables is retained, but it can\'92t execute any code.\
+\
+When an app is started the onCreate() method of the launcher/main activity is called. The activity that\
+starts the app can be specified in the AndroidManifest.xml. The main activity must have an\
+<intent-filter> tag in it which includes the following action and category tags:\
+	<action android:name=\'93androidintent.action.MAIN\'94 />\
+	<category android:name=\'93android.intent.category.LAUNCHER\'94 />\
+\
+For each app you must implement the onCreate() method to perform basic basic application startup\
+logic that should happen only once for the lifetime of the activity. For example, it must define the UI - \
+setContentView(R.layout.activity_main);  -  and possibly instantiate some class-scope variables.\
+\
+You can call finish() from within the onCreate() method to make the activity immediately call\
+onDestroy() without calling onPause() and onStop().\
+\
+In all of the lifecycle methods for an activity you always need to call the method on the superclass as\
+the first line in the method:			super.onCreate(), super.onDestroy(), etc.\
+\
+In the Paused state, in the onPause() method, you should stop any ongoing actions that should not\
+continue while paused, like playing music or video, and you should persist any info that should be saved permanently in case the user leaves the app entirely. If the user continues the system calls the\
+onResume() method. The onPause() method should be used to stop animations or other ongoing\
+actions that consume CPU use, commit unsaved changes that the user expects to be saved when\
+they leave, release system resources, such as broadcast receivers, handles to sensors (like GPS), or\
+any resources that may affect battery life, like the camera. Avoid doing CPU-intensive work in the\
+onPause() method like writing to a database because it can slow the transition to the next activity,\
+instead do that kind of stuff during onStop().\
+\
+The onResume() method, which is called when the activity is first started and anytime it comes back\
+from a paused state, should initialize any components that were released during onPause(), and start\
+any other initializations that must occur whenever the activity enters the Resumed state, like starting\
+animations, music, etc.\
+\
+Times when an activity is stopped restarted, calls onStop() and onRestart():\
+	- The user goes to the Recent Apps window and switches to another app, then goes back to\
+		your app.\
+	- The user performs an action in your app that starts a new activity, the current activity is\
+		stopped when the new activity is created. If the user presses the back button then the\
+		original activity is restarted.\
+	- The user receives a phone call while using an app on a phone.\
+\
+An activity is stopped, using onStop(), when that activity is completely hidden - no longer visible.\
+When a new activity is created the previous one is stopped, waiting to be onRestart(), onStart(), and\
+onResume() if the user goes back to it.\
+\
+Use the logs to see when something is stopped, etc if you aren\'92t sure. simply go into the the onBlah()\
+method you want and type:	Log.d(stringVar, \'93onBlah() event\'94);\
+and then look at the logs when the app is running to see when your string is displayed.\
+\
+When an activity is stopped, in the onStop() method it should release almost all resources that aren\'92t\
+needed while the user isn\'92t using it. Important to use onStop() to release resources that might leak\
+memory because in rare cases the system might simply kill the app process without calling the final\
+onDestroy(). The onStop() method should be used to perform larger, more CPU intensive shutdown\
+operations than onPause(), like writing to a database. The system keeps track of the state of all View\
+objects so, for example, you don\'92t need to save text entered into an EditText widget when the activity\
+is stopped. Note: even if the system destroys the activity while it\'92s stopped, all View objects are saved\
+in a Bundle and restores them if the user navigates back to the same instance of the activity.\
+\
+Since the onRestart() method is only called when coming back from the stopped state, you can use it\
+to perform stuff specific to coming back from a stopped state, as opposed to the onStart() method. In\
+general though anything that needs to be brought back after being stopped is already coded into the\
+onStart() method which is executed also when the activity first starts up. For example, in the onStart()\
+method you would enable GPS, stuff like that.\
+\
+In onDestroy() make sure that any additional threads and long-running processes that aren\'92t\
+terminated in onStop() get ended.\
+\
+When the Back button is pressed the current activity is destroyed. But if the system destroys an\
+activity due to system constraints (rather than normal app behavior), the system still saves a set of\
+data that describes the state of the activity when it was destroyed so if the user navigates back to that\
+activity its previous state is recreated. The saved data the system uses to do this is called the\
+\'93instance state\'94 and is a collection of key-value pairs stored in a Bundle object.\
+\
+Note that when screen orientation changes the activity is destroyed and recreated, which is why on\
+my Computer Graphics projects switching the orientation always reset what was on the screen. So\
+you need to save the current data of the activity when switching orientation and then load it back up.\
+The system uses the Bundle instance state to save info about each View object in the activity layout.\
+
+\b In order for the system to restore the state of the Views in the activity, each View must have a unique ID, using the android:id attribute.
+\b0  To store additional data about the activity state you must override the 
+\b onSaveInstanceState() 
+\b0 method. The system calls this method when the user is leaving\
+the activity and passes it the Bundle object in the even the activity is destroyed unexpectedly. If the\
+system must recreate the activity instance later, it passes the same Bundle object to both the\
+onRestoreInstanceState() and onCreate() methods. 
+\b To saving data during screen orientation switch, or any other time the activity stops, save it in the onSaveInstanceSate() method. 
+\b0 This\
+method stores data as key-value pairs that are added to the Bundle object. For instance to save an\
+integer that is the point score do:		savedInstanceState.putInt(key, value);\
+					i.e.	savedInstanceState.putInt(\'93playerScore\'94, scoreVar);\
+After which you always call the superclass so it can save the view hierarchy state:\
+		super.onSaveInstanceState(savedInstanceState);\
+When the activity is recreated after being destroyed, you can recover the saved state from the\
+Bundle. Both the onCreate() and the onRestoreInstanceSate() methods receive the same Bundle.\
+You must check whether the Bundle is null before you attempt to read it. If it is null, then the system is\
+creating a new instance of the activity instead of restoring a previous one that was destroyed. So if it\
+isn\'92t null, get the saved data like so:\
+			value = savedInstanceState.getInt(key);\
+		i.e.	scoreVar = savedInstanceState.getInt(\'93playerScore\'94);\
+Otherwise, if it is null, just initialize member variables with default values for a new instance.\
+Also, instead of restoring the state in the onCreate() method, you can implement the\
+onRestoreInstanceState() method, which is called after onStart(), but only called if there is a saved\
+state to restore (so you don\'92t need to check whether the Bundle is null.\
+\
+Remember, all these activity life cycle methods require you to call their superclass first thing in the\
+method, except in the onSaveInstanceSate() method you call it last I guess.\
+\
+Note: when you press the Recent Apps button to make the app minimize to the Recent Apps view, this calls the onPause() and onStop() methods.\
+\
+\
+
+\b Fragments:
+\b0 \
+To create a dynamic and multi-pane UI you need to encapsulate UI components and activity\
+behaviors into modules that you can swap into and out of your activities - you create these modules\
+with the Fragment class. The fragment class behaves somewhat like a nested activity that can define\
+its own layout and manage its own lifecycle. Fragment layouts can be configured in different\
+combinations with other fragments to suit different screen sizes - like a small screen showing one\
+fragment at a time, while a large screen shows two or more.\
+A Fragment is sort of like a \'93sub-Activity\'94 that you can re-use in different activities.\
+\
+If supporting only Android systems API 11 or above you just use the framework\'92s built in Fragment\
+class and related APIs. If supporting API\'92s below 11 you need to use Android\'92s Support Library. You\
+need to set up the project to use the v4 library by following the Support Library Setup document, but\
+you can also include the action bar in activities by instead using the v7 appcompat library, which is\
+compatible with Android 2.1 (API 7) and up, which includes the Fragment APIs.\
+\
+To create a Fragment you make a class that extends the Fragment class, then override key lifecycle\
+methods to insert your app logic, similar to what you\'92d do with an Activity class. One difference is that\
+you must use the onCreateView() method to define the layout. This is the only callback method you\
+need to get a fragment running. All other callback methods are the same as in activities.\
+i.e.\
+	public class myFrag extends Fragment \{\
+		@Override\
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle\
+		   savedInstanceState) \{\
+			//Inflate the layout for this fragment\
+			return inflater.inflate(R.layout.article_view, container, false);\
+\
+Each instance of a Fragment class must be associated with a parent FragmentActivity. You create\
+this association by defining each fragment within your activity layout XML file. If supporting API\'92s\
+lower than 11 you need to make the activity that has the fragment extend the FragmentActivity class, but if only supporting API 11 and up you can just extend the regular Activity class. If using the v7 appcompat library, the activity should extend the ActionBarActivity class instead, which is a subclass\
+of FragmentActivity.. The XML file links the self-created fragment class with the created Activity class\
+that it exists in, the XML code is:\
+	i.e.\
+		<fragment android:name=\'93come.example.android.fragments.myFrag\'94\
+			\'85 />\
+Then you just apply the layout within its parent activity\'92s onCreate() method with the\
+setContentView(R.layout.frag_xml_file) method.\
+\
+You can reuse fragments in different layouts to support different screen sizes.\
+The FragmentManager class provides methods to add, remove, and replace fragments to an activity\
+at runtime in order to create a dynamic experience. So not only can you define fragments for an\
+activity in the layout XML file with the <fragment> tag, but you can add them to an activity during the\
+activity runtime, kind of like how you can define View/widget objects in either the XML layout file or in\
+the Activity source code using the FragmentManager class.. This is necessary if you plan to change\
+fragments during the life of the activity.\
+\
+The FragmentManager is used to create a FragmentTransaction, which provides API\'92s to add,\
+remove, replace, and perform other fragment transactions. If the activity allows the fragments to be\
+removed and replaced, you need to add the initial fragment(s) to the activity during the activity\'92s\
+onCreate() method. Note that a fragment MUST have a container View in the layout in which the\
+fragment\'92s layout will reside.\
+In the XML file, instead of having individual <fragment> tags, you can use the <FrameLayout> tag\
+that acts as an empty fragment container, which allows you to replace one fragment with another at\
+runtime. Inside the activity, call 
+\i getSupportFragmentManager()
+\i0  to get a FragmentManager using the\
+Support Library API\'92s. Then call 
+\i beingTransaction()
+\i0  to create a FragmentTransaction and call 
+\i add()
+\i0  to\
+add a fragment. You can perform multiple fragment transactions for the activity using the same\
+FragmentTransaction, when you\'92re ready to make the changes, call 
+\i commit()
+\i0 . When a fragment is\
+added to the FrameLayout container at runtime, instead of defining it in the activity\'92s layout, the\
+activity can remove the fragment and replace it with a different one.\
+\
+To replace a fragment with another one the procedure is similar to adding a fragment except you use\
+the 
+\i replace()
+\i0  method instead of add(). You usually want to allow the user to navigate backward to\
+undo the fragment change, to do this you must call 
+\i addToBackStack()
+\i0  before you commit the\
+FragmentTransaction.\
+	i.e.		myFragTrans.replace(R.id.myFrag_container, myNewFrag);\
+			myFragTrans.addToBackStack(null);\
+			myFragTrasn.commit();\
+\
+Fragments can communicate with each other, but they should never communicate directly, only\
+through their associated Activity.\
+To allow a Fragment to communicate with its Activity you define an interface in the Fragment class\
+and implement it within the activity. The fragment captures the interface implementation during its\
+
+\i onAttach()
+\i0  lifecycle method and can then call the interface methods in order to communicate.\
+\
+In order to receive event callback from the fragment, the activity that hosts it must implement the\
+interface defined in the Fragment class like so:\
+	public static class MainActivity extends Activity implements blah.blah \{ \}\
+\
+The host activity can deliver messages to a fragment by capturing the Fragment instance with\
+
+\i findFragmentById()
+\i0  and then directly call the fragment\'92s public methods.\
+\
+\
+
+\b Saving Data:
+\b0 \
+\
+Saving a relatively small amount of data as key-value pairs using the SharedPreferences API\'92s. A\
+SharedPreferences object points to a file containing key-value pairs and provides simple methods to\
+read and write them. Each SharedPreferences file is managed by the framework and can be private\
+or shared.\
+\
+Create a new shared preference file or access an existing one by calling one of two methods:\
+	getSharedPreferences()	-	Use this if you need multiple shared preference files\
+						identified by name, which you specify with the first\
+						parameter. You can call this from any Context in the app.\
+	getPreferences()		-	Use this from an Activity if you need to use only one shared\
+						preference file for the activity. B/c this retrieves a default\
+						shared preference file that belongs to the activity, you don\'92t\
+						need to supply a name.\
+	i.e.\
+		Context context = getActivity();\
+		SharedPreferences sharPref = context.getSharedPreferences(\
+			getString(R.string.preference_file_key), Context.MODE_PRIVATE);\
+\
+The 
+\i .MODE_PRIVATE
+\i0  in the above code means that the file is accessible by only your app.\
+When naming shared preference files you should use a name that\'92s uniquely identifiable to your app,\
+like \'93com.example.myapp.PREFERENCE_FILE_KEY\'94. If you need just one shared preference file\
+the above code would have used getPreferences() method instead like so:\
+	i.e.\
+		SharedPreferences sharPref = getActivity().getPreferences(Context.MODE_PRIVATE);\
+\
+If you create a shared preference file with with MODE_WORLD_READABLE or\
+MODE_WORLD_WRITEABLE, then any other apps that know the file identifier can access the data.\
+\
+To write to a shared preferences file, create a 
+\i SharedPreferences.Editor
+\i0  by calling 
+\i edit()
+\i0  on your\
+SharedPreferences. Pass the keys and values you want to write with methods like 
+\i putInt()
+\i0  and\
+
+\i putString()
+\i0 . Then call commit() to save the changes.\
+\
+i.e.\
+	SharedPreferences sharPref = getActivity().getPreferences(Context.MODE_PRIVATE);\
+	SharedPreferences.Editor editor = sharPref.edit();\
+	editor.putInt(getString(R.string.savedHighScore, newHighScore);\
+	editor.commit();\
+\
+To read from the shared preferences file, call methods like 
+\i getInt()
+\i0  and 
+\i getString()
+\i0 , providing the key\
+as the argument to get the value you want, and optionally a default value to return if the key isn\'92t\
+present.\
+\
+i.e.\
+	SharedPreferences sharPref = getActivity().getPreferences(Context.MODE_PRIVATE);\
+	int defaultValue = getResources().getInteger(R.string.savedHighScoreDefault);\
+	long highScore = sharPref.getInt(getString(R.string.savedHighScore), defaultValue);\
+\
+Saving Files:\
+\
+\'85\
+\
+\
+Saving Data in SQL Databases:\
+Android uses SQLite databases. Check out the Android developer pages under the Develop tab ->\
+Reference tab -> Android API Level 19 -> android.database.sqlite to learn more about it.\
+\
+A schema in SQL is a formal declaration of how the database is organized. The schema is reflected\
+in the SQL statements you use to create your database. It is helpful to create a companion class,\
+known as a contract class, that explicitly specifies the layout of the schema in a systematic and\
+self-documenting way. A contract class is a container for constants that define names for URI\'92s,\
+tables, and columns. It allows you to use the same constants across all the other classes in the same\
+package. This lets you change a column name in one place and have it propagate throughout the\
+code. Organize the contract class by putting definitions that are global to the whole database in the\
+root level of the class, then create an inner class for each table that enumerates its columns.\
+Implementing the 
+\i BaseColumns
+\i0  interface lets the inner class inherit a primary key field called\
+
+\i _ID
+\i0  that some Android classes such as cursor adaptors will expect it to have.\
+\
+i.e.\
+	public final class myContractClass \{\
+		public myContractClas() \{ \}\
+\
+		// Inner class that defines the table contents\
+		public static abstract class myInner implements BaseColumns \{\
+			public static final String TABLE_NAME = \'93entry\'94;\
+			public static final String COLUMN_NAME_ENTRY_ID = \'93entryId\'94;\
+			public static final String COLUMN_NAME_TITLE = \'93title\'94;\
+			\'85\
+		\} \}\
+\
+Once you\'92ve defined how the database looks, implement methods to create and maintain the\
+database and tables.\
+\
+Use SQLiteOpenHelper class.\
+Use methods 
+\i getWritableDatabase()
+\i0  and 
+\i getReadableDatabase()
+\i0 , these are long-running processes\
+that should be called in a background thread, with something like AsyncTask or IntentService.\
+\
+\'85 MORE DATABASE STUFF I NEED TO READ AND LEARN\'85\
+\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 Interacting with Other Apps:
+\b0 \
+\
+\'85\
+\
+\
+
+\b Building Apps with Content Sharing:
+\b0 \
+\
+\'85\
+\
+\
+
+\b Audio:
+\b0 \
+\
+Android maintains a separate audio stream for playing music, alarms, notifications, the incoming call\
+ringer, system sounds, in-call volume, and DTMF tones. This is done to allow the user to control the\
+volume of each stream independently. Music is done through the 
+\i STREAM_MUSIC
+\i0  stream. Android\
+provides the 
+\i setVolumeControlStream()
+\i0  method to direct volume key presses to the audio stream you\
+specify. So you just need to set the audio stream you want as the volume stream target. This only\
+needs to be done once during the activity\'92s lifecycle, so it should be done in the onCreate() method of\
+the activity or fragment that controls the media.\
+	i.e.\
+		setVolumeControlStream(AudioManager.STREAM_MUSIC);\
+Whenever a user presses the hardware keys play, pause, stop, skip, and previous (some handsets\
+and headsets have these buttons), the system broadcasts an intent with the\
+ACTION_MEDIA_BUTTON action. To respond to media button clicks you need to register a\
+BroadcastReceiver in the manifest that listens for this action broadcast:\
+\
+	<receiver android:name=\'93.RemoteControlReceiver\'94>\
+		<intent-filter>\
+			<action android:name=\'93android.intent.action.MEDIA_BUTTON\'94 />\
+		</intent-filter>\
+	</receiver>\
+\
+The receiver implementation needs to extract which key was pressed. The Intent includes this under\
+the EXTRA_KEY_EVENT key, while the KeyEvent class includes a list KEYCODE_MEDIA_* static\
+constants that represent each of the possible media buttons, like KEYCODE_MEDIA_PLAY_PAUSE\
+and KEYCODE_MEDIA_NEXT, etc.\
+\
+Because multiple apps might want to listen for media button presses, you must programmatically\
+control when your app should receive media button press events. Use the 
+\i AudioManager
+\i0  to register\
+or de-register the media button event receiver. Apps should typically unregister most of their receivers\
+whenever they become inactive or invisible. Although a better approach is to register and unregister\
+the media button event receiver when the application gains or loses audio focus.\
+\
+Audio Focus:\
+\
+\
+Audio Output Hardware:\
+Might need to know this for if people are using headsets and whatnot.\
+\
+\
+\
+
+\b Capturing Photos:
+\b0 \
+\
+\'85\
+\
+\
+
+\b Printing Content:
+\b0 \
+\
+\'85\
+\
+\
+\
+
+\b Bitmaps:
+\b0 \
+There is a need to use bitmaps efficiently so they doesn\'92t take up too much space or use up too much\
+RAM.\
+The 
+\i BitmapFactory
+\i0  class provides several decoding methods (
+\i decodeByteArray()
+\i0 , 
+\i decodeFile()
+\i0 ,\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\i \cf0 decodeResource()
+\i0 , etc). for creating a Bitmap from various sources. Choose the most appropriate\
+decode method based on the image data source. These methods attempt to allocate memory for the\
+constructed bitmap and therefore can easily result in an 
+\i OutOfMemory exception
+\i0 . Each type of\
+decode method has additional signatures that let you specify decoding options via the\
+
+\i BitmapFactory.Options
+\i0  class. Setting the 
+\i inJustDecodeBounds
+\i0  property to True while decoding\
+avoids memory allocation, returning null for the bitmap object but setting 
+\i outWidth
+\i0  , 
+\i outHeight
+\i0 , and 
+\i outMimeType
+\i0 . This technique allow you to read the dimensions and type of the image data prior to construction (and memory allocation) of the bitmap.\
+This gets the image dimensions:\
+	i.e.\
+		BitmapFactory.Options options = new BitmapFactory.Options();\
+		options.inJustDecodeBounds = true;\
+		BitmapFactory.decodeResource(getResources(), R.id.myimage, options);\
+		int imageHeight = options.outHeight;\
+		int imageWidth = options.outWidth;\
+		String imageType = options.outMimeType;\
+\
+To avoid out of memory exceptions check the dimensions of a bitmap before decoding it, unless you absolutely trust the source to provide you with predictably sized image data that fits within available memory.\
+\
+Now that the image dimensions are known, they can be used to decide if the full image should be loaded into memory or if a subsampled version should be loaded instead. Some factors to consider are: estimated memory usage of loading full image, amount of memory you are willing to commit to loading this image given other memory requirements of the app, dimensions of the target 
+\i ImageView
+\i0  or UI component that the image is to be loaded into, screen size and density of the current device.\
+\
+To tell the decoder to subsample the image (load a smaller version into memory) set 
+\i inSampleSize
+\i0  to True in the BitmapFactory.Options object. A 2048x1536 Image that is decoded with an inSampleSize of 4 produces a bitmap of about 512x384, and loading this into memory uses 0.75 MB instead of 12MB for the full image.\
+\
+\
+\
+\
+\
+\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 Animations and Graphics on Android:
+\b0 \
+\
+Three different kinds of animations:\
+	Property Animation	-	(api level 11 and up) lets you animate properties of any object,\
+					including ones that are not rendered to the screen. Lets you\
+					animate properties of custom types as well.\
+	View Animation	-	the older system of animation and can only be used for Views. It is\
+					relatively easy to setup and offers enough capabilities to meet\
+					many apps\'92 needs.\
+	Drawable Animation -	this is sprite animation. involves displaying drawable resources one\
+					after another, like a roll of film.\
+\
+2D and 3D graphics options:\
+	Canvas and Drawables -	Can extend View widgets to modify the way they look or behave.\
+					Can also do custom 2D rendering using the various draw methods\
+					continued in the Canvas class or create Drawable objects for things\
+					like textured buttons or frame-by-frame animations.\
+	Hardware Acceleration -	(api level 11 and up) you can hardware accelerate the majority of\
+					the drawing done by Canvas API\'92s to further increase their\
+					performance.\
+	OpenGL -			supports OpenGL ES 1.0 and 2.0, with Android framework API\'92s as\
+					well as natively with the Native Development Kit (NDK). There is a\
+					performance hit using the framework API\'92s compared to NDK, so\
+					for graphically intense games using NDK is beneficial. OpenGL is\
+					useful for when you need to do 3D graphics, or do stuff that Canvas\
+					can\'92t do.\
+\
+View Animation (tween):\
+	View animation works by simply changing where the View is drawn, but not changing its actual\
+	property coordinates (Property Animation would actual change this). For instance,\
+	using View animation to move a button across the screen would make it so the Button is drawn\
+	as being animated across the screen but you would still have to click in its original position to\
+	click the button.\
+\
+	Perform animation using tweened animation on Views. Tween animation calculates the\
+	animation with information such as the start point, end point, size, rotation, and other common\
+	aspects of animation. Basically tween animations performs simple transformations, on the\
+	contents of a View object. So you can move, rotate, grow, or shrink a TextView Object, for\
+	instance. The 
+\i animation package
+\i0  contains all the classes for tween animation.\
+\
+	You can define tween animations, which is a sequence of animation instructions, in either XML\
+	or in source code. Defining tween animation in an XML file is recommended because it is more\
+	readable, reusable, and swappable than hard-coding the animation. To do it in source code\
+	you use the AnimationSet class and other Animation subclasses.\
+\
+	The animation instructions define which transformations occur, when they occur, and how long\
+	they take to apply. To make several transformations happen simultaneously, give them the\
+	same start time.\
+\
+	The animation XML file belongs in the res/anim/ directory. The file must have a single root\
+	element this will either be a single <alpha>, <scale>, <translate>, <rotate>, interpolator\
+	elements, or <set> element that holds groups of these elements (which may include another\
+	set). By default all animations occur at the same time, you must use the 
+\i startOffset
+\i0  attribute to\
+	change this.\
+	Note: A root element in an XML file is the outermost tag and contains all the other tags, so\
+	always use the <set> tag as the root for tween animations if there will be multiple types of\
+	animations.\
+\
+	Note: When doing animation in java code, you need to put multiple animations in a set, if you\
+	just call them individually the timing doesn\'92t work right.\
+\
+\
+\
+\
+\
+	When drawing things that are going to be dynamically changing a lot, like in video games, you\
+	want to draw with a Canvas.\
+\
+\
+\
+so in a game, the onCreate() initializes stuff, most importantly the setContentView(). The onResume() method should then call a game loop class I think, maybe a surfaceView class.\
+\
+\
+\
+\
+
+\b Game Programming with LibGDX:
+\b0 \
+\
+	Only one activity is used because individual activities require their own OpenGL context, which would be time consuming to create and reload for each activity, so all LibGDX code just goes to the single MainActivity in the Android part of the project.\
+\
+All loaded resources should go into Android\'92s assets folder in the res/ directory. They can be shared from there with the other platforms if needed. Need to create a source link to the desktop platform\'92s asset folder if I\'92ll be testing the app on the desktop.\
+\
+Android Manifest notes:\
+Need to change the minSDKVersion in the Android Manifest file, because libgdx starts it at 5. Make it 8 or 11 probably. The screen orientation is set to landscape to keep it in landscape by default and the configChanges attribute is also used to keep the application from restarting when say orientation changes or a phone keyboard is slid out or into the phone. If the app needs to write to the external storage of a device (SD card), needs internet access, uses the vibrator, wants to record audio, etc., permissions need to be added to the Android Manifest file in the following form (which can be seen on the libgdx wiki in the start classes & config document:\
+		<uses-permission android:name=\'93android.permission.RECORD_AUDIO\'94 />\
+\
+If a game doesn\'92t use the accelerometer or compass it is advised to disable these by setting the useAccelerometer and useCompass fields of the AndroidApplicationConfiguration to false. This helps conserve the battery.\
+\
+Five modules of libgdx:\
+At its core, libgdx consist of five interfaces or modules that provide means to interact with the OS: application, files, input, Net, Audio, Graphics. These modules can be accessed via static fields of the Gdx class. This is a set of global variables that allow easy access to any module. Even though this is bad coding practice it gets rid of the need to pass around references to things that are used often. These are accessed like so (below creates a new AudioDevice:\
+i.e.	AudioDevice audioDevice = Gdx.audio.newAudioDevice(44100, false);\
+i.e.					  Gdx.app\
+i.e.					  Gdx.files			etc.\
+\
+\
+The main class in libgdx implements the ApplicationListener so the app can use the life cycle events. the main methods needed in the main libgdx class are:\
+	create()	-	initializes the game when the app is created\
+	render()	-	called by the game loop every time rendering needs updating, also logic.\
+				Essentially this is the game loop.\
+	resize()	-	only needed for orientation or screen size changes (when not paused).\
+				Also called once just after the create()  method, in case you want to set\
+				an initial screen size different than what is normal.\
+	pause()	-	pause the app, called when home button is pressed or an incoming call.\
+				It is a good place to save the game state.\
+	resume()	-	come back from paused state (only used for Android)\
+	dispose()	-	called when the app is destroyed, it is preceded by the pause()\
+\
+\
+Modules usage:\
+	Input\
+		Allows polling of all inputs, and can register input processors to use an event based\
+		input model. Example is getting the current touch screen coordinates:\
+			if (Gdx.input.isTouched()) \{\
+				System.out.println(\'93Input occurred at x=\'93 + x + \'93, y=\'93 + y);\
+			\}\
+\
+	Graphics\
+		Provides convenient methods to obtain instances of OpenGL ES wrappers. Also\
+		provides methods to generate Pixmaps and Textures. To obtain:\
+			OpenGL API 1.0:		GL10 gl = Gdx.graphics.getGL10();\
+			OpenGL API 1.1:		GL10 gl = Gdx.graphics.getGL11();\
+			OpenGL API 2.0:		GL10 gl = Gdx.graphics.getGL20();\
+		The gl that is returned is an instance that can be used to draw on the screen.\
+		To clear the screen and paint it with red do just like normal with OpenGL ES:\
+			gl.glClearColor(0.1f, 0f, 0f, 1);\
+			gl.glClear(GL10.GL_COLOR_BUFFER_BIT);\
+\
+		For 2D features there is:	sprite rendering, bitmap fonts, particle systems, tmx map\
+						rendering, bitmap manipulation, complete 2D scene graph\
+						with tweening framework\
+		Libgdx renders everything through OpenGL ES.\
+\
+	Files\
+		Can access, read, and write files regardless of the platform you\'92re programming for.\
+		Most common use case is loading game assets like textures and sound files. You use\
+		the same sub-directory of the application for all platforms. Also useful for writing high\
+		scores or game state to files.\
+		Code below creates a texture from a file present in the assets directory:\
+			Texture myTexture = new Texture(Gdx.files.internal(\'93assets/texture/brick.png\'94));\
+\
+		Note that for some reason textures don\'92t load unless I set useGL10 to true.\
+\
+	Audio\
+		Used for the creation and playback of audio files. Also gives direct access to the sound\
+		hardware. Handles two types of sound files: music and sound. Both types support WAV,\
+		MP3, AND OGG formats.\
+		Sound instances are loaded into memory and can be played back anytime. This is ideal\
+		for sounds that will be used multiple times.\
+		Music instances are streams from files on the desk, every time a file is played it is\
+		streamed from the file to the audio device. This is because music is usually too big to be\
+		kept in memory.\
+		Rule of thumb: if the sound clip is longer than 10 seconds it should be used as a music\
+		clip, not a sound clip.\
+		To play a music file called myMusicFile.mp3 at half volume and have it loop:\
+			Music music = Gdx.audio.newMusic(Gdx.files.getFileHandle(\'93data/myMusicFile.mp3\'94, FileType.Internal));	 // or:  Gdx.audio.newMusic(Gdx.files.internal(\'93blah.mp3\'94));\
+			music.setVolume(0.5f);\
+			music.play();\
+			music.setLooping(true);\
+		For sound you use:			Gdx.audio.newSound(Gdx.files.internal(\'93sound.mp3));\
+\
+	Net\
+		No notes on this.\
+\
+Querying:\
+	Use Gdx.app.getType() to get the application type (like Android, Desktop, WebGL). Can put it\
+	in a switch statement with the different types as the cases. For Android you can also query the\
+	version of Android that the game is running on with:\
+		int androidVersion = Gdx.app.getVersion();\
+	For debugging and profiling purposes it is often necessary to know the memory consumption,\
+	for both the Java heap and the native heap:\
+		long javaHeap = Gdx.app.getJavaHeap();\
+		long nativeHeap = Gdx.app.getNativeHeap();\
+	They return the number of bytes currently in use on the respective heap.\
+\
+Logging:\
+	A message can be a normal info message, an error message with an optional exception, or a\
+	debug message:\
+		Gdx.app.log(\'93MyTag\'94, \'93my informative message\'94);\
+		Gdx.app.error(\'93MyTag\'94, \'93my error message\'94, exception);\
+		Gdx.app.debug(\'93MyTag\'94, \'93my debug message\'94);\
+	Can specify a log level that mutes all logging, or logs all messages, or logs only error\
+	messages, or logs error and normal messages using:    Gdx.app.setLogLevel(theologlevel);\
+\
+Threading:\
+	The ApplicationListener methods are all called on the same thread. For most games it is\
+	sufficient to implement both the logic updates and rendering in the ApplicationListener.render()\
+	method and on the rendering thread.\
+	Any graphics operating directly involving OpenGL need to be done in the rendering thread,\
+	because the OpenGL context is only active in the rendering thread.\
+	To pass data to the rendering thread from another thread you should use the method\
+	Application.postRunnable(). This will run the code in the Runnable in the rendering thread in\
+	the next frame, before ApplicationListener.render() is called. i.e.:\
+\
+	new Thread(new Runnable() \{\
+	    @ Override\
+	    public void run() \{\
+		// do something important here, asynchronously to the rendering thread\
+		final Result result - createResult();\
+		// post a Runnable to the rendering thread that processes the result\
+		Gdx.app.postRunnable(new Runnable() \{\
+			@Override\
+			public void run() \{\
+				// process result, i.e. add it to a Array<Result> field of ApplicationListener\
+				results.add(result);\
+			\}\
+		\});\
+	    \}\
+	\});\
+\
+Notes on making a simple game:\
+	To make a camera, make a class variable	-	OrthographicCamera camera;\
+	Then in the create method initialize it	-		camera = new OrthographicCamera();\
+									camera.setToOrtho(false, Wpx, Hpx);\
+	\
+	To create a sprite batch as a class variable	-	SpriteBatch batch;\
+	And instantiate it in the create method	-		batch = new SpriteBatch();\
+\
+	Place graphics on screen by making them a Rectangle object:\
+		Rectangle ship;\
+	In the create method instantiate the Rectangle and specify its values. The coordinate of the\
+	Rectangle object define its bottom-left corner:\
+		ship = new Rectangle();\
+		ship.x = xcoord;\
+		ship.y = ycoord;\
+		ship.width = blah_pixels;\
+		ship.height = blah_pixels;\
+	NOTE: IN LIBGDX Y COORDS START AT BOTTOM. But it is possible to change this so the\
+	y-coords start at the top of the screen like in Android. To do this just set the first argument in\
+	the setToOrtho() camera method to true:\
+\
+		Y-down coordinates system:		camera.setToOrtho(true, width, height);\
+\
+	If using TextureRegions and/or TextureAtlas as well, all you need to do in addition to setting the\
+	boolean to true is to call region.flip(false, true);\
+\
+	Pixmap coordinate and touch event coordinates are by default y-down.\
+\
+	In the 
+\b render()
+\b0  method:\
+		You need to use OpenGL to set the screen clear color and then clear the screen. These\
+		are the only two OpenGL commands you need in LibGDX if you use the high-level\
+		classes like Texture and SpriteBatch:\
+			Gdx.gl.glClearColor(0f,0f,0f,1f);\
+			Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);\
+\
+		Cameras use a projection matrix that is responsible for setting up the coordinate system\
+		for rendering. These matrices need to be recomputed every time we change a property\
+		of the camera, like its position. To do this call:		camera.update();\
+\
+		To actually draw an image to the screen, tell the SpriteBatch to use the coordinate\
+		system specified by the camera (camera.combined is the projection matrix), then tell the\
+		SpriteBatch to start a new batch, then do all the rendering of each image, then tell the\
+		SpriteBatch to end. Since OpenGL likes to have as image render requests at once, the\
+		SpriteBatch begin() and end() methods just take all the drawing requests, and once\
+		end() is called only then is it all sent to OpenGL:\
+					batch.setProjectionMatrix(camera.combined);\
+					batch.begin();\
+					batch.draw(image, image.x, image.y);\
+					\'85. more drawing commands\'85\
+					batch.end();\
+		
+\b I guess the SpriteBatch is just the class that does stuff for the batch of sprites\
+		being used.
+\b0  Only one SpriteBatch object is needed in the app I think.\
+\
+		To handle movement we need to know the time from one frame to the next, for this you\
+		use Gdx.graphics.getDeltaTime(), so to move a sprite by X many pixels a second you\
+		just do X * Gdx.graphics.getDeltaTime().\
+\
+		To get user input, like touch events:\
+			if (Gdx.input.isTouched())\
+\
+	To handle multiple instances of a sprite image, in the create() method make a Rectangle Array\
+	of them. The Array class is a libgdx utility class to be used instead of standard Java collections\
+	like ArrayList. The libgdx Array class handles garbage better than the Java collection classes.\
+	Other libgdx utility classes that handle garbage collection are stuff like hash-maps and sets:\
+			Array<Rectangle> lasers;\
+\
+	Can keep track of overall time in say nanoseconds, to say keep track of when the last laser\
+	was fired to decide when the next laser can be fired (regulate rate of fire) by using the a libgdx\
+	class called TimeUtils:\
+					lastLaserTime = TimeUtils.nanoTime();\
+	For instance you could then do in the render() method to regulate a laser fire once every\
+	second:\
+			if (TimeUtils.nanoTime() - lastLaserTime > 1000000000),   then fire again.\
+	The MathUtils class in libgdx offers various mathematical methods like .random(low, high);\
+\
+	To iterate over an Array do something like this:\
+		Iterator<Rectangle> iter = lasers.iterator();\
+		while(iter.hasNext()) \{\
+			Rectangle laser = iter.next();\
+			\'85move laser \'85 if laser hits something then do tier.remove();\
+		\}\
+\
+	Can use a for-each loop in the render() method to render a set of things, like lasers.\
+\
+	There\'92s a built-in collision detection method in libgdx for Rectangle objects called overlaps(),\
+	so can check for collision detection like so:\
+		if (Rect1.overlaps(Rect2)) \{ \}\
+\
+	
+\b Memory Management:
+\b0 \
+	Any libgdx class that implements the Disposable interface and therefore the dispose() method\
+	needs to get manually cleaned up afterwards. You need to dispose of resources. They should\
+	be disposed of as soon as they are no longer needed. Check if a class has a dispose() method\
+	to know whether or not resources of that class need to be disposed of.\
+	For Memory Management purposes the following classes need to be disposed of:\
+		Asset Manager, Bitmap, BitmapFont, BitmapFontCache, CameraGroupStrategy,\
+		DecalBatch, ETC1Data, FrameBuffer, Mesh, Model, ModelBatch, ParticleEffect,\
+		Pixmap, PixmapPacker, Shader, ShaderProgram, Shape, Skin, SpriteBatch,\
+		SpriteCache, Stage, Texture, TextureAtlas, TileAtlas, TileMapRenderer,\
+		com.badlogic.gdx.physics.box2d.World, all bullet classes.\
+	
+\b Object pooling
+\b0  is the principle of reusing inactive/dead objects instead of creating new objects\
+	every time, this save memory resources. You create an object pool, and when you need an\
+	object you can check to see if the Pool has an available object of that kind and it is returned,\
+	otherwise a new object is created. This is important for games that has a lot of this spawning\
+	on screen frequently. The Poolable interface has a reset() method which will be automatically\
+	called when an object is freed. Looks like you can manually create pools for a class or do it\
+	automatically for any class using ReflectionPool. See Pool wiki pages in the Memory\
+	Management section of the wiki. Should use pooling for stuff like lasers and enemies.\
+\
+	For pausing and resuming a game due to some system event like pressing the home button\
+	and getting a phone call the pause() method automatically handles a lot of stuff so that when\
+	the user comes back to the game it continues where they left off. But it is good to implement\
+	say a pause screen and ask the user to touch a button to play again. Also can easily\
+	implement a pause button by using it to call the pause() method.\
+\
+	
+\b Asset Management:
+\b0 \
+	For very simple games that don\'92t have many resources to load you don\'92t want to use the \
+	AssetManager, but otherwise you should definitely use it! It provides the following things:\
+		- Loading of most resources is done asynchronously, so you can display a reactive\
+			loading screen while things load.\
+		- Assets are reference counted, so if two assets A and B both depend on another asset,\
+			C, C won\'92t be disposed of until A and B have been disposed of. This also means\
+			that if you load an asset multiple times, it will be shared and only take up memory\
+			once.\
+		- A single place to store all the assets.\
+		- Allows to transparently implement things like caches.\
+\
+	Create an AssetManager like so:\
+			AssetManager manager = new AssetManager();\
+	To load assets the AssetManager needs to know how to load a specific type of asset. This is\
+	implemented via AssetLoaders - which means there are loaders you have to use for each\
+	different type of asset. Two variants - SynchronousAssetLoader and\
+	AsynchronousAssetLoader. The former loads everything on the rendering thread, the latter\
+	loads parts of the asset on another thread (i.e. the Pixmap needed for a Texture) and then\
+	loads the OpenGL dependent part on the rendering thread. The following loaders can be\
+	loaded out of the box with the AssetManager:\
+			PixmapLoader\
+			TextureLoader\
+			BitmapFontLoader\
+			TextureAtlasLoader\
+			MusicLoader\
+			SoundLoader\
+			SkinLoader\
+			ParticleEffectLoader\
+	To load a specific asset:			manager.load(\'93data/asset.blah\'94, ResouceType.class);\
+	Some loaders allow you to also pass parameters to them via the .load() method. \
+	The assets aren\'92t loaded until you you call the .update() method in the game loop - in the\
+	render() method. Like so:\
+		if (manager.update()) \{ // done loading so move to another screen \}\
+	To check the progress of the loading you can call the .getProgress() method which returns a\
+	float between 0 and 1 indicating the percentage of the assets loaded so far. If you want to\
+	block the game thread from continuing and make sure all assets are loaded you can call\
+	manager.finishLoading() method. This kind of defeats the purpose of asynchronous loading,\
+	but it could be used say in the loading of the assets needed to display the loading screen itself.\
+	To get an asset just do:\
+		i.e.		Texture tex = manager.get(\'93data/mytexture.png\'94, Texture.class);\
+	Can also check to see if a specific resource has been loaded with the .isLoaded(\'93data/\'85\'94)\
+	method.\
+	To dispose assets using the AssetManager don\'92t dipose of them manually, instead call the\
+	.unload(\'93file path\'94) method on them. To get rid of all assets at once use the .clear() method, or\
+	to get rid of them all at once and kill the AssetManager itself use the .dispose() method.\
+	If you want to display a loading screen for when a project hits the onResume() Android\
+	callback method you can use a texture like so:		texture.setAssetManager(manager);\
+	In the libgdx resume() method you can then switch to the loading screen and call the .update()\
+	method until everything is loaded back.\
+	\
+\
+	Some Notes on 
+\b optimization
+\b0 :\
+		The Memory Management class can be used to recycle all the Rectangle objects each\
+		time one is deleted from the screen. Also OpenGL doesn\'92t like getting handed too many\
+		different images in a batch, so you would usually put all those images into a single\
+		Texture, known as a TextureAtlas. Screen\'92s and Game\'92s can also be utilized for\
+		increased interaction. Some more stuff is mentioned in detail next.\
+\
+Notes on advancing the simple game a bit:\
+\
+	Screen Interface:\
+		Screens I guess can be used like Android Activities. They contain some of the same \
+		methods that the main ApplicationListener class has, and also has the show() and hide()\
+		methods, which are called when the Screen gains and loses focus. It\
+\
+	Game class (an abstract built-in class):\
+		This class provides an implementation of ApplicationListener, along with some helper\
+		methods  to set and handle Screen rendering. Together, Screen and Game objects are\
+		used to create a simple and powerful structure for games. A class that extends the\
+		Game class will have create(), render(), and dispose() methods. In the render() method\
+		you need to make sure to render the superclass with:		super.render();\
+		If you forget call render() on the Game superclass then the Screen that is set in the\
+		create() method won\'92t be rendered.\
+\
+		In the create() method you can create a Screen for the Game class like so:\
+			gameClassObj.setScreen(new nextScreenClass(this));\
+\
+		Note that the constructor for the Screen takes a parameter that is the Game class. This\
+		instance of the Game class is passed down from Screen to Screen for the whole app.\
+		Which means that each Screen implementation class must make a class variable of\
+		the subclass of the Game class and initialize it in the Screen\'92s constructor.\
+\
+	
+\b Structure of a game
+\b0  using the Game superclass and Screen interfaces:\
+		Since the Game class provides an implementation of ApplicaitonListener it can be used\
+		as the entry point to the app, and it will have the app\'92s create() method, from there you\
+		can set the Game class\'92 screen, and you can use classes that implement the Screen\
+		interface like Activities. So your subclass of the Game class starts the app and in its\
+		create() method (as the last line of that method) you instantiate a class that has\
+		implemented the Screen interface. From there you can, on some event, go to the next\
+		Screen class, each class with the Screen interface has a render() method to implement\
+		a game loop.\
+			i.e.	Subclass of Game class starts app, calls Intro Screen class, which then\
+				calls the Main Menu Screen class, and on hitting play it calls the Level 1\
+				Screen class.\
+\
+	SpriteBatch is used to render objects onto the screen.\
+	BitmapFont object is used, along with a SpriteBatch, to render text onto the screen. Set the\
+	font to use I think in the constructor when instantiating the BitmapFont object, a default\
+	constructor makes it Arial.\
+\
+	Draw font to the screen like this:\
+		gameClassObject.bitmapfontObj.draw(gameObj.spriteBatchObj, \'93text\'94, xcoord, ycoord);\
+\
+	Since these two objects are used to render stuff to the screen, they only need to be\
+	instantiated once during the app, and they\'92ll be used each time drawing to the screen is\
+	needed. This means you need to instantiate them in the hierarchically highest class, which is\
+	the Game class. So make them class variables of the Game class and instantiate them in its\
+	create() method.\
+\
+
+\b Outline Structure of a game:
+\b0 \
+	Class that extends Game superclass:\
+		Make SpriteBatch and BitmapFont objects as class variables.\
+		Use create() method to instantiate those objects and start start the first class\
+			implementation of the Screen interface\
+	Screen class:\
+		Sets up all its resources and whatnot it its constructor.\
+		Has a render method to handle the game loop.\
+		Has resize, pause, resume, and dispose methods.\
+		Has show and hide methods for the Screen gaining and losing focus.\
+		On some event call the next Screen in the app (screen\'92s are basically like Activities).\
+	\
+\
+\
+\
+Notes on libgdx graphics stuff:\
+	To make an image on the screen that behaves as an object -  load the texture, make a\
+	rectangle to represent it and handle collisions and all that. And then when your draw it with\
+	the sprite batch you put the rectangles coords and the texture image in the draw method which\
+	links the texture with the rectangle object. Move the recntagle\'92s coordinates in the game\'92s\
+	logic, which will move texture when it is drawn. An image\'92s dimensions must be in powers of\
+	two (I think this is only for OpenGL 1.x).\
+\
+
+\b 	Textures, TextureRegions, and SpriteBatches
+\b0 \
+	A TextureRegion describes a rectangle inside a texture and so only that part of the texture\
+	will be drawn to the screen (this is using those srcX, srcY, srcWidth, srcHeight parameters),\
+	which you can also do with a normal texture in the spritebatch.draw() method, but it easier to\
+	do with a TextureRegion because then you can have one object refer to a region of the texture.\
+	It is more efficient to only have to load one texture for drawing in the render() loop rather than\
+	loading a bunch of textures, so it is more efficient to make a big sprite sheet of all the different\
+	textures (or at least several of them) that will be needed to be drawn in a given Screen class,\
+	and so this is what TextureRegion allows you to do, to take one big texture with several smaller\
+	textures that will be used independently, and make an object for each one that specifies where\
+	in the TextureRegion that texture lies. This way you can only draw one texture to the screen,\
+	but draw its individual regions each many times over, to be more efficient for the GPU. The\
+	reason this is more efficient is because the SpriteBatch can only send to the GPU one texture\
+	at a time, meaning that you want to group together in the SpriteBatch drawing section all the\
+	textures that are the same before moving onto a different texture. Because what it does is it\
+	groups together all the geometries that the program sends it until it has to load a different\
+	texture, then it has to send those to the GPU and then load the new texture and start grouping\
+	(or batching) those geometries. This is why a single texture using texture regions is better, b/c\
+	the sprite batch doesn\'92t have to send the GPU data multiple times which would slow the game\
+	down. If you do have different textures though, make sure to draw all of the same texture\
+	together before drawing a different texture. To draw a Texture/TextureRegion using the\
+	SpriteBatch:\
+		batch.draw(texture, \'85other params);
+\b \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b0 \cf0 	Also note that a 2D TextureRegion array can be created and then using the\
+	TextureRegion.split(Texture, pixels/column, pixels/row) method you can split the\
+	frames, or individual textures, of a Texture into TextureRegions. This is especially useful for\
+	animation.\
+\
+	
+\b Sprites:
+\b0 \
+	A Sprite basically combines what a Texture or TextureRegion can do in one of those long\
+	versions of the batch.draw() method, plus it acts as a rectangle which you can access through\
+	the .getBoundingRectangle() method of the Sprite class. So a Sprite is just more convenient\
+	because it combines everything you need into a single object. A Sprite is also a little more\
+	efficient than than using a Texture/TextureRegion with a Rectangle if stuff like scale, rotation,\
+	etc need to be changed because in a sprite you can do that when you create it, and can do it\
+	later on in the game loop only when it is required because it has methods to do those things,\
+	whereas a Texture/TextureRegion can only have traits things manipulated in the batch.draw()\
+	method which means every single frame that extra computational work is being done. Note\
+	that the Sprite constructor doesn\'92t have any parameters for position, you must use one of its\
+	methods, like .setPosition(), to edit the position. Oh, and a Sprite also describes the color the\
+	texture will be drawn as well. The constructor is:\
+			Sprite(Texture, srcX, srcY, srcWidth, srcHeight);\
+	Also to draw a texture is a simpler method than to draw Textures/TextureRegions, you still put\
+	it between the batch begin() and end() methods, but the draw method is just:\
+			sprite.draw(batch);\
+	Sprites should not be used over Texture/TextureRegions when you need to separate the model\
+	from the view (sprite combines model info like position, rotation, etc with view info - the texture\
+	being drawn).\
+\
+	
+\b Tinting:
+\b0 \
+	You can tint any Texture, TextureRegion, or Sprite. To tint a Sprite just use its .setColor()\
+	method. To tint a Texture or TextureRegion you need to use the SpriteBatch\'92s .setColor()\
+	method between the batch being() and end() method, before drawing the texture. Can use\
+	RGBA values for tinting. Alpha is ignored when blending is disabled.\
+\
+	
+\b Blending
+\b0 :\
+	Blending is enabled by default. It just means that when a texture is drawn, its translucent parts\
+	are merged with pixels already on the screen at that location. When blending is disabled it\
+	means that anything already on the screen at that location is replaced by the texture. Blending\
+	being disabled is more efficient, so it should be disabled unless it is needed. For example\
+	when drawing a large background image over the whole screen a performance boost can be\
+	gained by first disabling blending. Blending is part of the SpriteBatch class, so you use the\
+	methods .disableBlending() and .enableBlending() between the batch begin() and end()\
+	methods. A background is drawn between those methods like any other texture, so you should\
+	disable blending, then draw the background, then enable blending if it is needed for the\
+	foreground textures.\
+\
+	
+\b Performance Tuning with SpriteBatch:
+\b0 \
+	Read up on this section in the Wiki again when I want to tune up the performance of a game.\
+	SpriteBatch\'92s efficiency can be increased by testing the max number of sprites that are sent\
+	to be drawn and then setting its max just above that so it isn\'92t wasting memory.\
+\
+	
+\b 2D Animation:
+\b0 \
+	A sprite sheet is a sheet of sprites that map out an animation, with each individual sprite being\
+	a frame of that sprite sheet. Note: that when building sprite sheets for animations you want to\
+	think about how quickly you want to go through one set of the animation, because based on\
+	the game\'92s frame rate that will determine of many frames of animation you need to draw to\
+	complete the sprite sheet. Note that the whole thing behind TextureRegions/Sprites only\
+	drawing part of a texture is perfect for a sprite sheet where there is one big texture split up into\
+	different frames, only one frame being drawn at a time.\
+\
+	To create an animation you use the Animation class, and you need integer variables to specify\
+	the number of columns and rows in the sprite sheet. You would have a Texture to load the\
+	whole sprite sheet in the create() method, then an array of TextureRegions or Sprites to hold\
+	each frame of the animation, and of course a SpriteBatch is used to draw it all to the screen.\
+	\
+	Ahh, you can declare a variable, lets all it stateTime, to keep track of how much time has\
+	passed since the last sprite in the animation was rendered, Each time the render loop is called\
+	you can add the Gdx.graphics.getDeltaTime() amount on to it and only draw the next animation\
+	once the given time has passed based on how quickly you want the animation to occur. So you\
+	can control the rate of the animation and don\'92t have to leave it up to the frame rate of the\
+	game - the FPS of the game could be 50 or so but you want 25 frames of animation to occur in\
+	a second so you can have the animation only play as fast as you want. And this is done by just\
+	putting the elapsed time into the animation object\'92s method, having already put the desired\
+	time for each frame to be displayed in the animation object\'92s constructor. The constructor is:\
+		myAni = new Animation(timeInSecondsForEachFrame, arrayOfFrames);\
+\
+	Use a 2D TextureRegion array with the split method described above in the TextureRegion\
+	notes to split up a Texture into its TextureRegion animation frames, assuming the frames are\
+	of equal size. You then need to use two embedded for-loops to place all the frames into a\
+	1D TextureRegion array because the Animation object only takes one-dimensional arrays. The\
+	Animation constructor takes the time-interval that each frame should be displayed for, and the\
+	array of frames. Set the stateTime variable to zero. All of the above is in the create() method.\
+\
+	Now in the render() method you add the DeltaTime to the stateTime. Then have a\
+	TextureRegion objects that gets the return value of the Animation object\'92s call to its\
+	getKeyFrame(stateTime, looping) method. Its first parameter is the time elapsed for the current\
+	frame (I\'92m guessing the method automatically resets this to zero when it is time for a new\
+	frame). The second parameter is a boolean, if true then the animation will keep looping, if false\
+	it will stop once all the frames have been run. Then you just use the SpriteBatch object to draw\
+	the current frame (returned by the getKeyFrame() animation method).\
+\
+	
+\b Clipping:
+\b0 \
+	With clipping you can limit the rendering of a rectangle to within the bounds of a rectangle\
+	within it. Can also use multiple rectangles so that only the pixels of within those rectangles\
+	are rendered. Use the ScissorStack class and its methods. See the wiki.\
+\
+	
+\b Viewports and Camera Projections:
+\b0 \
+	A viewport is a rectangular viewing region of the screen where the scene is projected. There\
+	are two different types of camera projection types that change how objects appear in the\
+	viewport. There is perspective projection and orthogonal projection. Perspective projection is\
+	used for 3D because it scales objects in the background to look further behind. This happens\
+	by having field of view expand out from the camera in a constant fashion so that the viewport\
+	(or near clipping plane) is smaller compared to the far clipping plane which is further away, and	this creates that visional perspective where far away objects are smaller, just like in real life.\
+	The frustum is the area between the near and far clipping planes, and anything outside the\
+	frustum, whether closer than the viewport or further than the far clipping plane, are not\
+	rendered to the screen.\
+\
+	Orthogonal projection is when there is no scaling between far and near objects. The viewport\
+	(near clipping plane) and the far clipping plane are the exact same size. This does not create\
+	any perspective of distance because far away objects look just as big as closer objects. This is\
+	why this is used for 2D, because its basically like looking at a flat image of the world without\
+	any perspective.\
+\
+	
+\b Orthographic Camera:
+\b0 \
+	Used for 2D games because there is no scale factor created by the orthogonal projection. The\
+	camera can move and rotate, zoom in and out, change the viewport, and project/unproject\
+	points to and from window coordinate/world space. You can change the size of the viewport in\
+	pixels but because the screen size does not change, only the viewport gets smaller when you,\
+	say, zoom in, so the viewport is scaled up to the actual resolution.\
+\
+	Can make a class for the camera controller that implements ApplicationListener interface, and\
+	within it make an OrthographicCamera variable on the class level to control the view of the\
+	camera. Have a texture as the background. A rectangle to represent the viewport.\
+\
+	Note, my tablet screen width is 1280x800\
+\
+\
+\
+	
+\b Read up on NinePatch images, which allow you to make stretchable images.
+\b0 \
+\
+	
+\b Read up on Distance Field Fonts which make really smooth scalable bitmapfonts.
+\b0 \
+\
+	
+\b Texture Packing using TextureAtlases combines all your textures into one giant texture.
+\b0 \
+\
+	
+\b Pixmaps:
+\b0 \
+	Pixmaps seem to allow for drawing things like lines, shapes, and setting of individual pixels at\
+	runtime.\
+\
+	
+\b Read up on Particle Effects, also pooling is in this section.
+\b0 \
+\
+	}

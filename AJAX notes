@@ -1,0 +1,217 @@
+Asynchronous JavaScript and XML (AJAX) Notes
+
+
+
+AJAX is not a programming language, but a different way to use existing standards.
+AJAX lets you exchange data with the server and update parts of the webpage without reloading the
+whole page.
+AJAX can help create faster web pages.
+
+AJAX updates webpages asynchronously by exchanging small amounts of data with the server behind the
+scenes. Classic web pages that do not use AJAX must reload the whole page to change content.
+
+Google maps, Gmail, Youtube, and Facebook tabs are examples of applications that use AJAX.
+
+
+
+
+************************ AJAX BASICS ************************
+
+
+Browser:                                                Server:
+An event occurs...
+-create an XMLHttpRequest object        ---->           -process HttpRequest
+-send HttpRequest                                       -create a response and send data back
+                                                         to browser
+                                                          |
+                                                          |
+                        Browser:                          |
+                        -process the returned data    <---|
+                         using JavaScript
+                        -update page content
+
+
+AJAX is based on internet standards and uses a combination of:
+    - XMLHttpRequest object     (to exchange data asynchornously with a server)
+    - JavaScript/DOM        (to display/interact with the information)
+    - CSS       (to style the data)
+    - XML       (often used as the format for transferring data)
+
+AJAX applications are browser and platform independent.
+
+Note that AJAX uses JavaScript to do the actual coding.
+
+
+
+
+************************ XMLHttpRequest Object ************************
+
+
+The keystone of AJAX is the XMLHttpRequest object.
+
+
+Create an XMLHttpRequest Object:
+
+    In modern browsers:
+        variable = new XMLHttpRequest();
+
+    In IE5 and IE6:
+        variable = new ActiveXObject("Microsoft.XMLHTTP");
+
+    i.e.
+            var xmlhttp;
+            if (window.XMLHttpRequest)
+                xmlhttp = new XMLHttpRequest();
+            else
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+
+
+--------------------
+
+
+Send a Request to a Server:
+
+    Methods to use on the Request object:
+
+        open(method, url, async)    -   specifies the type of request, the url, and if the request
+                                        should be handled asyncrhonously or not
+                                                method: GET or POST
+                                                url: location of the file on the server
+                                                async: true (asynchronous) or false (synchronous)
+        send(string)                -   Sends the request off to the server.
+                                                string: only used for POST requests
+
+        i.e.
+            xmlhttp.open("GET", "filename", true);
+            xmlhttp.send();
+
+
+    GET or POST?
+            GET is simpler and faster and can be used in most cases.
+            Always use POST when:
+                - a cached file is not an otion (update a file or database on the server)
+                - sending a large amount of data to the server (POST has no size limitations)
+                - sending user input (which can have malicious code, POST is more secure than GET)
+
+    GET Requests:
+        A normal GET request might get a cached result, so to avoid this you can add a unique ID
+        to the URL using Math.random() like so:
+                xmlhttp.open("GET" "filename" + Math.random(), true);   // ?? need to look this up
+                xmlhttp.send();
+
+        Can also send information with the GET method by adding it to the URL:
+                xmlhttp.open("GET" "filenamefname=Henry&lname=Ford", true);     // ?? look this up
+                xmlhttp.send();
+
+    POST Requests:
+                xmlhttp.open("POST","filename",true);
+                xmlhttp.send();
+
+        To POST data like an HTML form, add an HTTP header with setRequestHeader(). Specify the
+        data you want to send in the send() method:
+
+        Syntax:         setRequestHeader(header,value)      -   Adds HTTP header to the request
+                                                                    header: specifies header name
+                                                                    value: specifies header value
+                xmlhttp.open("POST", filename, true);
+                xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xmlhttp.send("fname=Henry&lname=Ford");
+
+    Setting the third open() parameter to true means making an asynchronous request, which is a
+    huge improvement for web pages because it means the processing can take place in the
+    background instead of holding up the webpage.
+    If you set it to false, the JavaScript will not continue until the server response is ready.
+    If false, don't write an onreadystatechange() function, discussed below.
+
+
+--------------------
+
+
+Server Response
+
+    To get the response from a server, use the responseText or responseXML property of the
+    XMLHttpRequest object.
+
+    responseText    -   get the response data as a string
+        If the response from the server is not XML, use the responseText property.
+        i.e.
+            document.getElementById("myDiv").innerHTML = xmlhttp.responseText;    
+
+    responseXML     -   get the response data as XML data
+        If response from the server is XML, and you want to parse it as an XML object, use this.
+        i.e.
+            xmlDoc=xmlhttp.responseXML;
+            txt="";
+            x=xmlDoc.getElementsByTagName("blah");
+            for (i=0; i<x.length; i++)
+                txt += x[i].childNodes[0].nodeValue + "<br>";
+            document.getElementById("myDiv").innerHTML=txt;
+
+
+    ResponseText equals whatever is printed out from the PHP file that was called in the AJAX.
+    So you don't return anything from the PHP script, you just echo something to return it to
+    responseText.
+
+--------------------
+
+
+onreadystatechange Event
+
+    When a request to a server is sent, we want to perform some actions based on the response.
+    The onreadystatechange event is triggered every time the readyState changes.
+    The readyState property holds the status of the XMLHttpRequest.
+
+    Important properties of the XMLHttpRequest object:
+        onreadystatechange  -   stores a function (or name of a function) to be called automatically
+                                each time the readyState property changes
+        readyState          -   Holds the status of the XMLHttpRequest. Changes from 0 to 4:
+                                    0: request not initialized
+                                    1: server connection established
+                                    2: request received
+                                    3: processing request
+                                    4: request finished and response is ready
+        status              -   200: "OK"
+                                400: Page not found
+
+    In the onreadystatechange event you specify what will happen when the server response is ready
+    to be processed. When readyState is 4 and status is 200, the response is ready.
+
+    i.e.    xmlhttp.onreadystatechange=function() {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+                    document.getElementById("myDiv").innerHTML = xmlhttp.responseText;
+            }
+
+    Using a Callback function:
+
+        A callback function is a function passed as a parameter to another function.
+        If you have more than one AJAX task on the website, you should create ONE standard function
+        for creating the XMLHttpRequest object, and call this for each AJAX task.
+
+        The function call should contain the URL and what to do on the onreadystatechange (which
+        is probably different for each call):
+
+        i.e.    function myFunc() {
+                    loadXMLDoc("filename", function() {
+                        if (xmlhttp.readyState==4 && status==200)
+                            document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+                    });
+                }
+
+
+
+
+************************ AJAX EXAMPLES ************************
+
+
+    AJAX example on this website:      http://www.w3schools.com/ajax/ajax_aspphp.asp
+
+    AJAX example for Database on this site:     http://www.w3schools.com/ajax/ajax_database.asp
+
+    AJAX can be used for interactive communication with an XML file. This is what I did for my
+    Resume on my website. An example:       http://www.w3schools.com/ajax/ajax_xmlfile.asp
+
+    More examples:          http://www.w3schools.com/ajax/ajax_examples.asp
+
+
+
+-----------------------------------------------------------------------------------------------------

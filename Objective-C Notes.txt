@@ -1,0 +1,678 @@
+Notes on Objective-C
+
+
+
+Stuff to look up elsewhere:
+	Delegates
+	Blocks
+	NSNumbers
+	NSErrors
+	Extensions
+	Protocols
+	the "id" data type
+	Class Clusters and Composite Objects
+
+
+
+
+Objective-C adds Smalltalk-style messaging to the C language. It’s the main language used for OS X
+and iOS and Cocoa and Cocoa Touch.
+
+Objective-C supports the 4 pillars of OOP: Encapsulation, Data Hiding, Inheritance, Polymorphism
+
+<Foundation/Foundation.h> library provides a list of extended data types like NSArray, NSDictionary,
+	NSSet, etc. It consists of a set of functions for manipulating files, strings, etc. It provides
+	for URL Handling, utilities for date formatting, data handling, error handling, etc.
+
+To compile an Objective-C program on the command line (on a mac):
+
+	clang -fobjc-arc -framework Foundation filename.m -o output_filename
+
+	But you want to use Xcode to build iOS and OS X programs and not the command line in general.
+
+To create a class interface:
+	@interface InterfaceName:InheritedObject
+	@interface SampleClass:NSObject		<— NSObject is the base class of all objects
+	@end		<— to end the interface
+
+To create a class implementation:
+	@implementation ClassName {
+		body…
+	}
+	@end
+
+To declare a method:
+	- (void)sampleMethod;
+
+To define a method:
+	- (returnType)sampleMethod {
+		statements
+	}
+
+Note: Objective-C supports C style functions too.
+
+@end marks the end of an interface
+
+@implementation SampleClass implements the interface SampleClass
+
+NSLog(…) outputs to the screen, and prefixes to the output the date, time, filename, and something
+else.
+Just used the C language output functions to print normally.
+
+To import libraries/header files use this syntax:		#import <blah/blah.h>
+
+
+
+Keywords (unique to Objective-C - not in C):
+
+NSObject
+
+property
+
+weak
+
+protocol
+
+NSInteger
+
+nonatomic;
+
+unsafe_unretained;
+
+interface
+
+NSNumber
+
+retain
+
+readwrite
+
+implementation
+
+CGFloat
+
+strong
+
+readonly
+
+
+
+Data Types:
+	Basic Types:
+		Arithmetic types of 2 kinds:		integers		floats
+	Enumerated Types:
+		Arithmetic types that are constant.
+	Void Type:
+		Indicates that no value is available.
+	Derived types:
+		Include pointer types, array types, structure types, union types, and function types.
+
+	The array types and structure types are collectively referred to as aggregate types.
+
+	Has all the same number types as the C language.
+
+	Use sizeof(type) function to get the size in bytes of a data type.
+
+
+Constants and Literals:
+	0x is used to start hex numbers and just 0 is used to start octal numbers.
+	Can use suffixes u or U and l or L to stand for unsigned and long at the end of the digits of a
+	literal.
+	All the same rules for number literals that apply to C also apply to Objective-C.
+
+	const and #define are used in the same way as in C language.
+
+
+
+Functions:
+	Seems like you need to create an interface and implementation of a class and put a function in it
+	to use a function. Maybe that’s why in the tutorial it said that all Objective-C functions are
+	methods.
+
+	General form is:
+
+		- (return type) method_name:(arg1 type) arg1
+		joiningArgument2:(arg2 type) arg2
+		joiningArgumentN:(argN type) arg
+		{
+			body…
+		}
+
+		Ex.
+			- (int) max:(int) num1 secondNum:(int) num2
+
+		In the above example “secondNum” is the joiningArgument2. Joining arguments is to make it
+		easier to read and to make it clear while calling it.
+
+		Can use method prototypes with just a semi-colon at the end of the method declaration.
+
+	Calling a function:
+		returnVariable = methodName:arg1 joiningArg:arg2;
+		Ex.
+			theMax = max:3 andNum2:10;
+
+	The way to call a method on an object is by using brackets, like so:
+
+		ReturnVar =  [ObjectName MethodName];
+				[ObjectName MethodName:arg];
+				[ObjectName MethodName:arg joiningArg:arg2];
+
+
+
+Blocks:
+	Blocks are used in C, C++, and Objective-C. They allow you to create distinct segments of code
+	that can be passed around to methods or functions as if they were values.  Blocks are Objective-C
+	objects which means they can be added to collections like NSArray and NSDictionary. They also
+	have the ability to capture values from the enclosing scope, making them similar to closures or
+	lambdas from other languages. Blocks can take arguments and have return values.
+
+	Block Declaration Form:
+						returnType (^blockName)(argumentType, argType2, argTypeN);
+	Block Implementation Form:
+						returnType (^blockNAme)(argumentType) =
+							^(argtype argName, argType argName) {
+								body…
+						};
+	Ex.
+		void (^simpleBlock)(void) = ^{
+			NSLog(@“This is a block”);
+		};
+
+	Invoking a block:
+				blockName(args);
+
+
+
+
+NSNumbers:
+	NSNumbers are the Objective-C class wrappers for basic data types so that you can save
+	a basic data type as objects.
+
+	These are some of the methods to work with NSNumbers.
+
+	+ (NSNumber *)numberWithBool:(BOOL)value
+			Creates and returns an NSNumber containing a given value, treating it as a BOOL.
+	+ (NSNumber *)numberWithChar:(char)value
+			Creates and returns an NSNumber containing a given value, treating it as a signed
+			char.
+	+ (NSNumber *)numberWithDouble:(double)value
+			Creates and returns an NSNumber containing a given value, treating it as a double.
+	+ (NSNumber *)numberWithFloat:(float)value
+			Creates and returns an NSNumber containing a given value, treating it as a float.
+	+ (NSNumber *)numberWithInt:(int)value
+			Creates and returns an NSNumber containing a given value, treating it as a signed int.
+	+ (NSNumber *)numberWithInteger:(NSInteger)value
+			Creates and returns an NSNumber containing a given value, treating it as an
+			NSInteger.
+	- (BOOL)boolValue
+			Returns the receiver’s value as a BOOL.
+	- (char)charValue
+			Returns the receiver’s value as a char.
+	- (double)doubleValue
+			Returns the receiver’s value as a double.
+	- (float)floatValue
+			Returns the receiver’s value as a float.
+	- (NSInteger)integerValue
+			Returns the receiver’s value as a NSInteger.
+	- (int)intValue
+			Returns the receiver’s value as an int.
+	- (NSString *)stringValue
+			Returns the receiver’s value as a human-readable string.
+
+
+
+Strings:
+	For strings in Objective-C use NSString and its subclass NSMutableString. The simplest way to
+	create a string is using the @“…” construct.
+		Ex.			NSString *greeting = @“Hello”;
+
+	The symbol for using a string in a formatted printing function is:	%@
+
+	Some methods for manipulating strings:
+		- (NSString *)capitalizedString;
+				Returns a capitalized representation of the string.
+		- (unichar)characterAtIndex:(NSUInteger)index;
+				Returns the character at the given array position.
+		- (double)doubleValue;
+				Returns the floating-point value of the text as a double.
+		- (Float)floatValue;
+				Returns the floating-point value of the text as a float.
+		- (BOOL)hasPrefix:(NSString *)aString;
+				Returns a boolean value that indicates whether a given string matches the
+				beginning characters of object string.
+		- (BOOL)hasSuffix:(NSString *)aString;
+				Returns a boolean value that indicates whether a given string matches the
+				ending characters of object string.
+		- (id)initWithFormat:(NSString *)format …;
+				Returns an NSString object initialized by using a given format string as a
+				template into which the remaining argument values are substituted.
+				Ex.  str = [[NSString alloc] initWithFormat:@“%@ %@“, str1, str2];
+		- (NSInteger)integerValue;
+				Returns the NSInteger value of the object string.
+		- (BOOL)isEqualToString:(NSString *)aString;
+				Returns a boolean value that indicates whether a given string is equal to the
+				object string using a literal Unicode-based comparison.
+		- (NSUInteger)length;
+				Returns the number of characters in the object string.
+		- (NSString *)lowercaseString;
+				Returns lowercased representation of the string.
+		- (NSRange)rangeOfString:(NSString *)aString;
+				Finds and returns the range of the first occurrence of a given string within the
+				object string.
+		- (NSString *)stringByAppendingFormat:(NSString *)format …;
+				Returns a string made by appending to the object string a string constructed
+				from a given format string and the following arguments.
+		- (NSString *)stringByTrimmingCharactersInSet:(NSCharacterSet *)set;
+				Returns a new string made by removing from both ends of the object string
+				characters contained in a given character set.
+		- (NSString *)substringFromIndex:(NSUInteger)anIndex;
+				Returns a new string containing the characters of the object string from a given
+				index to the end.
+
+
+
+Log Handling:
+	The NSLog method is used in Objective-C to print logs.
+	Ex.
+			NSLog(@“Hello World\n”);
+
+	Only want Logs for debugging purposes, and not in live apps. So need to know how to disable the
+	logs for live apps. Use a type definition (#define)
+
+		#if DEBUG == 0
+		#define DebugLog(…)
+		#elif DEBUG == 1
+		#define DebugLog(…)  NSLog(__VA_ARGS__)
+		#endif
+
+	then in main function use:
+		DebugLog(@“output for debugging purposes”);
+
+
+
+Error Handling:
+	In Objective-C error handling is provided with the NSError class available in Foundation
+	framework.
+	NSError objects capture more info than just an error code or error string could. The core
+	attributes of an NSError object are an error domain (represented by a string), a domain-specific
+	error code, and a user info dictionary containing application specific info.
+
+	NSError consists of:
+		Domain:  The error domain can be one of the predefined NSError domains or an arbitrary
+			     string describing a custom domain and domain must not be nil.
+		Code:  The error code for the error.
+		User Info:  The userInfo dictionary for the error and userInfo may be nil.
+
+	To create a custom error:
+		NSString *domain = @“com.MyCompany.MyApplication.ErrorDomain”;
+		NSString *desc = NSLocalizedString(@“Unable to complete the process”, @“ “);
+		NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : desc };
+		NSError *error = [NSError errorWithDomain:domain code:-101 userInfo:userInfo];
+
+
+
+Arrays, Pointers, Structs, Typedef, Typecasting, Command Line Arguments:
+	All these in Objective-C work the same as in C. Can return an array from a function (not sure if
+	you can do that in C).
+
+
+
+Classes and Objects:
+	The main purpose of the Objective-C language is to add OOP to C programming.
+	A class is defined in two different sections:  @interface and @implementation
+	Almost everything is in the form of objects.
+	Objects receive messages and objects are often referred to as receivers.
+	Objects contain instance variables, objects and instance variables have scope.
+	Classes hide an object's implementation.
+	Properties are used to provide access to class instance variables in other classes.
+
+	Class Interface:
+		A class definition starts with the keyword @interface, then the class name, a colon, and its
+		superclass. NSObject is the base class for all classes in Obj-C, so if there is no superclass
+		for your class put NSObject. NSObject provides basic methods like memory allocatino and
+		initialization. A class implementation ends with @end.
+		The member variables of a class are private, but properties (explained below) allow you to
+		access member variables outside of the class.
+
+		Syntax for Class Interface:
+
+					@interface className:superClass
+					{
+						// declare member variables
+					}
+					// declare constructor and methods
+					@end
+
+	Class Implementation:
+		Once a class has an interface you must implement that class with @implementation, where you
+		define the class methods. No curly braces used for the implementation, it is closed with
+		@end.
+
+
+		Syntax for Class Implementation:
+
+					@implementation className
+						//implementation code, like method bodies
+						// constructor:
+						-(id)constructorName		// I think "init" is the default constructor name
+						{
+							self = [super init];
+							// other variables
+							return self;
+						}
+					@end
+
+		Seems like for the constructor the data type "id" is used and you have to declare
+		self = [super init] and then return self. And maybe init is used by convention for the name
+		of the constructor??
+
+	Creating objects:
+		To declare objects you must allocate memory for the size of the object, and use square
+		brackets and the constructor.
+
+		Syntax for declaring an object:
+
+					className objectName = [[className alloc]constructor];
+
+	Access data members of objects using the dot operator as you would expect.
+
+	Properties:
+		Properties enusre that the member variables of the class can be accessed outside the class.
+		Property declarations begin with the @property keyword. Then in parenthesis access
+		specifiers, which are nonatomic or atomic, readwrite or readonly, and strong,
+		unsafe_unretained or weak. These vary based on the type of variables. For any pointer type
+		you can use strong, unsafe_unretained, or weak. For other types you can use readwrite or
+		readonly. Then comes the datatype of the variable, then the variable/property name and a
+		semi-colon.
+
+		Syntax of Properties:
+
+					@property(access_specifier, access_specifier) datatype varName;
+
+		I guess properties must be sythesized in the implementation of the class, but its automatic.
+		You can add a synthesize statement in the class implementation, but in the latest XCode the
+		synthesis part is taken care of by XCode so you don't need it.
+
+		A property basically just creates internal getters and setters under the hood for member
+		variables, so thats why you can only access object member variables that have been declared
+		with the @property keyword.
+
+
+
+Inheritance:
+	Inheritance allows us to define a class in terms of another class which makes it easier to create
+	and maintain an application.
+	Obj-C allows only multiple inheritance, it can have only one base class but allows multi-level
+	inheritance.
+	All classes in Obj-C are derived from the superclass NSObject.
+
+	Syntax for Inheritance:			@interface derivedClass:baseClass
+
+	A derived class can access all the private members of its base class if it's defined in the
+	interface class, but it cannot access private members that are defined in the implementation.
+
+	The different access types can be defined by who can access them:
+		- variables declared in the implementation with the help of extensions is not accessible
+		- methods declared in the implementation with the help of extensions is not accessible
+		- if the inherited class implements the method, then the method in the derived class is
+		  executed. Overriding?
+
+
+
+Polymorphism:
+	Polymorphism means "having many forms". Polymorphism occurs when there is a hierarchy of classes
+	and they are related by inheritance.
+	Obj-C polymorphism means that a call to a member function will cause a different function to be
+	exectued depending on the type of object that invokes the function.
+	Basically is is where sub-classes override methods from superclasses.
+
+
+
+Data Encapsulation:
+	Encapsulation is an OOP concept that binds together the data and functsion that manipulate the
+	data and that keeps both safe from outside interference and misuse. Data encapsulation led to
+	the important OOP concept of data hiding.
+	Data encapsulation is a mechanism of bundling the data and the functions that use them, and
+	data abstraction is a mechanism of exposing only the interfaces and hiding the implementation
+	details from the user.
+	Basically, this is done through the use of classes.
+
+	Methods inside the interface are public.
+
+
+
+Categories:
+	Categories (and Extenions - talked about further down) allow you to add behavior to classes that
+	is useful only in certain situations.
+	If you need to add a method to an existing class, to say make it easier to do something in your
+	own application, the easiest way is to add a category.
+	To declare a category you use the @interface keyword, like a standard class interface, except
+	that you don't indicate any inheritance from a superclass, and instead is specifies the name of
+	a category in parenthesis.
+
+	Declaring a category:
+			@interface ClassName (CategoryName)
+
+	Characteristics of a Category:
+		-	a category can be declared for any class, even if you don't have the original
+			implementation source code
+		-	any methods that you declare in a category will be available to all instances of the
+			original class, as well as any subclasses of the original class
+		-	at runtime, there's no difference between a method added by a category and one that is
+			implemented by the original class
+
+
+
+Extensions:
+	A class extension is similar to a Category, but it can only be aded to a class for which you have
+	the source code at compile time (the class is compiled at the same time as the class extensions).
+
+	The methods declared by a class extension are implemented in the implementation block for the
+	original class, so you can't, for example, declare a class extension on a framework class such
+	as a Cocoa or Cocoa Touch class like NSString.
+
+	Extensions are just categories without the category name. Often referred to as anonymous
+	categories. Basically you just make another interface for the class that has other methods that
+	you specifically need for your program, but that maybe you wrote the class for a bunch of
+	programs and instead of putting it in a library just copied and pasted it in, but you need to
+	add stuff to it for this specific program, then use an extension I guess.
+
+	The syntax is the same as when making the initial class interface except you put parenthesis at
+	the end of the class name instead ":superclass".
+
+	Syntax:
+				@interface ClassName()
+				{
+					// variables
+				}
+					// methods
+				@end
+
+	Characteristics of Extensions:
+		-	an extension cannot be declared for any class, only for classes that you have the
+			original implementation source code for
+		-	an extension is adding private methods and private variables that are only specific to
+			the class
+		-	any method or variable declared inside the extensions is not accessible even to the
+			inherited classes
+
+
+
+Protocols:
+	Protocols declare the methods expected to be used for a particular situation. Protocols are
+	implemented in the classes conforming to the protocol.
+
+	Syntax:
+			@protocol ProtocolName
+			@required
+				// list of required methods
+			@optional
+				// list of optional methods
+			@end
+
+	The methods under the @required keyword must be implemented in the classes that conform to the
+	protocol and the methods under the @optional keyword are optional to implement. To specify
+	multiple protocols for a class just list them in a comma-separated list.
+
+	Syntax for a class conforming to a protocol:
+				@interface ClassName:superclass <ProtocolName>
+					// class body
+				@end
+
+	An instance of a class that conforms to a protocol will respond not only to the methods declared
+	in its interface, but also the methods required in the Protocol. There's no need to re-declare
+	the protocol methods in the class interface. In the protocol you just declare the protocol
+	methods, while in the implementation of the class you provide the protocol methods definitions.
+
+
+
+Delegates:	???
+	Apparently for iOS or a Mac app every program will have a delegate. No idea what they are though!
+
+
+
+Dynamic Binding:
+	Dynamic binding determines the method to invoke at runtime instead of at compile time, also
+	referred to as late binding.
+	In Obj-C all methods are resolved dynamically at runtime.
+	Dynamic binding enables polymorphism.
+
+
+
+Class Clusters and Composite Objects:
+	Composite objects are subclasses created within a class cluster that defines a class that embeds
+	within it an object.
+
+	Class Clusters are a design pattern that the Foundation framework makes extensive use of. They
+	group a number of private concrete subclasses under a public abstract superclass. The grouping
+	of classes in this way simplifies the publicly visible architecture of an OOP framework.
+
+	Basically, instead of creating multiple classes for similar functions you create a single class
+	that will take care of its handling based on the value of input. For example NSNumber has many
+	clusters of classes like char, int, bool, etc. All of them are grouped into a single NSNumber
+	class which actually wraps the value of those primitive types into objects.
+
+	A Composite Object is an object that has a private cluster object embedded in it. The Composite
+	object can rely on the cluster object for its basic functionality, only intercepting messages
+	that the composite object wants to handle in some particular way.
+
+	The composite object must declare itself to be a subclass of the cluster's abstarct superclass.
+	As a subclass it must override the superclass' primitive methods. It can also override derived
+	methods, but it's not necessary because the derived methods work through the primitive ones.
+
+
+
+The Foundation Framework:
+	The Foundation framework defiens a base layer of Obj-C classes and it introduces several
+	paradigms that define functionality not covered by the Obj-C language.
+
+	The Foundation framework is designed with the following goals in mind:
+		-	provide a small set of basic utility classes
+		-	make software development easier by introducing consistent conventions for things such
+			as deallocation
+		-	support unicode strings, object persistence, and object distribution
+		-	provide a level of OS independence to enhance portability
+
+	The reason everything is named "NS..." is because the Foundation framework was made by NeXTStep
+	before it was acquired by Apple, so NS stands for NeXTStep.
+
+	Import the Foundation framework like so:		#import <Foundation/Foundation.h>
+
+	NSObject is the base class of all objects including the foundation kit classes. It provides
+	methods for memory management, basic interface to the runtime system, and ability to behave as
+	Obj-C objects. It is the root of all classes.
+
+	Foundation handles these things:
+		- data storage
+		- text and strings
+		- dates and times
+		- exception handling
+		- file handling
+		- URL loading system
+
+
+
+Collections and Fast Enumeration:
+	An Obj-C feature that helps in enumerating through a collection.
+	It seems like Fast Enumeration just refers to a for-in loop (like a for-each loop).
+
+	Collections:
+		Collections are fundamental constructs. They are used to hold and manage other objects.
+		The whole purpose of a collection is that it provides a common way to store and retrieve
+		objects efficiently.
+
+		There are several types of collections, they differ mostly in the way objects are retrieved.
+		The most common collections in Obj-C are:
+				NSSet
+				NSArray
+				NSDictionary
+				NSMutableSet
+				NSMutableArray
+				NSMutableDictionary
+
+	Fast Enumeration:
+		Syntax:
+					for (classType variable in collectionObject)
+					{
+						// statements
+					}
+
+
+
+Memory Management:
+	The process of allocating memory to objects when the are required and deallocated memory when
+	they are no longer required. It is a matter of performance, if a program doesn't free unneeded
+	objects its memory footprint grows and performance suffers.
+
+	Obj-C memory management techniques can be classified in two types:
+		- "Manual Retain-Release" or MRR
+		- "Automatic Reference Counting" or ARC
+
+	Manual Retain-Release (MRR):
+		In MRR you explicitly manage memory by keeping track of objects on your own. This is
+		implemented using a model callsed reference counting that the Foundation class NSObject
+		provides in conjunction with the runtime environment.
+
+		The only difference between MRR and ARC is that the retain and release is handled by the
+		programmer manually in MRR, while in ARC it is taken care of automatically.
+
+		Basic Rules:
+			-	you own any object you create: you create an object using a method whose name begins
+				with "alloc", "new", "copy", or "mutableCopy"
+			-	you can take ownership of an object using retain: a received object is normally
+				guaranteed to remain valid within the method it was received in, and that method may
+				also safely return the object to its invoker. You use retain in two situations:
+					-	in the implementation of an accessor method or an init method, to take
+						ownership of an object you want to store as a property value
+					-	to prevent an object from being invalidated as a side-effect of some other
+						operation
+			-	when an object is no longer needed, you must relinquish ownership of it by sending
+				it a release message or an autorelease message. Called releasing the object.
+			-	you must not relinquish ownership of an object you do not own.
+
+	Automatic Reference Counting (ARC):
+		The system uses the same reference counting system as in MRR, but it does the work for us.
+		ARC does all the memory management for you so you don't have to worry about it, so ARC
+		should be used unless you are an expert Obj-C programmer and want to do the memory
+		management yourself.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

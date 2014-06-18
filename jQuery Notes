@@ -1,0 +1,594 @@
+jQuery Notes
+
+
+
+jQuery is a JavaScript library to simplify JavaScript programming.
+
+It's a lightweight "write less, do more" JavaScript library.
+jQuery also simplifies some complicated things from JavaScript, like AJAX calls and DOM
+manipulation.
+
+jQuery library contains the following features:
+    -HTML/DOM manipulation
+    -CSS manipulation
+    -HTML even methods
+    -Effect and animations
+    -AJAX
+    -Utilities
+    -and plug-ins for lots of stuff too
+
+
+
+************************ Installing jQuery ************************
+
+
+Two ways to use jQuery in your code.
+You can either install jQuery onto your computer or include jQuery from a Content Delivery
+Network (CDN) like Google and Microsoft.
+
+One advantage to including it from a CDN is that many users have already downloaded jQuery from
+Google or Microsoft when visiting another site, and so it will be loaded from cache when they
+visit your site, which means less loading time.
+
+To download jQuery or to include it from a CDN just go to this webpage:
+                            http://jquery.com/download/
+
+Read the webpage and pick the best option, links to Google's and Microfost's CDNs are
+on the page. The code to include to get jQuery from Google's CDN looks something like this:
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+
+NOTE:   You need a server for the jQuery code to actually work. Just opening the website from
+        a text editor won't run the jQuery code. So you need to either use a localhost like
+        XAMPP or upload your website to an actual server host.
+
+NOTE:   If you are just using a localhost like XAMPP you need to include http: or https: at the start
+        of the link to Google's jQuery CDN (although I think if you are offline you can't use jQuery
+        anyway because it still has to download jQuery from the Google CDN - although you would think it
+        would be cached on my computer since I've already used jQuery recently. Once your pages are actually
+        uploaded to a server though you don't need that prefix, as shown in the example above. The only
+        thing that not having it does for you though is leave open the option for it to use either of http
+        or the secure https.
+
+
+
+************************ BASIC SYNTAX ************************
+
+
+In jQuery you select (or query) the HTML elements and perform actions on them.
+
+Syntax:
+            $(selector).action()
+
+The "$" defines/accesses jQuery
+The "(seclector)" is what is used to query/find HTML elements
+The "action()" will be performed on those elements
+
+jQuery code goes right in with JavaScript code.
+
+
+Examples:
+            $(this).hide()          -       hides the current element
+            $("p").hide()           -       hides all <p> elements
+            $(".test").hide()       -       hides all elements with class="test"
+            $("#test").hide()       -       hides the element with id="test"
+
+To prevent jQuery code from running before the document is finished loading you should put all
+jQuery code inside this document ready event (use either option):
+
+            $(document).ready(function() {           OR          $(function() {
+                // all jQuery code...                                // all jQuery code...
+            });                                                  });
+
+
+Can put jQuery code into an external .js file just like normal JavaScript.
+
+
+
+
+************************ SELECTORS ************************
+
+
+jQuery selectors all you to create and manipulate elements.
+They are used to find HTML elements based on their id, classes, types, attributes, values of
+attributes, and more.
+All selectors stat with $()
+
+Element Selector
+    Select an HTML element by element name:             $("elementName")
+        i.e.
+                $("p")        $("h1")       $("button")
+
+Id Selector
+    Select an HTML element by the value of its id attribute:    $("#id")
+
+Class Selector
+    Select an HTML element by its class:        $(".className")
+
+More Selectors
+    $(*)                            -       Selects all elements
+    $(this)                         -       Selects the current HTML element
+    $("p.intro")                    -       Selects all <p>'s with class="intro"
+    $("p:first")                    -       Selects the first <p> element
+    $("ul li:first")                -       Selects the first <li> of the first <ul>
+    $("ul li:first-child")          -       Selects the first <li> of every <ul>
+    $("[href]")                     -       Selects all elements with an href attribute
+    $("a[target='_blank']")         -       Selects all <a> with a target attribute = "_blank"
+    $("a[target!='_blank']")        -       Selects all <a> with a target attribute != "_blank"
+    $(":button")                    -       Selects all <button> and <input> of type="button"
+    $("tr:even")                    -       Selects all even <tr> elements
+    $("tr:odd")                     -       Selects all odd <tr> elements
+
+Go to this website to see all jQuery Selectors:
+                            http://www.w3schools.com/jquery/jquery_ref_selectors.asp
+
+
+
+
+************************ EVENT METHODS ************************
+
+
+Syntax:         $(selector).event(function(){
+                    // action or effect goes here
+                });
+
+Commonly used jQuery event methods:
+    ready()
+    click()
+    dblclick()
+    mouseenter()
+    mouseleave()
+    mousedown()
+    mouseup()
+    hover()
+    focus()
+    blur()      - when the form field loses focus
+
+See this website for a list of all jQuery event methods:
+                        http://www.w3schools.com/jquery/jquery_ref_events.asp
+
+
+
+
+************************ Effects ************************
+
+
+For a list of all jQuery effects go to this website:
+                            http://www.w3schools.com/jquery/jquery_ref_effects.asp
+
+
+Hide and Show
+
+    hide() and show()
+    These methods hide and show HTML elements.
+
+    Syntax:     $(selector).hide(speed, callback);
+                $(selector).show(speed, callback);
+                $(selector).toggle(speed, callback);
+
+    The toggle() method just toggles from an element from being shown to hidden, and vice versa.
+
+    The two arguments are optional. The speed parameter controls the speed of the hiding/showing
+    and can be "slow", "fast", or in milliseconds. The callback parameter is a
+    function to be executed after the hide() or show() method completes.
+
+    i.e. Hide all elements that have an id="hide" when they are clicked:
+            $("#hide").click(function() {
+                $("p").hide(1000);                  // takes one second (1000 ms) to hide
+            });
+
+
+Fade
+
+    fadeIn(), fadeOut(), fadeToggle(), fadeTo()
+    These methods fade an HTML element.
+
+    Syntax:     $(selector).fadeIn(speed, callback);
+                $(selector).fadeOut(speed, callback);
+                $(selector).fadeToggle(speed, callback);
+                $(selector).fadeTo(speed, opacity, callback);
+
+    Parameters take the same kind of arguments as in the hide() and show() methods.
+
+    In the fadeTo() method the opacity parameter is required, it specifies fading to a given
+    opacity between 0 and 1.
+
+
+Slide
+
+    slideDown() and slideUp() and slideToggle()
+    These methods slide an element up and down. What this means is that if an element is up
+    it isn't showing I think.
+
+    Syntax:     $(selector).slideDown(speed, callback);
+                $(selector).slideUp(speed, callback);
+                $(selector).slideToggle(speed, callback);
+
+    Parameters work the same as with the other effects.
+
+
+Animate
+
+    animate()
+    This method lets you create custom animations.
+
+    Syntax:     $(selector).animate({params}, speed, callback);
+
+    The required params parameter defines the CSS properties to be animated.
+
+    By default all HTML elements have a static position and can't be moved. Before animating
+    an element make sure to first set the CSS position property to absolute, fixed, or relative.
+
+    i.e.    To move an element to the right until it has reached a left property of 300px:
+    
+                $("div").animate({left:'250px'});
+
+    Can make multiple animations happen at once on an element simply by listing the CSS
+    properties with commas separating them.
+
+    Important Note: all CSS properties must use camel-casing when listed in the animate()
+    method. So instead of "padding-left" it would be "paddingLeft".
+
+    You can also use relative values to animate an element a certain amount from its current
+    state. Like so:         width:'+100px'
+
+    You can even use three pre-defined values to specify an animation's property, using:
+                show         hide           toggle
+    i.e.
+            $("div").animate({
+                height:'toggle'
+            });
+
+    To run animations on an element in a sequential nature, one after the other, make separate
+    animation() calls.
+        i.e.
+                var div=$("div");
+                div.animate({height:'200px', opacity:'0.4'}, "slow");
+                div.animate({left:'+100px'});
+
+
+Stop
+
+    stop()
+    This method is used to stop an animation or effect before it is finished.
+
+    Syntax:     $(selector).stop(stopAll, goToEnd);
+
+    The two parameters are optional. stopAll specifies if also the animation queue should be
+    cleared, default is false - meaning only the active animation is stopped therefore allowing
+    any queued animations to be performed afterwards. The goToEnd parameter specifies whether
+    or not to complete the current animation immediately, default is false. So by default the
+    stop() method kills the current animation being performed on the selected element.
+
+
+--------------------
+
+
+Callback Functions
+
+    A callback function is executed after the current effect is completely finished.
+    Because effects take time, and the next lines of code can be executed while the effect is
+    not yet finished, this can cause errors. To prevent this you can create a callback function.
+
+    You can define the callback function right in the effect method call like so:
+
+        $("p").hide("slow", function() {
+            alert("The paragraph is now hidden");
+        });
+
+--------------------
+
+Chaining
+
+    Chaining allow youto run multiple jQuery methods on the same element, one after the other,
+    within a single statement. These speeds up execution because browsers don't have to find
+    the same element multiple times.
+
+    To chain an action you simply append it to the previous action with the dot operator.
+    Can use line breaks and indentations so that its not just one big run-on line.
+
+    i.e.
+            $("#p1").fadeTo(1000,"0.3").animate({height:'+100px'}).slideDown("slow");
+
+
+
+************************ OPERATIONS ON THE HTML DOM ************************
+
+
+For a complete list of HTML/CSS methods in jQuery check out this webpage:
+                http://www.w3schools.com/jquery/jquery_ref_html.asp
+
+
+text()
+    This method sets or returns the text content of selected elements.
+        Syntax:
+                $(selector).text()                  // to get text
+                $(selector).text("some value")      // to set text
+
+html()
+    This method sets or returns the content of selected elements (including HTML markup).
+        Syntax:
+                $(selector).html()                      // to get the HTML markup content
+                $(selector).html("<tag> text <tag>")    // to set the HTML markup content
+
+val()
+    This method sets or returns the value of form fields.
+        Syntax:
+                $(selector).val()                   // to get the value of form fields
+                $(selector).val("blah")             // to set the value of form fields
+
+attr()
+    This method gets attribute values.
+        Syntax:
+                $(selector).attr("theAttribute")                // to get an attribute value
+                $(selector).attr("theAttr","new attr value")    // to set an attribute value
+
+The methods text(), html(), val(), and attr() all have callback functions, which in this case
+just seems to be putting a function as the argument in the methods. The callback functions
+require two parameters: the index of the current element in the list of elements selected, and
+the original value. You then return the string you wish to use as the new value from the
+function.
+
+    i.e.
+            $("#demo").text(function(i,origText) {
+                return "old text: " + origText + " new text: yowza (index: " + i + ")";
+            });
+
+
+Adding Elements
+
+    append()
+                inserts content at the end of the selected elements
+                Syntax:     $(selector).append("text");
+
+    prepend()
+                inserts content at the beginning of the selected elements
+                Syntax:     $(selector).prepend("text");
+
+    after()
+                inserts content after the selected elements
+                Syntax:     $(selector).after("text");
+
+    before()
+                inserts content before the selected elements
+                Syntax:     $(selector).before("text");
+
+Can add several new elements at once with any of these four methods by separating them with
+commas in the argument list of the methods.
+
+
+Removing Elements
+
+    remove()
+                removes the selected element (and its child elements)
+                Sytnax:         $(selector).remove();
+                                $(selector).remove(arg);    // filter what is removed with arg
+                i.e.
+                        $("p").remove(".italic");   // removes all <p> with class="italic".
+                                                    // parameter can be any of the jQuery
+                                                    // selector syntaxes
+
+    empty()
+                removes the child elements from the selected element
+                Sytnax:         $(selector).empty();
+
+
+Manipulating CSS
+
+    css()
+                sets or returns one or more style properties for the selected elements.
+                To return the value of a property:
+                                                    $(selector).css("propertyName");
+                To set the value of a property:
+                                                    $(selector).css("propertyName", "value");
+                To set multiple CSS properties:
+                        $(selector).css({"propertyName":"value", "propertyName":"value"});
+
+    addClass()
+                adds one or more classes to the selected elements. Class must be defined in
+                the CSS code. Add multiple classes by just putting a space in between them.
+                Syntax:     $(selector).addClass("className");
+                            $(selector).addClass("className otherClass");
+
+    removeClass()
+                removes one or more classes from the selected elements. Remove multiple classes
+                by just putting a space in between them.
+                Syntax:     $(selector).removeClass("className");
+                            $(selector).removeClass("className otherClass");
+
+    toggleClass()
+                toggles on and off the adding and removing of classes from the selected
+                elements. Toggle multiple classes at once by just putting a space in between
+                them.
+                Syntax:     $(selector).toggleClass("className otherClass");
+
+
+Manipulating Dimensions of Elements and Browser Window
+
+    width()
+            sets or returns the width of an element (without padding, border, or margin)
+            Syntax:     $(selector).width()
+                        $(selector).width("newWidth")
+
+    height()
+            sets or returns the height of an element (without padding, border, or margin)
+            Syntax:     $(selector).height()
+                        $(selector).height("newHeight")
+
+    innerWidth()
+            only returns the width of an element (includes padding)
+            Syntax:     $(selector).innerWidth()
+
+    innerHeight()
+            only returns the height of an element (includes padding)
+            Syntax:     $(selector).innerHeight()
+
+    outerWidth()
+            only returns the width of an element (includes padding and border).
+            if parameter is set to "true" the width includes padding, border, and margin.
+            Syntax:     $(selector).outerWidth();
+                        $(selector).outerWidth(true);
+
+    outerHeight()
+            only returns the height of an element (includes padding and border).
+            if parameter is set to "true" the height includes padding, border, and margin.
+            Syntax:     $(selector).outerHeight();
+                        $(selector).outerHeight(true);
+
+
+    Notes:  Can also set the width and height of an element at once like so:
+                            $(selector).width(value).height(value)
+
+            Can also get the width and height of the entire document or the browser window:
+                            $(document).width();
+                            $(document).height();
+                            $(window).width();
+                            $(window).height();
+
+
+
+
+************************ TRAVERSING ************************
+
+
+jQuery traversing means finding HTML elements based on their relationship to other elements.
+Start with one selection and move through that selection until you reach the elements you were
+looking for. Can move up and down the DOM tree.
+
+For a complete listing of jQuery traversing methods go to this webpage:
+                        http://www.w3schools.com/jquery/jquery_ref_traversing.asp
+
+Ancestors
+
+    An ancestor is a parent, grandparent, great-grandparent, etc.
+    Can traverse up the DOM tree to find ancestors of an element.
+
+    Methods:
+
+        parent()
+                    returns the direct parent element of the selected element.
+                                $(selector).parent();
+
+        parents()
+                    returns all the ancestor elements of the selected element, all the way up
+                    to the root element (<html>). Can use an optional parameter to filter the
+                    search for parents, which will only return ancestors of the specified type
+                    of element.
+                                $(selector).parents();
+                                $(selector).parents("HTML tag");
+
+        parentsUntil()
+                    returns all ancestor elements between two given elements. It'll return
+                    all ancestor elements between the selector and the argument given.
+                                $(selector).parentsUntil("filter element");
+
+
+Descendents
+
+    A descendent is a child, grandchild, great-grandchild, etc.
+    Can traverse down the DOM tree to find descendents of an element.
+
+    Methods:
+
+        children()
+                    returns all direct children of the selected element. Can also use an
+                    optional argument to filter the kind of elements that are returned out of
+                    the direct children of the selected element.
+                                $(selector).children();
+                                $(selector).children("filter element");
+
+        find()
+                    returns all the decsendents of the selected element, all the way down to
+                    the last descendent. Looks like a filter parameter is required, use "*"
+                    to get all the descendents, or put in the name of an html tag element
+                    to get only a specific kind of element.
+                                $(selector).find("filter");
+
+
+Siblings
+
+    Siblings share the same parent.
+    Can traverse sideways in the DOM tree to find silbings of an element.
+
+    Methods:
+
+        siblings()
+                    retuns all sibling elements of the selected element. Optional parameter to
+                    filter the siblings that are returned.
+                                $(selector).siblings();
+                                $(selector).siblings("filter");
+
+        next()
+                    returns the next sibling of the selected element.
+                                $(selector).next();
+
+        nextAll()
+                    returns all next sibling elements of the selected element. This means it
+                    returns all siblings (in the list of parent's siblings) after the selected
+                    element.
+                                $(selector).nextAll();
+
+        nextUntil()
+                    returns all next sibling elements between the selected element and the
+                    given argument.
+                                $(selector).nextUntil("elementType");
+
+        prev()
+                    works just like next() except opposite.
+
+        prevAll()
+                    works just like nextAll() except opposite.
+
+        prevUntil()
+                    works just like nextUntil() except opposite.
+
+
+Filtering
+
+    Filtering the elements that will be returned is a good way to narrow down the search for
+    elements.
+    The three most basic filtering methods are first(), last(), and eq() which allow you to
+    select a specific element based on its position in a group of elements.
+    Other filtering methods, like filter() and not() allow you to select elements that match or
+    don't match a certain criteria.
+
+    Methods:
+
+        first()
+                    returns the first element of the selected elements.
+                                $(selector).first();
+                        i.e.    $("div p").first();     // returns the first <p> inside the
+                                                        // first <div>
+
+        last()
+                    returns the last element of the selected elements.
+                                $(selector).last();
+
+        eq()
+                    returns an element with a specific index number of the selected elements.
+                                $(selector).eq(index);
+
+        filter()
+                    lets you specify a criteria. Elements that do not match the criteria are
+                    removed from the selection, and those that match will be returned.
+                                $(selector).filter("filter");
+
+        not()
+                    returns all elements that do not match the criteria. It's the opposite of
+                    the filter() method.
+                                $(selector).not("filter");
+
+
+
+
+************************ RANDOM NOTES ************************
+
+
+Three Different ways to create text:
+        var txt1="<p>Text.</p>";              // Create text with HTML
+        var txt2=$("<p></p>").text("Text.");  // Create text with jQuery
+        var txt3=document.createElement("p");
+        txt3.innerHTML="Text.";               // Create text with DOM
+
+
+

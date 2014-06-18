@@ -1,0 +1,538 @@
+eXtensible Stylesheet Language Transformations (XSLT) Notes
+
+
+
+
+
+eXtensible Stylesheet Language (XSL) is a stylesheet language for XML documents.
+XSLT stands for XSL Transformations, and it uses XSL to transform XML into other formats, like
+HTML.
+
+The XSL languages started with XSL and ended up with XSLT, XPath, and XSL-FO.
+XSL describes how an XML document should be displayed, just like CSS does for HTML.
+
+XSL is more than just a stylesheet language. It consists of three parts:
+        XSLT        -       a language for transforming XML documents
+        XPath       -       a language for navigating in XML documents
+        XSL-FO      -       a language for formatting XML documents
+
+XPath is a major element of the XSLT standard and you need to know it in order to create
+XSLT documents. XSLT uses XPath to navigate in XML documents. So let's study XPath first!
+
+
+
+
+************************ XPath ************************
+
+
+XPath is used to navigate through elements and attributes in an XML document.
+XPath is a major element of the XSLT standard, and XQuery and XPointer are built on XPath
+expressions.
+
+XPath is a language for finding information in an XML document.
+It is a syntax for defining parts of an XML document.
+It uses path expressions to navigate in XML documents.
+It contains a library of standard functions.
+
+XPath uses path expressions to select nodes or node-sets in an XML document. These path
+expressions look a lot like the expressions you see when you work with a traditional computer
+file system.
+
+XPath has over 100 built-in standard functions. There are functions for string values, numeric
+values, date and time comparison, node and QName manipulation, sequence manipulation, boolean
+values, etc.
+
+
+XPath Nodes
+
+    XML documents are treated as trees of nodes. In XPath, there are seven kinds of nodes:
+        - element
+        - attribute
+        - text
+        - namespace
+        - processsing-instruction
+        - comment
+        - document
+
+    Atomic values are nodes with no children or parent. These are the values of other nodes I
+    guess.
+    Items are atomic values or nodes.
+
+    Each element and attribute has one parent.
+    Element nodes may have zero, one, or more children.
+    Nodes that have the same parent are sibling nodes.
+    Ancestors are a node's parent, grandparent, great-grandparent, etc.
+    Descendents are a node's children, grandchildren, great-grandchildren, etc.
+
+    XPath uses path expressions to select nodse or node-sets in an XML document. The node is
+    selected by following a path or sets.
+
+
+    Some useful path expressions:
+
+        theNodeName     -       selects all nodes with the name "theNodeName"
+        /               -       selects from the root node
+        //              -       selects nodes in the document from the current node that match
+                                the selection no matter where they are
+        .               -       selects the current node
+        ..              -       selects the parent of the current node
+        @               -       selects attributes
+
+        Examples:
+
+        bookstore         -   selects all nodes with the name "bookstore"
+        /bookstore        -   selects the root element bookstore (path that starts with "/"
+                              always represents an absolute path)
+        bookstore/book    -   selects all book elements that are children of bookstore
+        //book            -   selects all book elements no matter where they are in the document
+        bookstore//book   -   selects all book elements that are descendent of the bookstore
+                              element no matter where they are under the bookstore element
+        //@lang           -   selects all attributes that are named lang
+
+
+    Predicates:
+
+        Predicates are used to find a specific node or a node that contains a specific value.
+        Predicates are always embedded in square brackets.
+
+        Examples of path expressions with predicates:
+
+        /bookstore/book[1]          -   selects the first book element that is the child of
+                                        the bookstore element (in IE the first node is [0], to
+                                        solve this problem set the SelectionLanguage to XPath
+                                        in JavaScript:
+                                        xml.setProperty("SelectionLanguage", "XPath");
+        /bookstore/book[last()]     -   selects the last book element that is the child of the
+                                        bookstore element
+        /bookstore/book[last()-1]   -   selects the last but one book element that is the child
+                                        of the bookstore element
+        /bookstore/book[position()<3]   -   selects the first two book elements that are
+                                            children of the bookstore element
+        //title[@lang]          -   selects all title elements that have an attribute named lang
+        //title[@lang='eng']    -   selects all the title elements that have an attribute named
+                                    lang with a value of 'eng'
+        /bookstore/book[price>35.00]    -   selects all the book elements of the bookstore
+                                            element that have a price element with a value
+                                            greater than 35.00
+        /bookstore/book[price>35.00]/title  -   selects all title elements of the book elements
+                                                of the bookstore element with a value greater
+                                                than 35.00
+
+
+    Selecting Unknown Nodes:
+
+        XPath wildcards can be used to select unknown XML elements.
+
+        Wildcards:
+            *       -       matches any element node
+            @*      -       matches any attribute node
+            node()  -       matches any node of any kind
+
+        Examples:
+            /bookstore/*        -       selects all the child nodes of the bookstore element
+            //*                 -       selects all elements in the document
+            //title[@*]         -       selects all title elements which have any attribute
+
+
+    Selecting Several Paths:
+
+        By using the | operator in an XPath expression you can select several paths. Note that
+        it acts as an AND operator, not an OR operator.
+
+        Examples:
+            //book/title | //book/price     -   selects all the title AND price elements of all
+                                                book elements
+            //title | //price               -   selects all the title AND price elements in the
+                                                document
+            /bookstore/book/title | //price -   selects all the title elements of the book
+                                                element of the bookstore element AND all price
+                                                elements in the document
+
+
+    Axes:
+
+        An XPath axis defines a node-set relative to the current node.
+        Below are Axes and their results:
+
+        ancestor            -       selects all ancestors of the current node
+        ancestor-or-self    -       selects all ancestors of the current node and the curret
+                                    node itself
+        attribute           -       selects all attributes of the current node
+        child               -       selects all children of the current node
+        descendant          -       selects all descendants of the current node
+        descendant-or-self  -       selects all descendants of the current node and the current
+                                    node itself
+        following           -       selects everything in the document after the closing tag of
+                                    the current node
+        following-sibling   -       selects all siblings after the current node
+        namespace           -       selects all namespace nodes of the current node
+        parent              -       selects the parent of the current node
+        preceding           -       selects all nodes that appear before the current node in
+                                    the document, except ancestors, attributes, and namespace
+                                    nodes
+        preceding-sibling   -       selects all siblings before the current node
+        self                -       selects the current node
+
+
+    Local Path Expression:
+
+        A location path can be absolute or relative.
+        An absolute location path starts with a slash (/) and a relative path does not. In both
+        cases the path consists of one or more steps, each separated by a slash.
+
+            /step/step      -   absolute location path
+            step/step       -   relative location path
+
+        Each step is evaluated against the nodes in the current node-set.
+        A step consists of:
+            - an axis (defines the tree-relationship between the selected nodes and the current
+              node)
+            - a node-test (identifies a node within an axis)
+            - zero or more predicates (to further refine the selected node-set)
+
+        Syntax for a location step:
+
+            axisname::nodetest[predicate]
+
+        i.e.
+
+            child::book         -   selects all book nodes that are children of the current node
+            attribute::lang     -   selects the lang attribute of the current node
+            child::*            -   selects all element children of the current node
+            attribute::*        -   selects all attributes of the current node
+            child::text()       -   selects all text node children of the current node
+            child::node()       -   selects all children of the current node
+            descendant::book    -   selects all book descendants of the current node
+            ancestor::book      -   selects all book ancestors of the current node
+            ancestor-of-self::book  -   selects all book ancestors of the current node, and the
+                                        current node as well if it is a book node
+            child::*/child::price   -   selects all price grandchildren of the current node
+
+
+
+    XPath Operators:
+        An XPath expression returns either a node-set, a string, a boolean, or a number.
+
+        |       -       computes two node-sets          i.e.    //book | //cd
+        +       -       addition                        i.e.    6 + 4
+        -       -       subtraction
+        *       -       multiplication
+        div     -       division
+        =       -       equal
+        !=      -       not equal
+        <       -       less than
+        <=      -       less than or equal to
+        >       -       greater than
+        >=      -       greater than or equal to
+        or      -       or
+        and     -       and
+        mod     -       modulus (division remainder)
+
+
+    Loadding an XML Document:
+
+        Use XMLHttpRequest to load XML documents into a browser.
+        Dealing with XPath to select nodes is different in Internet Explorer than it is with
+        other major browsers.
+
+        IE:                 xmlDoc.selectNodes(xpath);
+        Other browsers:     xmlDoc.evaluate(xpath, xmlDoc, null, XPathResult.ANY_TYPE, null);
+
+
+
+
+************************ XSLT ************************
+
+
+XSLT is used to transform an XML document into another XML document or into anothe type of
+document that is recongized by a browser, like HTML.
+
+XSL documents use the .xsl extension.
+
+You link an XSL stylesheet to an XML document by referencing it between the prolog and root
+element in the XML document like so:
+
+                <?xml-stylesheet type="text/xsl" href="filename.xsl"?>
+
+With XSLT you can add/remove elements and attributes to or from the output file. You can also
+rearrange and sort elements, perform tests and make decisions about which elements to hide
+and display, plus a lot more.
+
+A common way to describe the transformation process is to say that XSLTj tranforms an XML
+source-tree into an XML result-tree.
+
+The way it works is that XSLT uses XPath to define parts of the source document that should
+match one or more predefined templates, when a match is found XSLT will transform the matching
+part of the source document into the result document.
+
+First line of code in an XSLT document should be same as XML because an XSLT doc is an XML doc:
+
+        <?xml version="1.0" encoding="UTF-8"?>
+
+The root element that declares the document to be an XSL stylesheet is:
+            <xsl:stylesheet>        or          <xsl:transform>
+
+So declare the XSL document as an XSLT stylsheet like so (either way works):
+
+    <xsl:stylesheet version="1.0"                  // declares and points to the XSLT namespace
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+    OR
+
+    <xsl:transform version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+Use a transformation template in the XSL document to create the stylesheet:
+
+    <xsl:template match="/">
+        ...styling code...
+    </xsl:template>
+
+
+So here is a SKELETON XSLT DOCUMENT:
+
+                <?xml version="1.0" encoding="UTF-8"?>
+
+                <xsl:transform version="1.0"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+                <xsl:template match="/">
+                    <html>
+                    <body>
+                    ...html code and XPath expressions go here...
+                    </body>
+                    </html>
+                </xsl:template>
+
+                </xsl:transform>
+
+
+The <xsl:template> Element:
+
+    Used to build templates. An XSL stylesheet consists of one or more sets of rules, or
+    templates. A template contains rules to apply when a specified node is matched.
+
+    The match attrbute (<xsl:template match="blah") is used to associate a template with an
+    XML element. The match attribute can also be used to define a template for the entire
+    XML document, using match="/". The value of the match attribute is an XPath expression.
+
+    The content inside the <xsl:template> element defines some HTML to write to output.
+
+
+The <xsl:value-of> Element:
+
+    Used to extract the value of a selected XML node and add it to the output stream of the
+    transformation.
+
+    Use the "select" attribute, with a value set to an XPath expression, to get the value and
+    print it out to with the surrounding HTML code in the XSL template:
+
+            <xsl:value-of select="XPath expression" />
+
+    This only gives you one XML node at a time.
+
+
+The <xsl:for-each> Element:
+
+    Used to select every XML eleemnt of a specified node-set. Use the "select" attribute, whose
+    value is an XPath expression, to choose what node to run the for-each on.
+
+            <xsl:for-each select="XPath expression">
+                ...html code, and using <xsl:value-of> to select XML elements to display
+            </xsl:for-each>
+
+    Can also filter the output from the XML file by adding criterion to the select attribute in
+    the <xsl:for-each> element. Filter operators are:
+            =
+            !=
+            @lt;        -   less than
+            @gt;        -   greater than
+
+        i.e.
+                <xsl:for-each select="XPath Expression[node='value']">
+
+
+The <xsl:sort> Element:
+
+    Used to sort the output. Use the "select" attribute, whose value is an XPath Expression to
+    choose the nodes you want sorted, to sort the output into alphabetical order (or numerical too maybe?).
+    Put it inside the <xsl:for-each> element:
+
+            <xsl:for-each select="XPath Expression">
+                ...
+                <xsl:sort select="XPath expression">
+                ...
+            </xsl:for-each>
+
+
+The <xsl:if> Element:
+
+    Used to put a conditional test against the content of the XML file, using the "test"
+    attribute. Put the <xsl:if> inside a <xsl:for-each> element. Use the filter operators shown
+    above to 
+
+        <xsl:if test="expression">
+            ...some output if expression is true...
+        </xsl:if>
+
+
+The <xsl:choose> Element:
+
+    Used in conjunction with <xsl:when> and <xsl:otherwise> to express multiple conditional
+    tests. Using these three elements together creates an if-else conditional block. Put this
+    <xsl:choose> block inside an <xsl:for-each> element. Can use multiple <xsl:when> elements
+    to create an if-elseif-else block with an arbitrary amount of else-if's (<xsl:when>'s).
+
+            <xsl:choose>
+                <xsl:when test="expression">
+                    ...some output...
+                </xsl:when>
+                <xsl:otherwise>
+                    ...some output...
+                </xsl:otherwise>
+            </xsl:choose>
+
+
+The <xsl:apply-templates> Element:
+
+    Applies a template to the current element or to the current element's child nodes.
+    If you add the "select" attribute to it, it will process only the child element that matches
+    the value of the attribute. You can use the select attribute to specify the order in which
+    the child nodes are processed.
+
+            <xsl:apply-templates />
+
+    So this is basically like calling a function in programming. If you mutliple templates in
+    an XSLT file being applied to different elements of the XML file, you can make a sort of
+    'main' template by matching it to the XML root with match="/". In this main template you
+    layout the main part of the HTML code used to style the XML document. And then when you
+    want to get data (XML elements) that used a different template you use the 
+    <xsl:apply-templates select="XPath expression" /> which will call one of the other templates
+    you made in the file by matching the 'select' value to the 'match' value of another
+    template. And you can then do this same thing in the other templates to create a series of
+    functions basically to apply the templates you want.
+
+    See this website for an example:
+            http://www.w3schools.com/xsl/tryxslt.asp?xmlfile=cdcatalog&xsltfile=cdcatalog_apply
+
+
+--------------------
+
+
+XSLT on the Client using JavaScript (for browser support and multiple stylesheets)
+
+    It is not always desirable to include a XSLT stylesheet reference in an XML file (i.e. it
+    won't work with a non-XSLT aware browser). So you can use JavaScript to do the
+    transformation. By using JavaScript you can do browser-specific testing and use different
+    stylesheets according to browser and user needs. In fact that is what XSLT is designed for,
+    to be able to transform data from one format to another, like supporting different browsers
+    and different user needs.
+
+    You still need to make XSLT documents to do transfomations on the XML document, but you
+    don't reference the XSLT document in the XML document. Instead you use JavaScript to link
+    an XSLT document to the XML document. Note that the only reason to do this would be if you
+    made different XSLT stylesheets for different browsers and the like, then you use JavaScript
+    to choose which XSLT stylesheet will be applied to the XML document. Although Even if you
+    don't use different stylesheets you still need to use JavaScript to check which browser is
+    being used because of Internet Explorer being different (as always!) from the other major
+    browsers.
+
+
+    1. To do this you do the normal stuff to get the XML document and the XSLT document from the server. Make a function to do these steps and then just send the filename as the argument. Call this function twice inside the function that is actually called from the
+    code, which is the functino in Step 2 below, which takes the loaded XML and XSL documents
+    and checks for what browser is being used, and then displays the document. But also need
+    to check here before creating the XMLHttpRequest object what the browser is since IE differs
+    from the rest of the browsers:
+
+        - Create an XMLHttpRequest object
+        - Use the open() and send() methods to send a request to a server
+        - Get the response data as XML data
+
+        i.e.
+        
+        function loadXMLDoc(filename) {
+        // code for IE
+            if (window.ActiveXObject)
+                xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");   // or is it "Microsoft.XMLHTTP"
+            else                       // code for the other browsers
+                xmlhttp = new XMLHttpRequest();
+            xmlhttp.open("GET", filename, true);
+            try {
+                xmlhttp.responseType = "msxml-document";           // helping IE11
+            } catch (err) { }
+            xmlhttp.send();
+            return xmlhttp.responseXML;
+        }
+
+    2. Then check for browser support (IE vs. the others) and link the XSL doc to the XML doc
+    and then place it in the desired HTML element for display. (If there are multiple
+    stylesheets being used this is also where you'd write branching statements to choose the
+    appropriate stylesheet to link to the XML document - not shown in code below):
+
+        i.e.
+
+        function displayResult() {
+            xml = loadXMLDoc("xmlfile.xml");
+            xsl = loadXMLDoc("xslfile.xsl");
+            //code for IE
+            if (window.ActiveXObject || xmlhttp.responseType == "msxml-document") {
+                ex = xml.tranformNode(xsl);
+                document.getElementById("blah").innerHTML = ex;
+            } // code for other broswers:
+            else if (document.implementation && document.implementation.createDocument) {
+                xsltProcessor = new XSLTProcessor();
+                xsltProcessor.importStylesheet(xsl);
+                resultDocument = xsltProcessor.transformToFragment(xml, document);
+                document.getElementById("blah").appendChild(resultDocument);
+            }
+        }
+
+
+--------------------
+
+
+XSLT on the Server
+
+    To make XML daa available to all kinds of browsers we can transform the XML document on the
+    server and send it back to the browser as HTML.
+
+    The section above uses JavaScript and an XML parser for the tranformation, but if a browser
+    doesn't have an XML parser, then you need to transform the XML document on the server. But
+    all major browsers have XML parsers so this really should be a problem, but this section
+    explains how to do it if you need to do it for some reason.
+
+    Like in the JavaScript section above, for this you won't have a reference to the XSL file
+    in the XML file.
+
+    Actually, the code is really easy, I'm just gonna link to the webpage that shows how to do
+    this in both PHP and ASP:           http://www.w3schools.com/xsl/xsl_server.asp
+
+
+--------------------
+
+
+Editing XML
+
+    Data stored in XML files can be edited from an Internet browser.
+    You can open, edit, and save an XML file that is stored on the server.
+    You use XSL to transform the XML document into an HTML form. The values of the XML elements
+    will be written to HTML input fields in an HTML form. The HTML form is editable. After
+    editing the data, the data is going to be submitted back to the server and the XML file
+    will be updated.
+
+    Basically you've got an XML file, an XSL file that puts the XML elements in input fields
+    of an HTML form, and then you've got backend stuff (PHP, ASP) to actually do this on the
+    server. This is a cross-browser solution because the client will only get the resultant
+    HTML back.
+
+
+
+    NOTE: SINCE THIS REQUIRES SERVER-SIDE PROGRAMMING I WON'T FINISH THIS LAST SECTION OF XSLT
+            NOTES UNTIL I'VE LEARNED PHP.
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------

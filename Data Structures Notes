@@ -1,0 +1,365 @@
+Data Structures Notes
+
+
+
+An Abstract Data Type (ADT) consists of data items of the same type and operations on that data.
+A Data Structure is the specific implementation of an ADT in a programming language.
+
+All the lists below have a linear ordering of data. Trees have a hierarchical ordering of data.
+
+Array
+    Static list of elements. Retrieving entry by index is fast. adding an entry from end of list is fast.
+    Adding/removing items from middle of list requires manual shifting of all later elements. Can
+    manually increase the size of the array by copying all contents to a new larger array.
+
+Vector / ArrayList
+
+    A resizable (dynamic) array. Unlike an array, it will automatically copy all elements into a larger array
+    when it is full. Will probably also reduce size when mostly empty. Can insert/remove elements by
+    index in the middle of the array, although this is slow because all the elements after it must be
+    shifted by one. Retrieving an entry by index is fast. Adding an entry at the end of the list is fast
+    except when the list capacity must be increased, which involves copying all the elements of the list
+    to a new array.
+    Methods are:    boolean add(item), void add(index, item), object get(index), void clear(),
+                    object set(index, entry), boolean contains(item), int size(), boolean isEmpty()
+
+
+List Iterator
+    A list iterator iterates through a list from front to back. It must be reset when it has reached the
+    end of a list (at least in Java).
+    Has methods:    object next(), void remove(), void set(object), object previous(), int nextIndex(),
+                    int previousIndex(), boolean hasNext(), boolean hasPrevious()
+
+
+Linked List
+
+    A Linked List is a collection of items that are made up of nodes that contain an
+    item/value and a pointer to the next node in the list.
+    There are singly-linked lists and doubly-linked lists, as well as circular
+    linked-lists.
+    Singly-linked lists only have points going one way. Doubly-linked lists have
+    pointers in each node pointing both to the node before and after.
+    Circular-linked lists means that the end of the list points to the other side of
+    the list, so the nodes create a cycle.
+
+    A Linked List can implement a Stack, a Queue, or a Bag.
+
+    A node class/DStruct:
+        class Node:
+            Item item
+            Node next
+            Node previous       // only in the case of a double-linked list.
+
+    A Linked List class holds the head node in the list, and in the case of a Queue
+    being implemented by a Linked List it also has a tail node.
+
+    A linked list has methods insertAfter, insertBeginning, iterate, removeAfter,
+    removeBeginning, hasNext.
+
+    A Singly Non-Circular Linked List class:
+        class Linked List:
+            Node head
+            int size
+            Node tail           // only in the case of a queue
+
+        insertBeginning(Item item):
+            Node curr
+            Node.item = item
+            Node.next = first
+            first = curr
+
+        insertAfter(Node node, Item item):
+            Node newNode
+            newNode.next = node.next
+            node.next = newNode
+            newNode.item = item
+
+        removeBeginning():
+            head = head.next
+
+        removeAfter(Node node):
+            node.next = node.next.next
+
+        hasNext(Node curr):
+            return !(curr.next == null)
+
+        iterate(Node curr):
+            if (LL.hasNext()):
+                curr = curr.next
+                return curr
+
+
+Bag
+
+    A collection of data items that you can't delete from. Purpose is just to add
+    data items to this collection and be able to iterate over the data.
+
+
+Stack
+
+    A collection of data items that follows a LIFO (last in, first out) standard.
+    Items are added at the top of the stack and removed from the top of the stack.
+    Has methods push(item) to add an item to the top, pop() to remove an item from
+    the top, isEmpty() that returns a boolean, and size() that returns the number
+    of items in the Stack.
+
+    Can be implemented as either an array or a Linked List. Array implementation
+    means the Stack will hold an array and an integer size.
+    Linked List implementation means the Stack will hold a head node and an integer
+    size, as well as implementing a Node that has an item and a pointer to the next
+    node.
+
+
+Queue
+
+    A collection of data items that follows a FIFO (first in, first out) standard.
+    Items are added to the top of the queue and removed from the bottom. Adding an
+    item is called enqueue, removing an item is called dequeue.
+
+    Methods for a queue are enqueue(item), dequeue(), isEmpty(), and size().
+
+
+Deque
+
+    A double ended queue.
+    Has methods:    addFirst(item), addLast(item), object removeFirst(), object removeLast(),
+                    object getFirst(), object getLast()
+
+
+Types of Linked Lists
+
+    Singly Linked List
+        The list is one-directional. It goes from the head node to the tail node and that is it. Each
+        node has a pointer pointing to the next node in the list.
+
+    Doubly Linked List
+        A bi-directional list. Can be traversed from head to tail or from tail to head. Each node has
+        a pointer to the previous node and the next node. The head's previous pointer points to null,
+        and the tail's next pointer points to null.
+
+    Circular List
+        A way to make an array that can add or delete from either end (which is why it is
+        used to implement a Deque). You keep track of the position of the head and tail
+        of the array and when an item is removed from either you change that head/tail to
+        point to the new head/tail. The head and tail are connected so that you can keep
+        adding to the head and it will start putting elements at the end of the array's
+        capacity, or keep adding to the tail and it will put elements at the beginning
+        of the array's capacity. This means that the array doesn't always start at 0
+        and the tail isn't always the last element in the array, which is why you have to
+        keep track of the head and tail. The array is full when the head and tail are
+        next to each other.
+
+
+Java comparisons
+
+    ArrayList vs. LinkedList:
+        If you need to do many adds/removes at the start/end or while traversing
+        the list then LinkedList is faster.
+        If you need to do many adds/removes/checks/changes accessed by position
+        then ArrayList is faster.
+        Checking is faster for ArrayList than LinkedList.
+        Remove/add in the middle is faster for LinkedList than ArrayList because in
+        an ArrayList adding/removing things requires shifting all the items that come
+        after it in the list.
+    An ArrayDeque is more time efficient (because its a circular array) than a Deque
+    LinkedList and a LinkedBlockingQueue, but the latter are more space efficient.
+    ArrayDeque is faster than Stack.
+    ArrayList is faster than Stack.
+    The Deque interface, and the ArrayDeque class using that interface, use a
+    circular array.
+    Java's LinkedList class is a doubly-circular list.
+
+    Note that a for-each loop can't be used to change or input things, it only
+    retrieves data, at least in Java. It also can't traverse two structures at once,
+    it can't compare elements because only one element can be accessed at a time, it
+    can only traverse forwards.
+
+
+Difference between a Stack, Queue, List, and Deque
+
+    A stack can only add/remove/check from the top. A queue adds to the top but does
+    remove/check from the bottom. A Deque can add/remove/check from the top and
+    bottom. While a List can add/remove/check anywhere, that is from the top,bottom,
+    or anywhere in the middle.
+
+
+Priority Queue
+
+    A priority queue is a queue that doesn't just place new items at the top of the
+    list, but compares their values to items already in the list and places them
+    in the appropriate order.
+    Priority Queue accesses and removes object with the highest priority. The priority
+    can be specified by an integer or by another object that must belong to a class
+    implementing some sort of Comparable interface, or have comparison support built
+    into it.
+    The priority queue's comparison should be based on 1,0,-1 for the object comes
+    before, equal to, or after the other object. The head element is the lowest in
+    the ordering, meaning it will be -1 compared to every other item in the queue.
+    Priority Queue add/remove work faster in a heap implementation than in an array
+    or linked list implementation. Implemented via sorted array.
+    Add/remove are faster using a Heap implementation than using an array or linked list.
+
+    Methods for a Priority Queue are: add/offer(item), poll/remove(), peek/element(),
+    remove(item), comparator()??
+
+
+Dictionary/Map
+
+    A Dictionary (or Map) is just a collection of key-value pairs. Each entry has
+    two parts: a unique key and a value associated with the key.
+
+    Methods are:    return V add(key,value), return V remove_pair(key)
+                    return V getValue(key), getAllKeys(), getAllValues,
+                    return int getSize(), isFull(), isEmpty(), clear(),
+                    containsKey(), containsValue()
+
+    Examples of uses:
+        - telephone directory in which the person's full name is the key and the
+          number is the value
+        - frequency counter in which a text is read and each unique word in the text
+          is a key and the number of times each word appears in the text is the value.
+        - concordance or words in which a text is read and each unique word in the
+          text is a key and the corresponding value is a list of line numbers in which
+          that word appears.
+        - any other thing that has some identifying characteristic and a value or
+          list of values associated with it, and you want to be able to search
+          through the set by the indentifying characteristic.
+
+
+
+Trees
+    Trees are a specific type of a graph in which there is a root node that is the
+    parent of all other nodes. A tree is a data structure that has a hierarchical ordering of the data
+    with a set of nodes connected by edges, in which each node contains a data item and its child nodes.
+    The edges indicate parent-child-sibling relationships. The hierarchy of nodes is arranged in levels.
+
+    Trees are acyclic, there are no cycles, just goes from root on down, splitting into children at each
+    node.
+    An Empty Tree has no nodes.
+    Height of a tree is the # of hierarchical levels it has.
+    Leaves are nodes with no children.
+    Can represent decision trees.
+
+    A bunch of different types of trees: General Trees, Binary Trees (Full Binary Trees, Complete Binary Trees), BinarySearchTree, Heaps, Red-Black Trees, and a few more.
+
+    Applications of trees are family tree, organization of an institution, file directories, game decision
+    trees, etc.
+
+    Binary Trees
+        A tree in which each node has either 0, 1, or 2 child nodes, called the left and right children.
+        Each binary node has a data item, a left node and a right node, and methods isLeaf(), hasLeft(),
+        hasRight(), getNumberOfNodes(), getHeight(), getNumberOfLeaves().
+        Each binary tree has a root and the currentNode, and methods isEmpty(), getNumberOfNodes(),
+        getHeight(), getNumberOfLeaves(), advanceLeft(), advanceRight(), clear().
+        
+        Full Tree - a type of binary tree in which all of its nodes not on the final level have two
+                    children.
+                    A full tree has height, h, and number of nodes, n,  n = 2^h - 1 and h = log(n+1) with
+                    base 2.
+        Complete Tree - a type of binary tree that is a full tree until the next to last level and is
+                        filled left to right, so all of the nodes except those on the last full level
+                        have two children, and leaves on the last level are filled left to right. For a
+                        complete tree h = log(n+1) also works, but not the other equation listed for
+                        Full Trees.
+        Heap - A complete binary tree in which each node contains either no smaller or no larger data
+               values than the objects of its descendents. A heap can be used to implement Priority Queue.
+               A heap can be represented by an array that is ordered by Level-Order Traversal. So when a
+               binary tree is complete level-order traversal can be used to store data in consecutive
+               locations of an array. This enables easy location of the data in a node's parent or
+               children:  Index for the parent of a node is found by doing the integer division
+               Parent = i/2, and you can find the index of a node's children like so, LeftChild = 2i,
+               RightChild = 2i + 1.
+               
+               Minimum Heap - every node is smaller than its children (smallest number is the root)
+               Maximum Heap - every node is larger than its children (largest number is the root)
+
+               A Max Heap has a root node and methods for void add(item), Object removeMax(),
+               Object getMax(), boolean isEmpty(), int getSize(), and void clear().
+
+        Examples of Binary Trees are Expression Trees, Decisions Trees, Binary Search Trees, Heaps.
+
+    Binary Search Tree
+        Same as a binary tree but with the added stipulation that all left children are less the parent
+        and all right children are greater than the parent. So the left subtree of a node is less than
+        that parent, and the right subtree of a node is greater than that node. It is organized so that
+        a search of its data is more efficient. The nodes must have objects that can be compared.
+        Has additional methods:     search, contains, add, delete, findMax, findMin
+
+    Tree Traversals
+        In-Order        - visit root between visiting subtrees. Start at leftmost node, then go to parent,
+                          then go to right of parent as far down to the left as the tree goes. Used to
+                          evaluate expression trees. Can't be done on General Trees, only on Binary Trees.
+        Level-Order     - begin at root, visit nodes one level at a time. Use a queue to put the current
+                          node at the front of the queue, then all of the children, and each time a new
+                          node is at the front of the queue, all of its children are put at the end of the
+                          node, resulting in traversing the tree from top to bottom, and left to right on
+                          each level. Works for any kind of tree.
+        Pre-Order       - visit root before subtree. Start at root, then get each node going all the way
+                          down to the left, when that is done you back track to the next parent node with
+                          a right node. Works for any kind of tree.
+        Post-Order      - visit root after subtree. Start at leftmost node, then go to the right subtree
+                          of that parent and go all the way down to the left. Grab the parents after their
+                          respective subtree is included. Works for any kind of tree.
+
+    General Tree
+        A tree in which the nodes can have any number of children.
+        Each node has a data item and a list of its children, along with methods hasChildren() and copy().
+        The general tree itself has a root node and methods isEmpty(), clear(), copy(), and whatever kind
+        of traversal you want (level-order, pre-order, or post-order).
+
+Graphs
+    Graphs are a collection of vertices (nodes) and edges.
+    A tree is a specific form of a graph. All trees are graphs. Any connect acyclic graph may be
+    represented as a tree.
+    A graph has no root, just a collection of nodes. ADT List used if vertices labels are integers,
+    otherwise if vertices' labels are non-integers then ADT Dictionary is used to hold the names of the
+    nodes
+    Each edge connects two vertices.
+    A path in a graph is a collection of edges from some vertex to some vertex.
+    Every two vertices may be connect by one edge (undirected graph), or up to two edges with opposite
+    direction (directed graph).
+
+    A graph has data edgeCount and a Map/List of Vertices, and methods:    addVertex(), addEdge(),
+    hasEdge(), isEmpty(), getNumberOfVertices(), clear(), and getNumberOfEdges().
+
+    A graph vertex has method a data label and a list of edges (edgeList), and methods equals(Vertex) and
+    connect(Vertex, weight)   <--  weight only if it is a weighted graph.
+
+    A graph has has an Edge class that has data endVertex and weight if weighted graph, no methods needed.
+
+    Digraph - graph with directed edges.
+    Subgraph - a portion of a graph that is a graph itself
+    Weighted Graph - has values on its edges
+
+    A path in a weighted graph has a weight that is the sum of the edges' weights that are along the path.
+    A directed path is a path in a digraph, in which the direction of the edges must be considered.
+    A cycle is a path that begins and ends at the same vertex. A graph with no cycles is acyclic.
+
+    Connected Graph - has a path between every pair of distinct vertices.
+    Complete Graph - has an edge between every pair of distinct vertices. i.e. every single vertex is
+                     connected to every single other vertex by a single edge.
+    Disconnected Graph - a graph that is not Connected.
+
+    The two possible implementations of a graph are an Adjacency Matrix and an Adjacency List.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

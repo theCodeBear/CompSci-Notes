@@ -1,0 +1,487 @@
+eXtensible Markup Language (XML) Notes
+
+
+
+XML is designed to structure, transport, and store data, focusing on what the data is.
+XML is a markup langauge like HTML (HTML is designed to display data).
+
+
+************************ GENERAL NOTES AND USES OF XML ************************
+
+
+XML tags are not predefined, you have to define your own tags.
+XML is designed to be self-descriptive.
+XML is just information wrapped in tags. Outside software must be designed to send, receive,
+read, or display it.
+
+In most web applications XML is used to transport data. It is the most common tool for data
+transmissions between all sorts of applications.
+
+If you need to display dynamic data in an HTML document, editing the HTML everytime the data
+changes is too time consuming. Instead you can store the data in separate XML files and have
+some JavaScript code read the external XML file and update the data.
+
+By storing data in XML you can get over the fact that different systems store data in different
+incompatible ways. Since XML data is stored in text format it beats this problem.
+
+The first line in an XML document is the XML declaration, which defines the XML version. This
+line is called the prolog. This line is optional. Note that UTF-8 (Universal character set
+Transformation Format) is the web standard encoding format. If no encoding in included the
+default is UTF-8.
+                                <?xml version="1.0" encoding="UTF-8"?>
+
+Note: When writing an XML document, use an XML editor that supports encoding. Make sure it
+      supports UTF-8 encoding.
+
+The second line is the root element.
+
+XML documents form a tree structure with a root element, which is the parent of all other
+elements. All elements have text content and attributes (just like in HTML).
+
+
+
+
+************************ SYNTAX ************************
+
+
+All XML elements must have a closing tag, but opening and closing can be done in one tag
+like so:        <tagName />
+
+Correct syntax for a "well formed" XML document:
+        - XML tags are case sensitive.
+        - XML tags must be propery nested, which means an element that is opened inside another
+          element must be closed before that other element is closed.
+        - XML must have a root document that contains all other elements.
+        - XML attribute values must be quoted:         <elementName attributeName="value">
+
+Entity References are characters that have special meaning in XML:
+            Entity Reference            Character it stands for
+                &lt;                            <
+                &gt;                            >
+                &amp;                           &
+                &apos;                          '
+                &quot;                          "
+
+<!-- Comments in XML are say as in HTML -->
+
+White space in XML is preserved, not truncated, so all white spaace is shown.
+
+XML stores a new line as a line feed: LF
+
+If there is a syntax error in an XML document a program will stop processing it. XML errors
+are not allowed!
+
+The w3schools website has an XML validator to check to make sure your XML has no errors. Go to
+this webpage to use it:             http://www.w3schools.com/xml/xml_validator.asp
+
+
+
+
+************************ ELEMENTS AND ATTRIBUTES ************************
+
+
+An element in XML is everything from the element's start tag to its closing tag.
+An element can contain other elements, text, and attributes.
+Elements with no content can be written as a self-closing tag:      <elementName />
+
+Elements must follow these naming rules:
+        - can contain letter, numbers, and other characters
+        - cannot start with a number or punctuation character
+        - cannot start with any version of "xml"
+        - cannot contain spaces
+
+Best naming practices:
+        - make names descriptive
+        - make names short and simple
+        - avoid using "-", ".", and ":". Some software make take these for programming concepts.
+
+Naming styles:
+        - all lower case, all upper case, underscore to separate words, pascal case, camel case.
+        - XML documents often have a corresponding database, it is good practice to use the
+          naming rules of your database for the elements in the XML documents.
+
+Elements are extensible, meaning they can be extended to carry more information. This means
+that more elements can be added and software that is designed to extract information can still
+do it because it will just read the tag that it is designed to read.
+
+
+
+Attributes provide additional info about an element.
+Attributes often provide info that is not part of the data but that could be important for
+software that wants to manipulate the element.
+
+Either single or double quotes can be used in defining an attribute's value.
+Character entities can be used in an attribute value.
+
+You can use either an attribute or an element in XML, there is no standard for when to use
+which, generally just using elements is probably a better idea though. Use an attribute when
+doing something like making an ID for elements.
+
+Some reasons not to use attributes are:
+        - attributes cannot contain multiple values, elements can
+        - attributes cannot contain tree structures, elements can
+        - attributes are not easily expandable for future changes
+
+Use elements for data, use attributes for info that is not relevant to the data.
+Store meta-data (data about data) as attributes, but store actual data as elements.
+
+
+
+
+************************ NAMESPACES ************************
+
+
+XML provides namespaces as a method to avoid element name conflicts.
+
+Name conflicts can occur when mixing XML documents from different XML applications.
+
+Can solve name conflict problems by including a prefix to XML element names in the form:
+            <prefix:elementName>
+    i.e.    <h:table>
+
+When using prefixes in XML, a namespace for the prefix must be defined, this is what the
+xmlns attribute is. Put the xmlns (XML NameSpace) attribute in the start tag of the element
+that starts the usage of that namespace. So if the entire XML document uses that namespace make
+it an attribute of the root element (can always put a namespace attribute, or multiple ones, in
+the root element and then use the namespace prefixes where needed in the document). But you
+need to use that namespace (by putting the prefix) in all the elements' opening and closing
+tags that are using it.
+
+    Namespace syntax:       xmlns:prefix="URI"
+
+The URI is just a URL given in the namespace attribute is not used by the parser to look up
+info about the namespace. The purpose is just to give the namespace a unique name. However,
+often companies use the namespace as a pointer to a webpage containing namespace information.
+
+You can also make a default namespace for the entire document and then you don't have to
+include the namespace prefix in all the tags.
+
+    Default Namespace syntax:       xmlns="namespaceURI"        // just doesn't have a prefix
+
+
+
+
+************************ VIEWING AN XML FILE ************************
+
+
+Raw XML files can be viewed in any browser. You can set up a href link to an xml file which
+will show the plain XML file. When viewing an XML file like this you can right-click and choose
+"View Page Source" to see the raw XML. If there are errors in the structure of the XML file the
+browser won't display it and will instead display an error.
+
+To set up a link to an XML file just use an <a> tag:
+
+            <a target="_blank" href="filename.xml">Click here to see the XML</a>
+
+
+XML files are shown in basically their raw format in a browser because since XML tags are
+user-defined, a browser has no info on how to display content based on the XML tags. But this
+is the difference between say HTML, which was created to display data, and XML which was
+created to store and transport data. XML doesn't worry about being displayed. However you can
+use other languages to change the display of XML code, like CSS, JavaScript, and XSLT (XSLT,
+which is used to transform XML documents into other formats, is the recommended tool for
+changing how an XML document is displayed).
+
+
+Displaying XML with CSS:
+
+    You can use CSS to style an XML document by creating an external .css file and including it
+    in the XML document with this:
+                <?xml-stylesheet type="text/css" href="filename.css"?>
+
+    To do this you simply use the XML element names as the selectors in the CSS code.
+
+
+
+
+************************ XML DOCUMENT VALIDATION ************************
+
+
+An XML document with correct syntax is called "well formed".
+A "valid" XML document must be well formed but also must conform to a specified document type.
+
+As stated above in the Syntax section, the w3schools website has an XML validator to check to
+make sure your XML has no errors. Go to this webpage to use it:
+                                http://www.w3schools.com/xml/xml_validator.asp
+
+
+Document Definitions
+
+    Rules that define legal elements and attributes for XML are often called document
+    definitions or document schemas.
+    Document definitions provide a refernce to the legal elements and attributes of a document.
+    It also acts as a common reference that developers can share. It provides a standardization.
+
+    XML does not require a document definition. They are basically just made for applications,
+    once the application's specifications are stable, that other developers will develop for so
+    that there is some standard for creating XML documents for that application.
+
+    There are different types of document definitions that can be used with XML, including
+    DTD (the original Document Type Definition) and the newer, XML based, XML Schema.
+
+    Reasons to use a Document Defintion:
+        - your XML files can carry a description of its own format
+        - independent groups of people can agree on a standard for interchanging data
+        - you can verify that the data you receive from the outside world is valid.
+
+
+
+XML DTD Intro
+
+    DTD is the original Document Type Definition. An XML document validated against a DTD is
+    well formed and valid. A valid XML document is a well formed (correct syntax) document
+    that also conforms to the rules of DTD.
+
+    DTD is not some standard definition for XML documents, you have to create your own external
+    .dtd file and then link to it in the XML file using this line of code:
+
+                    <!DOCTYPE rootElement SYSTEM "fileName.dtd">
+
+    Or you can also put the DTD code right in the XML document between the prolog and the root
+    element of the XML document.
+
+    A .dtd file havs the following form:
+
+        <!DOCTYPE rootElement
+        [
+        <!ELEMENT rootElement (comma separated list of all its child elements)>
+        <!ELEMENT anotherElement (comma separated list of all its child elements)>
+        <!ELEMENT anotherElement (#PCDATA)>
+        <!ENTITY entityName "entityValue">
+        ....
+        ]>
+
+    NOTE:   When declaring children in comma separated list, you only include the
+            direct-descendents, no grand-children, and so on.
+    Note:   #PCDATA means parse-able text data.
+            The ENTITY line of code is used to define special character or character strings. An
+            entity is basically like a variable constant to use in the XML document. To use the
+            entity in the XML code follow this syntax:              &entityName;
+
+    So you list all the elements and in parenthesis, if they children elements you list them
+    separated by commas, or if they have no children and just have text you put (#PCDATA).
+
+
+
+XML Schema Intro
+
+    An XML Schema describes the structure of an XML document just like a DTD.
+    XML Schema is an XML-based alternative to DTD.
+    XML Schemas are more powerful that DTD because:
+            - they are written in XML
+                            - don't have to learn a new language
+                            - can use your XML editor to edit your Schema files
+                            - can use your XML parser to parse your Schema files
+                            - can manipulate your Schemas with the XML DOM
+                            - can transform your Schemas with XSLT
+            - they are extensible to additions
+            - they support data types
+                            - easier to describe document content
+                            - easier to define restrictions on data
+                            - easier to validate the correctness of data
+                            - easier to convert data between data types
+            - they support namespaces
+
+
+    XML Schema syntax example:
+
+                <xs:element name="rootElement">
+
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="anElement" type="xs:dataType"/>
+                        <xs:element name="someElement" type="xs:dataType"/>
+                        ...
+                    </xs:sequence>
+
+                </xs:element>
+
+    
+    The above XML Schema code can be understood as follow:
+        - "xs:" is the namespace for XML Schema
+        - define an element with the word "element"
+        - "<xs:complexType>" means the rootElement is a complex type
+        - "<xs:sequence>" means the complex type is a sequence of elements
+        - "name="anElement" defines the name of an element
+        - "type="dataType" defines the date type of an element (i.e. string)
+        - general syntax is:        <prefix:element name="elementName" type="prefix:dataType"/>
+
+
+************************ JAVASCRIPT WITH XML ************************
+
+
+XMLHttpRequest Object
+
+    The XMLHttpRequest object is used to exchange data with a server behind the scenes.
+    It can:
+            - update a webpage without reloading the page
+            - request data from a server after the page has loaded
+            - receive data from a server after the page has loaded
+            - send data to a server in the background
+
+    An example of XMLHttpRequest's uses is say you have an input text field, when you type a
+    letter into the field the XMLHttpRequest object can be sent to the server and word
+    suggestions can be returned from a file on the server and displayed on the screen.
+
+    Creating an XMLHttpRequest Object (in JavaScript):
+
+        For modern browsers:        xmlhttp = new XMLHttpRequest();
+
+        For IE5 and IE6:            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+
+
+Parsing an XML Document
+
+    All modern browsers have a built-in XML parser that converts an XML document into an
+    XML DOM object, which can then be manipulated with JavaScript.
+
+    How to parse an XML Document:
+
+            if (window.XMLHttpRequest)
+                xmlhttp = new XMLHttpRequest();         // code for modern browsers
+            else
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");       // code for IE5 and IE6
+            xmlhttp.open("GET", "filename.xml", false);
+            xmlhttp.send();
+            xmlDoc = xmlhttp.responseXML;
+
+
+    Example of how to parse an XML string:
+
+            txt="<bookstore><book>";
+            txt=txt+"<title>Everyday Italian</title>";
+            txt=txt+"<author>Giada De Laurentiis</author>";
+            txt=txt+"<year>2005</year>";
+            txt=txt+"</book></bookstore>";
+
+            if (window.DOMParser) {                     // non-IE browsers
+                parser=new DOMParser();
+                xmlDoc=parser.parseFromString(txt,"text/xml");
+            }
+            else {                                      // Internet Explorer
+                xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+                xmlDoc.async=false;
+                xmlDoc.loadXML(txt); 
+            }
+
+
+    Note:   For security reasons modern browsers do not allow access across domains, which means
+            that both the webpage and the XML file it tries to load must be on the same server.
+
+
+
+XML DOM
+
+    A DOM defines a standard way for accessing and maniupalating documents, so the XML DOM
+    defines a standard way for accessing and manipulating XML document.
+    
+    The XML DOM views an XML document as a tree structure.
+    
+    All elements can be accessed, and their text and attributes can be modified or deleted, and
+    new element can be created.
+    The elements, their text, and their attributes are all known as nodes.
+
+    Can use the XML DOM to display data from an XML file in an HTML webpage.
+
+    See the XML DOM tutorial for details about how to use the XML DOM in JavaScript.
+
+
+
+
+************************ INTRO TO OTHER XML TECHNOLOGIES ************************
+
+
+XPATH (XML Path Language)
+
+    XPATH is a language used to point to (select) parts of XML documents.
+    It is not a complete language, but a syntax to be used by other languages.
+
+
+XSLT (eXtensible Stylesheet Language Transformations)
+
+    XSLT is the recommended sytle sheet language of XML. With is you can tranform an XML
+    document into HTML so that XML data can be styled and displayed in the browser.    
+
+
+XLINK (XML Linking Language)
+
+    XLINK defines a standard way of creating hyperlinks in XML documents.
+    Any element in an XML document can behave as a link.
+    XLINK supports simple links (like HTML) and extended links (for linking multiple resources
+    together).
+    Links can be defined outside the linked files.
+    There is no browser support for XLINK, but it is used in SVG and other XML languages.
+
+    To use XLINK you need to declare the XLINK namespace at the top of the document:
+
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+
+    To define create a link using XLINK (using a simple link):
+
+            <elementName xlink:type="simple" xlink:href="URL" xlink:show="new">
+                hypertext to be displayed
+            </elementName>
+
+    In the code above, the xlink:show="new" means that the link will open in a new window. The
+    other XLINK attribute to use is xlink:actuate to specify when the resource should appear. 
+
+
+XPointer (XML Pointer Language)
+
+    XOointer allows hyperlinks to point to specific parts of XML documents, instead of linking
+    to an entire document as with XLINK.
+    It uses XPATH expressions to navigate in the XML document.
+    
+    If a hyperlink points to an XML document, you can add an XPointer part after the URL in
+    the xlink:href attribute to navigate (with an XPATH expression) to a specific place in the
+    document.
+            i.e.        href="http://www.example.com/cdlist.xml#id('rock').child(5,item)"
+
+    To link to a specific part of a page use # and an XPointer expression after the URL in
+    the xlink:href attribute.
+    For example,  #xpointer(id("idValue")) refers to the element in the target document with
+    an id value of "idValue". so the xlink:href attribute would looke like this:
+            xlink:href="http://blah.com/blah.xml#xpointer(id('idValue'))"
+    However, XPointer has a shorthand for when linking to an element with an id, you can use
+    the value of the id directly:
+            xlink:href="http://blah.com/blah.xml#idValue"
+
+    No browser support for XPointer, but it is used in other XML languages.
+
+
+
+
+************************ SOME ADVANCED XML FEATURES ************************
+
+
+CDATA
+
+    All text in an XML document will be parsed by the parser, except text inside a CDATA
+    section.
+
+    PCDATA (Parsed Character Data) refers to normal text in XML that will be parsed.
+
+    CDATA (Unparsed Character Data) refers to text data that should not be parsed by the parser.
+    CDATA is used for sections of text in an XML document that contain illegal characters,
+    like < and &. You might use these illegal characters if you say have JavaScript code as
+    text in an XML document.
+
+    To create a CDATA section in an XML document do this:
+
+                <![CDATA[
+                    data to go in the CDATA section...
+                ]]>
+
+SOAP exchanges XML data between applications.
+
+There are editors specifically made for XML.
+
+
+
+
+
+NOTE:   I SKIPPED THE "XML SERVER" AND THE "XML DOM ADVANCED" SECTION OF THE XML TUTORIAL ON
+W3SCHOOLS.COM
+
+
+------------------------------------------------------------------------------------------------

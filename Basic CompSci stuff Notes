@@ -1,0 +1,370 @@
+Notes for Basic CompSci stuff
+
+Consisting of:
+        - programming basics concepts/definitions
+        - OOP concepts/definitions
+        - software development life cycle notes
+        - maybe notes on data structures
+        - maybe notes on algorithms
+        - maybe programming languages concepts
+
+
+TDD
+    Test-driven development. It's a software development prcess that relies on the
+    repitition of a very short development cycle, used in Agile development. TDD is
+    related to the test-first programming concepts of extreme programming. In TDD
+    you first write an (initially failing)_ automated test case that defines a desired
+    improvement or new functino, then you produce the minimum amount of code to pass
+    the that test, and finally you refactor the new code to acceptable standards.
+
+DRY
+
+    Don't repeat yourself. Basically don't repeat code, instead make a function to
+    do something if you need to do that thing more than one time.
+
+lambda functions
+threads - concurrency
+exceptions
+macros
+
+MVC
+    Model-View-Controller.
+
+
+The Shell
+
+    The Shell is a program that takes commands from the keyboard and gives them to
+    the operating system to perform. A Terminal/Console window is a window that
+    allows you to interact with the shell.
+    On *nix systems there are various different shell programs. SH was the original
+    shell program for Unix, BASH is an enhanced version of SH, CSH, TSCH which is an
+    improved version of CSH, KSH, ZSH, and probably others. The default shell used
+    in *nix systems is usually BASH. On my Mac Bash is the default shell but the
+    others listed here are all installed on the Mac.
+    Bash stands for Bourne Again Shell (the creator of SH was named Bourne).
+    On Linux distributions there are even several different terminal programs. On my
+    Mac there is another terminal program called xterm, which is part of the XQuartz
+    thing that I downloaded for something.
+
+
+Number Bases
+
+    Binary
+        0, 1
+        i.e.    0111 1010
+    
+    Octal
+        0, 1, 2, 3, 4, 5, 6, 7
+        i.e.    7203
+
+    Decimal
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+        i.e.    1983
+
+    Hexadecimal
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F
+        i.e.    C92A
+
+
+    Conversion Between Bases
+        
+        Binary/Octal/Hex to Decimal:
+            ∑ (dig * base^i)  from i=0 -> n, n being number of digits
+            i.e.    0x3D = 3*16^1 + D*16^0 = 48 + 13 = 61
+            i.e.    0247 = 2*8^2 + 4*8^1 + 7*8^0 = 128 + 32 + 7 = 167
+            i.e.    1011 = 1*2^3 + 1*2^1 + 1*2^0 = 8 + 2 + 1 = 11
+
+        Binary to Octal:
+            Group each 3 bits into 1 Octal digit.
+            i.e.    1101 0011 = 011 101 011 = 353
+
+        Binary to Hex:
+            Group each 4 bits into 1 Hexadecimal digit.
+            i.e.    1101 0011 = C3
+
+        Octal to Binary:
+            Ungroup each Octal digit into 3 bits.
+            i.e.    715 = 111 001 101 = 0001 1100 1101
+
+        Hex to Binary:
+            Ungroup each Hex digit in 4 bits.
+            i.e.    3FB8 = 0011 1111 1011 1000
+
+        Octal to Hex:
+            Convert Octal to Binary, then convert Binary to Hex.
+            i.e.    472 = 100 111 010 = 0001 0011 1010 = 13A
+
+        Hex to Octal:
+            Convert Hex to Binary, then convert Binary to Octal.
+            i.e.    A4E = 1010 0100 1110 = 101 001 001 110 = 5116
+
+        Decimal to Binary:
+
+
+        Decimal to Octal:
+
+
+        Decimal to Hex:
+
+
+
+
+How To Design Functions (HTDF from Systematic Program Design MOOC)
+
+    Step 1
+        Signature, purpose, stub:
+            Signature is a comment that shows input -> output just using data types.
+            Always want to use the most specific type, for example, if the input
+            or output is a Natural Number (1,2,3...) then you want to put Natural
+            Number as opposed to just Number.
+                i.e. // Number -> Number
+                i.e. // Number, String -> String
+
+            Purpose is a succint 1-line comment that tells what the function
+            is meant to do.
+                i.e. // produce 2 times the given number
+
+            Stub is a commented out declaration of the function.
+            Stub must have the correct function name, the correct number of
+            parameters, and produces a dummy result of the correct type.
+            The 0 in the first example is just a place holder for the
+            expected output when using a check-expect expression.
+                i.e. // (define (double n) 0)
+                i.e. // int doubleNum(int n);
+                i.e. // (define (pluralize str) " ")
+                i.e. // (define (pluralize str) str)
+
+    Step 2
+        Examples (for BSL - wrapped in check-expect):
+            Give examples of what you expect for some input cases and the output.
+            In the BSL language you can use the check-expect keyword.
+            In other languages there is no check-expect so you would probably
+            just comment this out and put the expected output value.
+            Examples help you understand what the function must do. Use
+            multiple examples to illustrate behavior.
+            When you make this the examples will fail because the function
+            isn't actually defined yet, but it should at least run.
+            In a check-expect expression the first operand it the function
+            call with parameters, the second operand is the expected output.
+            The check-expect expression, when run, will return whether each
+            expression either failed or passed.
+            So using a check-expect means that the examples will serve as
+            unit tests for the completed function.
+            Enough examples should be made that tests all possible branches of
+            the function (every line of code is executing between all the examples).
+                i.e. (check-expect (double 3) 6)
+                i.e. (check-expect (double 4.2) 8.4)
+
+    Step 3
+        Inventory - template & constants:
+            Template is the function declaration and specifying what variables
+            or constants the function will work with.
+            The "... n" in the example means it is going to do something
+            with n.
+            Normally you don't keep a copy of the template, you just make a
+            template as the first step in coding the body.
+                i.e. (define (double n)
+                        (... n))
+
+    Step 4
+        Cody Body:
+            Make a copy of the template, look at everything that's been
+            written before in these steps and write the function definition.
+            Run the code to see if the previous tests passed now that the
+            function body has been written.
+                i.e. (define (double n)
+                        (* 2 n))
+
+    All the steps together Example:
+        ;; Design a function called area that consumes the length of one side of
+        ;; a square and produces the area of the square.
+
+        ; Number -> Number                               ; Signature
+        ; produces area of square given length of side   ; Purpose
+        ; (define (area n) 0)                            ; Stub
+
+        (check-expect (area 5) 25)                       ; Examples
+        (check-expect (area 3) 9)
+        (check-expect (area 3.3) (* 3.3 3.3))
+
+        ;(define (area n)                                ; Template
+        ;  (... n))
+
+        (define (area n)                                 ; Function definition
+          (sqr n))
+
+    Every line of code should be executed by the Examples. There needs to be
+    enough examples to have complete code coverage of the function, that is, all
+    branches of the code (every line) must be tested. Any line of code that wasn't
+    executed is highlighted in black in BSL after the program has been run.
+    Anytime you think of a new case or subtlety to the function make sure to go
+    back to the examples and make sure there is a test for it, and change any of
+    the other Design steps if needed. Code Coverage means given all the tests, how
+    much of the code has been covered. Complete Code Coverage means every possible
+    branch (every line) in the code has been executed in the tests.
+    When you discover boundary cases you need to write a test example for it, and
+    possible change the Purpose to be more clear.
+
+
+
+
+
+Basic Programming and OOP Concepts
+
+    Encapsulation:
+        Encapsulation is information hiding. It means hiding how something is
+        done and just giving the user the interface (and how to work with the
+        interface) for working with that data, whether it be a function or a
+        class/object. For OOP encapsulation basically means creating
+        classes/objects. It means hiding the inner workings of something so a
+        user can just easily interface with it.
+
+    Abstraction:
+        Abstraction is an emphasis on the idea, qualities, and properties rather
+        than the particulars. It is a suppression of detail. It hides irrelevant
+        details and involves using names to reference objects. It places empahasis on what an object does rather than what an object is. So it provides a
+        simple interface (generally a name and desired inputs) to work with some
+        object.
+
+    So Encapsulation is basically the creation of ways to hide data and processes
+    on that data, through the use of functions and in OOP of classes/objects. And
+    then Abstraction is the actually use of what is being encapsulated. So it is
+    abstracting out the details of what is encapsulated, by providing a simple
+    interface to work with the encapsulated data and processes. In programming
+    this generally takes the form of a name and inputs. So you can interface with
+    some encapsulated code simply by knowing the name that refers to it and what
+    sorts of inputs it takes.
+
+    Abstract class:
+        An abstract class is a class that cannot be instantiated. It is purely a
+        super-class for other classes to extend. Abstract classes have
+        implementations for their methods but they must all be extended by the
+        classes that use the abstract class. If an abstract class has an
+        abstract method then that method is declaration only, not implementation.
+
+    Interface:
+        An interface separates structure from implementation. An interface only
+        provides structure, while it is left to other software objects to deal
+        with the implmentation of that stucture. An interface is ideal when you
+        need the implementation to vary somewhat, on a case by case basis. An
+        interface defines a generic template for a class.
+
+    Inheritance:
+        Inheritance is the ability of a new class to be created from an existing
+        class by extending it. Inheritance is related to specialization, by the
+        idea that a subclass is going to be a specialized version of a superclass
+        and it will extend its properties to match with this specialization.
+
+    Polymorphism:
+        Polymorphism means "many shapes". It means the ability to request the
+        same operations be performed by a wide range of different types of things.
+        Basically its when classes that share the same interface/superclass but
+        use a different implementation of those methods they inherit. Like if a
+        Dog class and a Cat class inherit the method Speak, the Dog class would
+        implement it as a bark and the Cat class would implement it as a meow.
+        But in the code you can then use these varying objects that have different
+        implementations in the exact same way because their methods have the
+        same interface. Polymorphism makes code more modular and extensible
+        because instead of having complicated code to provide different
+        implementations you can use one piece of code to deal with the different
+        varieties of implementations created through polymorphism.
+
+        Polymorphism is realized through method overloading, method overriding,
+        and operator overloading.
+
+        Method Overloading:
+            The ability to define several methods with the same name, allowing
+            different implementations of the same method. The trick is they must
+            have different inputs.
+
+        Method Overriding:
+            The ability of a subclass to completely override a method it
+            inherits from a superclass, thus giving the method its own unique
+            implementation.
+
+        Operator Overloading:
+            The ability to treat an operator (+, -, =, etc) as a polymorphic
+            function that has different implementations based on what types of
+            values the operator is operating on.
+
+
+    Model-View-Controller (MVC):
+        An architecure that separates the modeling of the domain, the
+        presentation, and the actions based on user input into three separate
+        classes. So the Model is the model of the domain, the View is the
+        presentation, and the Controller is the actions or behaviors.
+
+
+Software Development Life Cycle
+
+    The process consisting of a series of planned activities to develop or alter
+    the software products (design, develop, and test software). There are
+    various models shown below.
+
+    The stages of the SDLC go in a iterative cycle and are: planning, defining,
+    designing, building, testing, deployment.
+
+    Agile:
+        Agile SDLC model is a combination of iterative and incremental process
+        models with focus on process adaptability and customer satisfaction by
+        rapid delivery of working software. The product is broken into small
+        incremental builds, which are provided in iterations. Each iteration
+        lasting just a few weeks at most.
+        Tasks are divided into small time frames called time boxes to deliver
+        specific features for a release. Agile process meant to be highly
+        adaptable. The keys are individuals and their interactions while
+        designing software (constant meetings), getting working software ready
+        to go in small incremental steps, customer collaboration in each iteration
+        to show off working software and get feedback, and responding to change
+        with quick responses.
+        As opposed to traditional SDLC models Agile doesn't focus on the entire
+        project at first, it takes a quick and adaptable step by step approach.
+        Agile developers work closely with their peers and are in constant
+        communication throught the production.
+
+        Highly collaborative, rapid delivery of working software in incremental steps, highly
+        adaptable.
+
+
+Testing
+
+    Unit Testing:
+        Testing each individual function to make sure it works correctly on its own.
+
+    Integration Testing:
+        Testing the functions together (testing the whole program) to make sure that all the
+        functions work together correctly.
+
+    Testing cycle is to do Unit Testing, then Integration Testing, and repeat.
+
+    Black Box Testing:
+        Don't take into consideration the details of a function's definition when testing it, just
+        use the function call interface to come up with appropriate test cases, based on the data
+        types of the function's parameters. Based on those data types you'd test "normal" inputs as
+        well as boundary cases of inputs.
+
+    Glass Box Testing:
+        Take into consideration the code, rather than just the function interfaces, to see how the
+        code works and base the test inputs on this. In this way you can see if their might be any
+        obvious mistakes in the code that would lead to errors when given certain inputs.
+
+
+
+Data Structures
+
+    Abstract Data Type (ADT) is the concept behind a data structure, while the
+    data structure itself is the implementation of the ADT.
+
+    Stack:
+        FILO (first in, last out) / LIFO (last in, first out)
+        Push to add an element to the stack.
+        Pop to remove the most recent element from the stack.
+        Peek to look at the most recent element on the stack.
+
+    Queue:
+        FIFI (first in, first out)
+        Enqueue to add an element to the back of the queue.
+        Dequeue to remove an element from the front of the queue.
+
+    Heap:
+

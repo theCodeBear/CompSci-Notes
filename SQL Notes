@@ -1,0 +1,1037 @@
+SQL Notes
+
+
+
+
+Structured Query Language (SQL) is a standard language for accessing databases.
+With SQL you can access and manipulate databases.
+
+Apparently even though SQL is an ANSI standard there are different version of SQL, though they all
+support the basic SQL commands. And most major SQL database programs have their own proprietary
+extentions in addition to the SQL standard.
+
+To use a database on a website you need to download a database program like MySQL, use a server-side
+scripting langague like PHP to interact with the database, and use SQL to get the data you want.
+
+
+
+
+************************ BASIC SYNTAX ************************
+
+
+A database contains one or more tables. Each table is identified by a name. Tables contain records
+(rows) with data in fields (columns).
+
+SQL is not case sensitive.
+
+A semi-colon is the standard way to separate SQL statements. Note that this doesn't mean at the end
+of each line of SQL code, but at the end of each query.
+
+The asterick * means all. So SELECT * means select all the data.
+
+Textual data in the query needs to have quotes around it.
+
+For dates I think you might use # signs around them, like:      #1/23/2014#
+
+To select a field from a specific table use the syntax:     table.field
+
+To specify a name that has white space in it use square brackets. i.e.   SELECT [my table]
+
+You can use mathematical operators like +, -, /, * in SQL queries.
+
+
+
+
+************************ CORE SQL STATEMENTS ************************
+
+
+SELECT
+
+    The SELECT statement is used to select data from a database, the result is stored in a result
+    table called the result-set.
+
+    Syntax:         SELECT columnName, columnName
+                    FROM tableName;
+
+                    SELECT * FROM tableName;
+
+You can navigate a result-set with programming functions, like Move-T0-First-Record,
+Get-Record-Content, Move-To-Next-Record. These are called from server-side languages like PHP.
+
+
+SELECT DISTINCT
+
+    The SELECT DISTINCT statement is used to return only distinct (unique) values. So if multiple
+    records have the same value in the specified field that value will only be returned once - only
+    one of those records (the first one) that have the same value will be returned.
+
+    Syntax:     SELECT DISTINCT columnName, columnName
+                FROM tableName;
+
+
+WHERE
+
+    The WHERE clause is used to filter records. It only extracts records that fulfills its criterion.
+
+    Syntax:     SELECT columnName
+                FROM tableName
+                WHERE columnName operator value;        // i.e. WHERE age > 30;
+
+    Data that is a string must have single quotes around it when querying records for that value.
+    Numbers don't need any quotes.
+
+    Operators for the WHERE clause:
+        =   <>  >   <   >=  <=                          //  <> means not equal
+        BETWEEN     -   between an inclusive range
+        LIKE        -   search for a pattern
+        IN          -   to specify multiple possible values for a column
+
+
+AND, OR
+
+    These operators are used to filter records based on more than one condition.
+    Pretty self-explanatory. Can use parenthesis to make control order of operations if using
+    both AND and OR.
+
+    Syntax:     SELECT * FROM tableName
+                WHERE fieldName operator value
+                AND fieldName operator value;
+
+
+ORDER BY
+
+    The ORDER BY keyword is used to sort the result-set by one or more columns.
+    It sorts the records in ascending order by default (you can make it explicit with ASC),
+    or by descending order using the DESC keyword. If there are several fields that are being
+    sorted by, the sorting takes precedence in the order those fields appear in the query, so the
+    first field after ORDER BY would be ordered, then within that ordering the next field would be
+    ordered, and so on.
+
+    Syntax:     SELECT columnName, columnName
+                FROM tableName
+                ORDER BY columnName, columnName ASC|DESC;
+
+
+INSERT INTO
+
+    Used to insert new records into a table.
+    Can used INSERT INTO in two differet ways.
+
+    First way is to not specify the field names where the data will be inserted, just put the values.
+    Syntax:     INSERT INTO tableName
+                VALUES (value1, value2, value3,...);
+
+    The second way is to specify both the column names and the values to be inserted.
+    Syntax:     INSERT INTO tableName (column1, column2, column3,...)
+                VALUES (value1, value2, value3,...);
+
+    In this way you can insert a new record but only insert value for certain fields, not all of
+    them (empty String fields will be "null" and I assume number fields would be 0.
+
+
+UPDATE
+
+    Used to update records in a table. You can use a WHERE clause to specify which records should
+    be updated, otherwise all records will be updated by default. And the SET keyword is used to
+    actually modify the values of the specific fields being updated. So unless you want to change
+    some field's values in every single record in a table, you better be sure you're using the
+    WHERE to specify which records need to be changed.
+
+    Syntax:     UPDATE tableName
+                SET field1=value1, field2=value2,...
+                WHERE somefield = someValue;
+
+
+DELETE
+
+    Used to delete rows in a table. Just like with UPDATE, use the WHERE clause to specify which
+    records are to be deleted, otherwise every record from the table will be deleted!
+
+    Syntax:     DELETE FROM tableName
+                WHERE someField = someValue;
+
+    To delete all records from a table without deleting the table itself just don't include the
+    WHERE clause, like so:
+            DELETE FROM tablename;          or              DELETE * FROM tableName;
+
+
+Injection   (security!)
+
+    SQL Injection can destroy your database.
+    SQL Injection is when a user puts computer code into an input field for the database and can
+    thereby dynamically change SQL statements to provide themselves with data from the database.
+    In other words, it's a technique where malicious users can inject SQL commands into an SQL
+    statement via web page input. This can compromise the security of a web application.
+
+    Injection based on 1=1 is always true:
+        If a user is supposed to put in a UserID for the program to find the user record with that
+        ID, if the user put something like "103 or 1=1" so that the SQL Query is the following:
+        SELECT * FROM Users WHERE UserId = 105 or 1=1, that query will always return true because
+        of the "1=1", so it will return all records from the table!
+
+    Injection based on ""="" is always true:
+        This is hard to follow, but if the code on the server for a query for someone's Username
+        and Password is coded like this:
+            uName = getRequestString("UserName");
+            uPass = getRequestString("UserPass");
+            sql = "SELECT * FROM Users WHERE Name ='" + uName + "' AND Pass ='" + uPass + "'";
+
+        The user could get the access to the usernames or passwords in the database simply by
+        typing in:          " or ""="
+        into the username or password text boxes. Because then that would make
+        the resulting server code like this:
+            SELECT * FROM Users WHERE Name = "" or ""="" AND Pass ="" or ""=""
+        The result of this is valid, it will return all records from the table Users, since
+        WHERE ""="" is always true. <-- read that as where emptry string equals empty string.
+
+    Injection based on Batched SQL statements:
+        Most databases support batched SQL statements, separated by semi-colon.
+        i.e.                    SELECT * FROM Users; some other SQL statement
+        If a user were to put in the input field of a query some input then a semi-colon followed
+        by another SQL command they could alter/delete things in the database with that second
+        command.
+
+    Parameters for Protection:
+        The only proven way to protect a web site from SQL injection attacks is to use SQL
+        parameters, which are values that are added to an SQL query at execution time, in a
+        controlled manner. The parameters are represented in the SQL statement by a @ marker. By
+        setting parameters the SQL engine checks each parameter to ensure that it is correct for
+        its column and they are treated literally, and not as part of the SQL to be executed!
+
+        ***WILL HAVE TO FIND AN EXAMPLE IN PHP FOR THIS, NOT SURE PHP USES THE @ MARKER FOR IT.***
+
+
+
+
+************************ MORE ADVANCED SQL ************************
+
+
+SELECT TOP / LIMIT
+
+    Used to specify the number of records to return.
+    It can be very useful on large tables with thousands of records. Returning a large number of
+    records can impact performance.
+
+    NOTE: Not all database systems support SELECT TOP. In MySQL SELECT TOP equivalent is LIMIT.
+
+
+
+    Syntax:     SELECT field
+                FROM table
+                LIMIT value;        // value is the max number of records to return
+
+
+--------------------
+
+
+LIKE
+
+    Used in a WHERE clause to search for a specified pattern in a field.
+
+    Syntax:     SELECT field
+                FROM table
+                WHERE field LIKE pattern;
+
+    The pattern uses '%' as a wildcard to represent any number of other characters in the pattern.
+    
+    i.e.
+            '%s'    -   looking for an 's' at the end of the data
+            's%'    -   looking for an 's' at the beginning of the data
+            '%s%'   -   looking for any data with an 's' anywhere in it
+            '%land%'    -   looking for any data that has 'land' anywhere in it
+
+
+--------------------
+
+
+SQL Wildcard Characters
+
+    A wildcard character can be usd to substitute for any other characters in a string, and they
+    are used with the LIKE operator.
+
+        %       -       a substitute for zero or more characters
+        _       -       a substitute for a single character
+        [charlist]  -   sets and ranges of characters to match
+        [^charlist]
+        or              -   matches only a character not specified within the brackets
+        [!charlist]
+
+    i.e.
+
+        '[bsp]%'    -   selects all data starting with either 'b', 's', or 'p'
+        '[a-c]'     -   selects all data starting with either 'a', 'b', or 'c'
+        '[!bsp]'    -   selects all data NOT starting with either 'b', 's', or 'p'
+
+
+--------------------
+
+
+IN
+
+    Allows you to specify multiple values in a WHERE clause.
+
+    Syntax:     SELECT field
+                FROM table
+                WHERE field IN (value1, value2,...);
+
+    i.e.    SELECT * FROM table
+            WHERE City IN ('Seattle', 'Tokyo');
+
+
+--------------------
+
+
+BETWEEN
+
+    Used to select values within a range, use the AND operator to make the range.
+    Use NOT BETWEEN to specify data outside the range.
+    Can also use the IN operator.
+
+    i.e.        SELECT field
+                FROM table
+                WHERE field BETWEEN value1 AND value2;
+
+                SELECT field
+                FROM table
+                WHERE field NOT BETWEEN value1 AND value2;
+
+                SELECT field
+                FROM table
+                WHERE (field BETWEEN value1 AND value2)
+                AND NOT field IN (value, value, value);
+
+
+--------------------
+
+
+SQL Aliases
+
+    SQL aliases are used to temporarily rename a table or a column heading.
+    Basically they are created to make column names more readable when displaying them.
+    And making aliases for tables can make the SQL query shorter to write.
+
+    Alias Syntax for Columns:
+                                    SELECT columnName AS aliasName
+                                    FROM tableName;
+
+    Alias Syntax for Tables:
+                                    SELECT columnName(s)
+                                    FROM tableName AS aliasName;
+
+    Use square brackets in an SQL query to go around a field name that has a space in it.
+
+    Aliases can be useful when there are more than one table in a query (make the code shorter),
+    functions are used in the query, column names are big or not very readable, or two or more
+    columns are combined together.
+
+
+--------------------
+
+
+UNION
+
+    The UNION operator combines the result of two or more SELECT statements.
+    Notice that each SELECT statement within the UNION must have the same number of columns.
+
+    Syntax:
+        SELECT field(s) FROM table1
+        UNION
+        SELECT field(s) FROM table2;
+
+    The UNION operator selects only distinct values by default. To allow duplicate values, use the
+    ALL keyword with UNION.
+
+    Syntax:
+        SELECT field(s) FROM table1
+        UNION ALL
+        SELECT field(s) FROM table2;
+
+
+--------------------
+
+
+SELECT INTO
+
+    With SQL you can copy data from one table into another using SELECT INTO, note that here you
+    are creating a whole new table, not putting it into an existing table.
+
+    Syntax to copy all columns into the new table:
+        SELECT *
+        INTO newtable [IN externaldb]       // note: the brackets just mean its optional
+        FROM table1;
+
+    Syntax to copy only the olumns we want into the new table:
+        SELECT field(s)
+        INTO newtable [IN externaldb]
+        FROM table1;
+
+    The new table will be created with the column names and types as defined in the SELECT statement.
+    You can apply new names using the AS clause.
+
+    Can also create a new empty table, using the schema of another table, by adding a WHERE clause
+    that will never be true (like 1=0):
+            SELECT *
+            INTO newtable
+            FROM table1
+            WHERE 1=0;
+
+
+--------------------
+
+
+INSERT INTO SELECT
+
+    This copies information from one table into another. Any existing rows in the target table are
+    unaffected.
+
+    Syntax to copy all columns from one table to another:
+        INSERT INTO table2
+        SELECT * FROM table1;
+
+        INSERT INTO table2 (field(s))
+        SELECT fields()
+        FROM table1;
+
+
+--------------------
+
+
+CREATE DATABASE
+
+    Used to create a database.
+
+    Syntax:
+        CREATE DATABASE dbname;
+
+
+--------------------
+
+
+CREATE TABLE
+
+    Used to create a table. Will create an empty table with just the field names.
+
+    Syntax:
+        CREATE TABLE tableName (
+            field1 data_type(size),
+            field2 data_type(size),
+            field2 data_type(size),
+            ...
+        );
+
+
+--------------------
+
+
+CREATE INDEX
+
+    Used to create indexes in tables.
+    Indexes allow the database application to find data fast, without reading the whole table.
+
+    Indexes:
+        The users cannot see the indexes, they are just used to speed up searches/queries.
+        Updating a table with indexes takes more time than updating a table without (because the
+        indexes also need an update). So you should only create indexes on columns (and tables)
+        that will be frequently searched against. You can create indexes on multiple fields in
+        a single SQL statement.
+
+    Syntax:
+        CREATE INDEX index_name
+        ON tableName (field, field,...);
+
+    Creating an index where duplicate values are not allowed:
+        CREATE UNIQUE INDEX index_name
+        ON tableName (field, field,...);
+
+
+--------------------
+
+
+DROP INDEX, DROP TABLE, DROP DATABASE
+
+    Indexes, tables, and databases can easily be deleted with the DROP statement.
+
+    DROP INDEX Syntax:
+        ALTER TABLE tableName
+        DROP INDEX index_name;
+
+    DROP TABLE Syntax:
+        DROP TABLE tablename;
+
+    DROP DATABASE Syntax:
+        DROP DATABASE dbName;
+
+    TRUNCATE TABLE -    to only delete the data in a table, but not the table itself
+        Syntax:
+            TRUNCATE TABLE tablename;
+
+
+--------------------
+
+
+ALTER TABLE
+
+    Used to add, delete, or modify columns in an existing table.
+
+    To add a field:
+        ALTER TABLE tablename
+        ADD field data_type;
+
+    To delete a field (some databases don't allow deleting a field):
+        ALTER TABLE tablename
+        DROP COLUMN field;
+
+    To modify a field:
+        ALTER TABLE tablename
+        MODIFY COLUMN field data_type;
+
+
+--------------------
+
+
+AUTO INCREMENT
+
+    Allows a unique number to be generated when a new record is inserterd into a table.
+    Very often you want the value of the primary key to be created automatically every time a new
+    record is inserted, like an ID number that increments up for each new record, this is what
+    AUTO INCREMENT does. By default the starting value is 1, and it will increment 1 for each new
+    record. You can let it start with another value though.
+
+    Syntax:
+        CREATE TABLE tablename (
+            field data_type AUTO_INCREMENT,
+            ...
+        );
+
+        or:     field data_type AUTO_INCREMENT=50;      // starts the values at 50 instead of 1
+
+        or do it after the table has been created:     ALTER TABLE field AUTO_INCREMENT=50;
+
+
+--------------------
+
+
+SQL VIEWS
+
+    A view is a virtual table based on the result-set of an SQL statement.
+    A view contains rows and columns, the fields in a view are fiedls from one or more real tables
+    in the database.
+    You can add SQL functions, WHERE , and JOIN statements to a view and present the data as if it
+    were coming from one single table.
+    A view always show up-to-date data, the database engine recreates the data using the view's SQL
+    statement everything a user queries a view.
+    You can create, update, and delete a view.
+
+    CREATE VIEW syntax:
+        CREATE VIEW viewName AS
+        SELECT field(s)
+        FROM tableName
+        WHERE condition;
+
+    Query the View like so:
+        SELECT * FROM viewName;
+
+
+    Updating a View Syntax (CREATE OR REPLACE VIEW):
+        CREATE OR REPLACE VIEW viewName AS
+        SELECT field(s)
+        FROM tableName
+        WHERE condition;
+
+
+    Dropping a View:
+        DROP VIEW viewName;
+
+
+--------------------
+
+
+SQL Date Functions
+
+    The most difficult part of working with dates is making sure the format of the date you are
+    inserting is the same as the format of the date field in the database.
+    As long as your date contains only the date portion your queries will work as expected. If a
+    time portion is involved then it gets complicated.
+
+    Important Date Functions:
+            NOW()       -   returns the current date and time
+            CURDATE()   -   returns the current date
+            CURTIME()   -   returns the current time
+            DATE()      -   extracts the date part of a date or date/time expression
+            EXTRACT()   -   returns a single part of a date/time
+            DATE_ADD()  -   adds a specified time interval from a date
+            DATE_SUB()  -   subtracts a specified time interval from a date
+            DATEDIFF()  -   returns the number of days between two dates
+            DATE_FORMAT() - displays the date/time data in different formats
+
+    SQL Date data types:
+            DATE        -   YYYY-MM-DD
+            DATETIME    -   YYYY-MM-DD HH:MM:SS
+            TIMESTAMP   -   YYY-MM-DD HH:MM:SS
+            YEAR        -   YYYY or YY
+
+    The date types are chosen for a column when the table is created.
+
+    You can compare two dates easily if there is no time component involved.
+    To keep queries simple DO NOT allow time components in your dates in the database.
+
+    i.e.
+        SELECT *
+        FROM tableName
+        WHERE field='2009-11-20';
+
+
+    NOTE:   MySQL only takes dates in this order: year, month, day. So any other order that is
+            used to put a date into MySQL will be all zeros in the database.
+
+
+
+
+************************ NULL AND DATA TYPES ************************
+
+
+NULL Values
+
+    NULL values represent missing unknown data.
+    By default, a table column can hold NULL values.
+    Two operators associated with NULL values are IS NULL and IS NOT NULL.
+
+    NULL values are treated differently from other values.
+    NULL is used as a placeholder for unknown or inapplicable values.
+    NULL and zero are not equivalent.
+    If no value is given to a field when a record is inserted or updated then that field holds a
+    NULL value for that record.
+
+    To test for a NULL value you cannot use the normal mathematical operators, instead you have to
+    use IS NULL adn IS NOT NULL.
+
+    i.e.
+            ...
+            WHERE field IS NULL;
+    i.e.
+            ...
+            WHERE field IS NOT NULL;
+
+
+--------------------
+
+
+NULL FUNCTIONS
+
+    NULL functions:
+        ISNULL(), NVL(), IFNULL(), COALESCE(). All these functions do the same thing.
+
+    ISNULL()
+        This is a microsoft function that is not available in MySQL (I think), but MySQL does have
+        an IFNULL() function that works a little bit differently. Also the NVL() and COALESCE()
+        functions do the same thing.
+
+    IFNULL(), NVL(), COALESCE()
+        These functions are the same. Use these functions to only use a data item if it is not NULL,
+        and if it is NULL you can set it to some other value (like zero) in the second parameter, so
+        that it won't screw up a calculation, for example, with a NULL value which would not compute.
+
+        Syntax:
+            IFNULL(field, defaultValue)
+            NVF(field, defaultValue)
+            COALESCE(field, defaultValue)
+
+        i.e.
+            SELECT field*(field+IFNULL(field,0))
+            FROM table;
+
+
+--------------------
+
+
+SQL General Data Types
+
+    A data type defines what kind of value a column can contain.
+    Each column in a database must have a name and a data type.
+    Data types of columns cannot be changed after the table is created.
+
+    In MySQL there are various text types, number types, and date types.
+
+    See these two webpages for a list of data types available in SQL and which ones are available
+    for different databases:
+                            http://www.w3schools.com/sql/sql_datatypes_general.asp
+                            http://www.w3schools.com/sql/sql_datatypes.asp
+
+
+
+
+************************ SQL JOINS ************************
+
+
+    Joins are used to combine rows from two or more tables, and it is based on a common field
+    between them.
+
+    There are four different kinds of JOIN clauses:
+        INNER JOIN  -   returns all rows when there is at least one match in both tables
+        LEFT JOIN   -   returns all rows from left table, and the matched rows from the right table
+        RIGHT JOIN  -   returns all rows from right table, and the matched rows from the left table
+        FULL JOIN   -   returns all rows when there is a match in one of the tables
+
+
+--------------------
+
+
+INNER JOIN
+
+    The most common typ of join is the INNER JOIN (simple join), which returns all rows from
+    multiple tables where the join condition is met.
+
+    Syntax:
+        SELECT table1.field1, table1.field2, table2.field1
+        FROM table2
+        INNER JOIN table1
+        ON table2.field1 = table1.field_X;          // where these 2 fields are the same field
+
+
+--------------------
+
+
+LEFT JOIN
+
+    The LEFT JOIN keyword returns all rows from the left table, with the matching rows in the right
+    table. The result is NULL in the right side when there is no match.
+
+    Syntax:
+        SELECT field(s)
+        FROM table1
+        LEFT JOIN table2
+        ON table1.field = table2.field;
+
+        or
+
+        SELECT field(s)
+        FROM table1
+        LEFT OUTER JOIN table2
+        ON table1.field = table2. field;
+
+
+--------------------
+
+
+RIGHT JOIN
+
+    The RIGHT JOIN returns all rows from the right table, with the matching rows in the left table.
+    The result is NULL in the left side when there is no match.
+
+    Syntax:
+        SELECT field(s)
+        FROM table1
+        RIGHT JOIN table2
+        ON table1.field = table2.field;
+
+        or
+
+        SELECT field(s)
+        FROM table1
+        RIGHT OUTER JOIN table2
+        ON table1.field = table2.field;
+
+
+--------------------
+
+
+FULL OUTER JOIN
+
+    The FULL OUTER JOIN returns all rows from the left table and the right table. It combines the
+    results of both LEFT and RIGHT joins.
+
+    Syntax:
+        SELECT field(s)
+        FROM table1
+        FULL OUTER JOIN table2
+        ON table1.field = table2.field;
+
+
+
+
+************************ SQL CONSTRAINTS ************************
+
+
+    SQL Constraints are used to specify rules for the data in a table.
+    If there is any violation between the constraint and the data action, the action is aborted
+    by the constraint.
+    Constraints can be specified when the table is created (inside the CREATE TABLE statement) or
+    after the table is created (inside the ALTER TABLE statement).
+
+    In SQL there are the following constraints:
+        NOT NULL    -   indicates that a field cannot store NULL value
+        UNIQUE      -   ensures that each row for a field must have a unique value
+        PRIMARY KEY -   a combination of a NOT NULL and UNIQUE. Ensures that a column (or
+                        combination of two or more columns) have a unique identity which helps find
+                        a particular record in a table more easily and quickly
+        FOREIGN KEY -   ensures the referential integrity of the data in one table to match values
+                        in another table
+        CHECK       -   ensures that the value in a field meets a specific condition
+        DEFAULT     -   specifies a default value when none is specified for the field
+
+    Syntax:
+        CREATE TABLE tableName (
+            field1 data_type(size) constraintName,
+            field2 data_type(size) constraintName,
+            ...
+        );
+
+
+
+    NOT NULL:
+        This constraint enforces a column to not accept null values, so a field must always have
+        a value.
+
+
+
+    UNIQUE:
+        Uniquely identifies each record in a table. UNIQUE and PRIMARY KEY both provide a
+        guarantee for uniqueness for a column or set of columns. You can have many UNIQUE constraints
+        in a table, but only one PRIMARY KEY per table.
+        Can also give custom names to contraints as show below.
+
+        Syntax for a single UNIQUE constraint in a table:
+            CREATE TABLE tableName (
+                field data_type(size) constraint,
+                ...,
+                UNIQUE (field)
+            );
+
+        Syntax for multiple fields with a UNIQUE constraint:
+            CREATE TABLE tableName (
+                field data_type(size) constraint,
+                ...,
+                CONSTRAINT constraintName UNIQUE (field, field, field...)
+            );
+
+        Using UNIQUE on ALTER TABLE:
+            ALTER TABLE tableName
+            ADD UNIQUE (field);    // multiple: ADD CONSTRAINT constrName UNIQUE (field, field...);
+
+
+        To DROP a UNIQUE constraint:
+            ALTER TABLE tableName
+            DROP INDEX constraintName;
+
+
+
+    PRIMARY KEY:
+        Uniquely identifies each record in a database and cannot contain null values.
+        Each table should have a PRIMARY KEY, and each table can only have one.
+        But you can define a PRIMARY KEY on multiple columns, there can just be only one in the
+        table. Also you can give the PRIMARY KEY a custom name.
+
+        Syntax:
+            CREATE TABLE tableName (
+                field data_type(size) constraint,
+                ...,
+                PRIMARY KEY (field)
+            );
+
+        Syntax for PRIMARY KEY on multiple fields and with a custom name:
+            CREATE TABLE tableName (
+                field data_type(size) constraint,
+                ...,
+                CONSTRAINT constraintName PRIMARY KEY (field, field,...)
+            );
+
+        Using PRIMARY KEY on ALTER TABLE:
+            ALTER TABLE tableName
+            ADD PRIMARY KEY (field);
+
+        To DROP a PRIMARY KEY:
+            ALTER TABLE tableName
+            DROP PRIMARY KEY;
+
+
+
+    FOREIGN KEY:
+        A FOREIGN KEY in one table points to a PRIMARY KEY in another table.
+        It is used to prevent actions that would destroy links between tables.
+        So a table has a field that is a FOREIGN KEY and that same field in another table it its
+        PRIMARY KEY, so the two are linked. Only data that is in the other table's PRIMARY KEY can
+        be in the FOREIGN KEY.
+        The FOREIGN KEY also prevents invalid data from being inserted into the foreign key column,
+        because it has to be one of the values contained in the table it points to.
+
+        Syntax:
+            CREATE TABLE tableName (
+                field data_type(size) constraint,
+                ...,
+                FOREIGN KEY (field) REFERENCES otherTable(primary key field from other table)
+            );
+
+        Syntax for FOREIGN KEY on multiple fields and with a custom name:
+            CREATE TABLE tableName (
+                field data_type(size) constraint,
+                ...,
+                CONSTRAINT constraintName FOREIGN KEY (field,...) REFERENCES otherTable(primary key)
+            );
+
+        Using FOREIGN KEY on ALTER TABLE:
+            ALTER TABLE tableName
+            ADD FOREIGN KEY (field)
+            REFERENCES otherTable(primary_key_field);
+
+        To DROP a FOREIGN KEY:
+            ALTER TABLE tableName
+            DROP FOREIGN KEY constraintName;
+
+
+
+    CHECK:
+        The CHECK constraint is used to limit the value range that can be placed in a column.
+        If you define a CHECK constraint on a single dolumn it allows only certain values for the
+        column.
+        If you define a CHECK constraint on a table it can limit the values in certain columns based
+        on values in other columns in the row.
+
+        CHECK constraint on CREATE TABLE:
+            CREATE TABLE tableName (
+                field data_type(size) constraint,
+                ...
+                CHECK (field  operator value)       // i.e.   field > 0
+            );
+
+            or:     CONSTRAINT constraintName CHECK (field operator value AND field operator value)
+
+
+        CHECK constraint on ALTER TABLE:
+            ALTER TABLE tableName
+            ADD CHECK (field operator value);
+
+            or:     ADD CONSTRAINT constraintName CHECK (field oper value AND field oper value)
+
+
+        To DROP a CHECK constraint:
+            ALTER TABLE tableName
+            DROP CHECK constraintname;
+
+
+
+    DEFAULT:
+        The DEFAULT constraint is used to insert a default value into a column. This value will be
+        added to all new records if no other value is specified.
+
+        DEFAULT constraint on CREATE TABLE:
+            CREATE TABLE tableName (
+                field data_type(size) constraint,
+                field data_type(size) DEFAULT value,
+                field data_type(size) DEFAULT aFunction()   // can be used to insert system values
+                ...
+            );
+
+        DEFAULT constraint on ALTER TABLE:
+            ALTER TABLE tableName
+            ALTER field SET DEFAULT value;
+
+        To DROP a DEFAULT constraint:
+            ALTER TABLE tableName
+            ALTER field DROP DEFAULT;
+
+
+
+
+************************ SQL FUNCTIONS ************************
+
+
+SQL has many built-in functions for performing calculations on data.
+
+SQL Aggregate functions:
+    SQL Aggregate functions retuns a single value, calculated from values in a column.
+    Some examples are:
+
+        AVG()   -   returns the average value.
+                    SELECT AVG(field) AS newfield FROM table;   //newfield will just be displayed
+
+        COUNT() -   returns the number of rows.
+                    SELECT COUNT(field) FROM table;
+                    SELECT COUNT(*) FROM table;                 // gets number of records in table
+                    SELECT COUNT(DISTINCT field) from table;    // gets number of unique values
+
+        FIRST() -   Only supported by MS Access. Returns the first value.
+                    To work in other databases sort in ascending order and use LIMIT 1.
+                    SELECT field FROM table
+                    ORDER BY field ASC
+                    LIMIT 1;
+
+        LAST()  -   Only supported by MS Access. returns the last value.
+                    To work in other databases sort in descending order and use LIMIT 1.
+                    select field FROM table
+                    ORDER BY field DESC
+                    LIMIT 1;
+
+        MAX()   -   returns the largest value.
+                    SELECT MAX(field) AS newFieldToDisplay FROM table;
+
+        MIN()   -   returns the smallest value.
+                    SELECT MIN(field) AS newFieldToDisplay FROM table;
+
+        SUM()   -   returns the sum.
+                    SELECT SUM(field) FROM table;
+
+    GROUP BY:
+        Aggregate functions often need an added GROUP BY statement, which groups the result-set by
+        one or more columns.
+            Syntax:
+                SELECT field, aggregateFunction(field)
+                FROM table
+                WHERE field operator value
+                GROUP BY field;
+
+    HAVING:
+        The HAVING clause was added to SQL because the WHERE clause could not be used with
+        aggregate functions. So it specifies a condition by which only the results of the 
+        aggregate function selected that meet the condition will be selected.
+            Syntax:
+                SELECT field, aggregateFunction(field)
+                FROM table
+                WHERE field operator value
+                GROUP BY field
+                HAVING aggregateFunction(field) operator value;
+
+            i.e.
+
+
+--------------------
+
+
+SQL Scalar functions:
+    SQL Scalar functions return a single value, based on the input value.
+    Some examples are:
+
+        UCASE()     -   converts a field to uppercase.
+                        SELECT UCASE(field) FROM table;
+
+        LCASE()     -   converts a field to lowercase.
+                        SELECT LCASE(field) FROM table;
+
+        MID()       -   extracts characters from a text field.
+                        The parameters are the required fieldName to extract the characters from,
+                        the required start position (which starts at 1), and the optional length
+                        which specifies the number of characters to return. If length is not given
+                        then the MID() function returns from the start position to the end of the
+                        text.
+                        SELECT MID(field, start[,length]) AS newFieldToDisplay FROM table;
+
+        LEN()       -   returns the length of a text field.
+                        SELECT LEN(field) AS newFieldToDisplay FROM table;
+
+        ROUND()     -   rounds a numeric field to the number of decimals specified.
+                        Two paremeters to give, the numeric field and the number of decimals to
+                        round to.
+                        SELECT ROUND(field, decimals) AS newFieldToDisplay FROM table;
+
+        NOW()       -   returns the current system date and time.
+                        SELECT NOW() AS newFieldToDisplay FROM table;
+
+        FORMAT()    -   formats how a field is to be displayed.
+                        Two parameters, both required. First is the field to be formatted, the
+                        second is the format.
+                        SELECT FORMAT(field, format) AS newFieldToDisplay FROM table;
+                        i.e.
+                                SELECT field, field, FORMAT(NOW(), 'YYYY-MM-DD') as [The Date]
+                                FROM table;
+
+
+----------------------------------------------------------------------------------------------------

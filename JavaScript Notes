@@ -1,0 +1,1762 @@
+JavaScript Notes
+
+
+
+JavaScript is the Client-Side scripting language of the Web. It makes pages dynamic and
+interactive.
+
+
+
+
+************************ SOME GENERAL NOTES ************************
+
+
+JavaScript can be implemented either in an external .js file, which is linked to in the <head>
+or <body> of an HTML document, or it can be implemented in the actual <head> and <body> of an
+HTML document by using the <script></script> tags. Can put as many scripts in an HTML document
+as you want.
+
+It is convention to put all JavaScript functions in the <head> if doing scripting in the actual
+HTML document.
+
+Using an external file for JavaScript is usually for when it contains code that will be used by
+several different webpages. To use an external JavaScript file just link to it with the
+"src" attribute in the <script> element.
+                <script src="externalJSfile.js"></script>
+
+The Document Object Model (DOM) is the official standard for accessing HTML elements through 
+JavaScript. You can get HTML elements by doing this in JavaScript:
+        document.getElementById("theId");
+
+Can change the content of an html element by finding it by ID, then using the
+.innerHTML="new content";.
+
+Can also change the styling of an html element in the same way except by using something like
+.style.color="new color";.
+
+Javascript is commonly use to make webpages dynamic by manipulating HTML elements, and to
+validate user input in forms.
+
+By simply writing out JavaScript code, that code will be executed immediately while the page
+loads. If you want to execute code when an event occurs, you need to put code inside a function
+and then call the function when an event occurs.
+
+
+// Comments use this or /* */
+
+
+
+
+************************ OUTPUT ************************
+
+
+To access an HTML element from JavaScript use the following method:
+                document.getElementById(id)
+
+Need to give HTML elements id attributes to be able to use this method.
+Can change the content of an element by using the .innerHTML="new content" like so:
+                document.getElementById("id").innerHTML="new content";
+
+The innerHTML variable of an HTML element refers to its content.
+
+To write to the document while it is loading use the document.write() method. Note: do not
+use the document.write() method after webpage has finished loading or else it will overwrite
+the entire webpage.
+                        document.write("write this to the screen");
+
+Can break up a line of code within a text string by using a backslash.
+        i.e.    document.write("Helllo \
+                World!");
+
+
+The alert() function will display an alert on-screen:       alert("blah");
+
+
+
+
+************************ VARIABLES, OBJECTS, AND DATA TYPES ************************
+
+
+Delcare variables with the "var" keyword.
+
+var x, y=40, name="todd";
+
+If you re-declare a variable it will not lost its current value.
+Before a variable is initialized its type is undefined.
+
+Data types:     String, Number, Boolean, Array, Object, Null, Undefined
+
+JavaScript has dynamic types, which means that the same variable can be redeclared as another
+type by setting it to a value of another data type.
+JavaScript only has one data type for numbers. The Number data type can be used as float of int.
+Numbers can be written in scientific notation like so:     var y = 123e5;
+
+The boolean values are true or false.
+
+
+Arrays:
+    var myArray = new Array();
+    myArray[0] = "blah";
+    myArray[1] = "bloop";
+
+    var theArr = new Array("blah", "bloop");    // a condensed declaration of an array
+
+    var arr = ["blah", "bloop"];                // a literal declaration of an array
+
+
+Objects:
+    Objects are delimited by curly braces, inside of which its properties are defined as
+    name:value pairs separated by commas, with a semi-colon at the end of the closing curly
+    brace.
+
+    var objName = {
+        name : "Todd",
+        age : 30,
+        id : 845
+    };
+
+    You can use variables from an object in two ways:
+            blah = objName.name;        or          blah = objNme["name"];
+
+
+Undefined and Null:
+    Undefined is the value of a variable before it is initialized.
+    Variables can be emptied by setting their value to null.
+
+Declaring a variable as an Object:
+    When the "new" keyword is used in a variable declaration you are declaring the variable
+    as an object.
+        i.e.            var name = new String;
+                        var blah = new String("blahbleep");
+                        var x = new Number;
+
+
+More on Objects:
+    Almost everything in JavaScript can be an Object: String, Functions, Arrays, Dates...
+
+    String objects have built in properties/methods like objName.length and 
+    objName.indexOf("section of the String"), which returns the index where that section of the
+    string starts. Also .toUpperCase(), and so on.
+
+    Can create your own objects like in different ways. Two ways shown here:
+            var obj = {
+                bleep : 23,
+                bloop : "wall-e"
+            };
+
+        or
+
+            var obj = new Object();
+            obj.bleep = 23;
+            obj.bloop = "wall-e";
+
+    Can also add new variables and methods to already existing objects.
+
+
+Variable Scope:
+    Variables declared outside of any function are Global in scope, and are available to all
+    scripts and functions on the webpage, and they are deleted when you close the page.
+
+    If you just assign a variable a value without declaring it (without using the "var" keyword)
+    then that variable is Global in scope, even if it happens inside a function.
+        i.e.        firstName="Todd";               // this is now a global variable
+
+
+Operators:
+    Use a "+" between string variables to concatenate them. Can also concatenate a string and a
+    number using "+", which will result in a string.
+
+    "===" the three equal signs means that the values are exactly equal (both in value and data
+    type). Just two equal signs "==" just means their value is equal and some type conversion
+    may have taken place to make them equal.
+    Similarly, "!==" means two values are of different value or different type.
+
+    && - and        || - or         ! - not
+
+
+
+
+************************ FUNCTIONS ************************
+
+
+Syntax:         function myFunc(var1, var2) {
+                    code...
+                    return blah;
+                }
+
+Can return a value by either assigning it to a variable, or you can put that value straight
+into the content of an HTML element like so:
+                document.getElementById("theId").innerHTML=myFunc(args);
+
+
+Can call functions when events happen, like on button clicks. Some examples:
+        <button onclick="myFunc(args)"> Click Me </button>
+        <input type="button" value="blah" onclick="myFunc(args)">
+
+
+
+
+
+************************ CONDITIONALS AND LOOPS ************************
+
+if-statement:
+                if (blah) {
+                    code...
+                } else if (blah) {
+                    code...
+                } else {
+                    code...
+                }
+
+                variableName = (condition) ? valueIfTrue : valueIfFalse;
+
+switch statement:
+                switch(var) {
+                case value1:
+                    code...
+                    break;
+                case value2:
+                    code...
+                    break;
+                default:
+                    code...
+                    break;
+                }
+
+for-loop:
+                for (var i=0; i < blah; i++) {
+                    code...
+                }
+
+for/in-loop:
+                Loops through the properties of an object. So not really the same as a for-each.
+                for (var x in obj) {
+                    code...
+                }
+
+while loop:
+                while (condition) {
+                    code...
+                }
+
+do-while loop:
+                do {
+                    code...
+                } while (condition);
+
+
+The "break;" statement jumps out of a loop.
+The "continue;" statement jumps to the next iteration of a loop.
+
+JavaScript has labels (reminds me of Assembly Language). To label JavaScript statement just
+use this syntax:            label:
+                            statements
+
+The break and continue statements can normally only be used inside a loop and a switch or a
+loop, respectively. But by using a label and putting a block of code between { } (specifying
+the label's block of code) you can use the "break label;" statement to jump out of that block
+of code. Continue doesn't work with labels, only break.
+    i.e.
+            blah:                   // the label
+            {
+                code...
+                break blah;         // program breaks out of this block here
+                code...
+            }
+
+
+
+
+************************ ERRORS - THROW, TRY, AND CATCH ************************
+
+
+The "try" statement lets you test a block of code for errors.
+The "catch" statement lets you handle the error.
+The "throw" statement lets you create custom errors.
+
+When an error occurs the JavaScript engine will 'throw' an error.
+
+Syntax:
+        try {
+            code to try to execute...
+        } catch (err) {                     // the argument will grab the error
+            handle errors here...
+        }
+
+Create custom errors by 'throw an exception', by using the throw keyword within a try-catch
+block. Like in the try block, if you want to specify a custom error (like incorrect input) you
+can do       if(blah)  throw "bad input";       or something like that. The catch block will
+then grab that 'thrown' error in its argument and you can define what you want to do with that
+error, like print it to the screen.
+
+
+
+
+************************ VALIDATING FORMS ************************
+
+
+JavaScript is often used to validate data in HTML forms before sending it off to a server.
+Syntax for getting data from an item in a form:
+                    var myVar = document.forms["formName"]["itemName"].value;
+    
+Example of getting data from a form:
+
+    JS:         function validate() {
+                    var myVar = document.forms["formName"]["itemName"].value;
+                    ...code to check to validate it...
+                }
+    HTML:       <form name="formName" action="blah.php" onsubmit="return validate()" method="post">
+                Name: <input type="text" name="itemName">
+                <input type="submit" value="Submit">
+                </form>
+
+Can use JavaScript to check to make sure all required form items have been filled out, use
+Regex's to check for correct data in various form items, etc.
+
+
+
+
+************************ OBJECTS ************************
+
+
+Note:
+Also look above in the Variables, Objects, and Data Types section for some stuff on Objects.
+
+Note: JavaScript doesn't use Classes, even though it uses Objects. JavaScript is prototype
+based, not class based.
+
+
+Nearly everything in JavaScript can be used as an object. Booleans, Numbers, Strings, Dates,
+Math, Regular Expressions, Arrays, and even Functions are either always objects or can be
+treated as either primitive data or objects.
+
+Since functions are objects, you can create an object simply calling a function (with the "new"
+keyword) whose arguments act as a constructor and assigning them to values using the "this" keyword, and assigning that new object/function to a variable.
+i.e.
+        function person(fName, lName, age, eyeColor) {        // function as object constructor
+        // variables
+            this.fName = fName;
+            this.lName = lName;
+            this.age = age;
+            this.eyeColor = eyeColor;
+            this.changeName=changeName;     // using a function as a variable
+        // methods
+            function changeName(name) {
+                this.fName = name;
+            }
+
+        }
+        someDude = new person("Jonas", "Simbacca", 55, "gray");     // this creates an object
+        someLady = new person("Angie", "Lovelace", 23, "green");
+
+You can add properties (variables and methods) to already existing objects.
+i.e.
+        person.hairColor = "blonde";
+
+
+
+************************ NUMBERS ************************
+
+
+JavaScript Numbers data type are 64-bit floats.
+Can use Octal numbers by putting a 0 in front of the number, i.e. 0475
+Can use Hexadecimal numbers by putting a 0x in front of the number, i.e. 0x4D
+
+Can display numbers in different bases using the .toString() method and sending as the
+argument the base you want to display the number in.
+
+If you calculate a number outside the range of the 64-bit float JavaScript will return the value
+of Infinity or -Infinity. Division by zero also generates +/-Infinity.
+
+NaN is a reserved word in JavaScript to indicate the result of a numeric operation is not a
+number. can use the isNaN(myVar) method to test whether a result is a number or not. Infinity
+counts as a number.
+
+Numbers can be primitive number data type or objects (var x = new Number(123);).
+
+Can use typeof(var) function to check the data type of the var.
+
+Properties of the Number wrapper object:
+        Number.MAX_VALUE
+        Number.MIN_VALUE
+        Number.NEGATIVE_INFINITY
+        Number.POSITIVE_INFINITY
+        Number.NaN
+        Number.prototype
+        Number.constructor
+
+Methods of the Number wrapper object:
+        Number.toExponential()
+        Number.toFixed()
+        Number.toPrecision()
+        Number.toString()
+        Number.valueOf()
+
+All methods of the Number object are available to primitive values because JavaScript will
+temporarily transfer primitive values to objects before executing the methods.
+
+
+
+
+************************ STRINGS ************************
+
+
+Can use single quotes or double quotes for strings.
+Can access each character in a string using its index:      myString[index];
+
+
+Member variables of Strings:
+    .length
+    .prototype
+    .constructor
+
+Methods of Strings:
+    .indexOf("substring")       // returns -1 if substring is not found
+    .match("substring")         // if finds substring returns the substring, if not returns null
+    .replace("original substring", "new substring");
+    .toUpperCase()
+    .toLowerCase()
+    .split("delimter")          // converts a string to an array
+    .charAt()
+    .charCodeAt()
+    .concat()
+    .fromCharCode()
+    .lastIndexOf()
+    .localeCompare()
+    .search()
+    .slice()
+    .substr()
+    .substring()
+    .trim()
+    .valueOf()
+    .toString()
+
+Use \ for escape characters.
+
+Strings can be primitive strings or objects.
+
+
+
+
+************************ DATES ************************
+
+
+The Date object is used to work with dates and times.
+Four ways to initiate a Date object:
+        new Date()                  // current time and date
+        new Date(milliseconds)      // milliseconds since 1/1/1970
+        new Date(dateString)
+        new Date(year, month, day, hours, minutes, seconds, milliseconds)
+
+Some of the parameters are optional.
+
+To set a date:
+        myDate.setFullYear(2010, 0, 13)         // sets myDate to Jan. 13th, 2010
+        myDate.setDate(myDate.getDate()+5);     // add days to the date
+
+Can compare two days with a simple comparison operator.
+
+
+
+
+************************ ARRAYS ************************
+
+
+Can have variables of any type, or any type of object, in a single array.
+
+.length gives the number of elements in the array.
+.indexOf(element) gives the index position of that argument
+
+Can create new array methods using Prototype. Prototype is a global constructor in JavaScript
+and it can construct new properties and methods for any JavaScript object.
+
+i.e.
+        Array.prototype.ucase=function() {
+            for (i=0; i<this.length; i++)
+                this[i] = this[i].toUpperCase();
+        }
+
+
+
+
+************************ MATH OBJECT ************************
+
+
+The JavaScript math object allows you to perform mathematical tasks.
+
+See the following webpage for all the constants and methods that can be used through the
+Math object:
+                http://www.w3schools.com/jsref/jsref_obj_math.asp
+
+
+
+
+************************ REGULAR EXPRESSIONS ************************
+
+
+Syntax:
+            var pattern = new RegExp(pattern, modifiers);
+    or      var pattern = /pattern/modifiers;
+
+Modifiers are used to perform case-insensitive and global searches.
+    "i" modifier is used to perform case-insensitive matching
+    "g" modifier performs a global match (find all matches instead of stopping after the first)
+    "m" modifier performs multi-line matching
+
+Note: below in examples "pattern" means its a regex object.
+
+test()
+        The test() method searches a string for a specified value, and returns true or false.
+        i.e.    pattern.test(str);
+
+exec()
+        The exec() method searches a string for a specified value, and returns the text of the
+        value found. If not match is found, it returns null.
+        i.e.    pattern.exec(str);
+
+match()
+        The match() method searches a string for a match against a regular expression given to
+        it as the argument, and returns the matches as an Array, or null if no match.
+        i.e.    str.match(/pattern/modifiers);
+
+Use this website to see specifics on how to make regexs:
+                http://www.w3schools.com/jsref/jsref_obj_regexp.asp
+
+
+
+
+************************ DOCUMENT OBJECT MODEL (DOM) ************************
+
+
+With the HTML DOM, JavaScript can access and change all the elements of an HTML document.
+When a webpage is loaded, the browser creates a DOM of the page, which is constructed as a
+tree of Objects. The DOM is an interface that allows programs and scripts to dynamically access
+and update the content, structure, and style of a document. Basically, DOM is a standard for
+getting, changing, adding, and deleting HTML elements.
+
+It defines HTML elements as objects, the properties of all HTML elements, the methods to
+access all HTML elements, and the events for all HTML elements.
+
+DOM Tree of Objects example:
+
+                                   Document
+                                      |
+                             Root Element <html>
+             _________________________|____________________________
+             |                                                    |
+        Element <head>                                      Element <body>
+             |                                         ___________|__________
+        Element <title>                                |                    |  
+             |               Attribute "href" ----- Element <a>         Element <h1>
+        Text: "My title"                               |                    |
+                                                Text: "My link"      Text: "My Header"
+
+With the DOM, JavaScript can do all these things:
+    change all HTML elements
+    chagne all HTML attributes
+    change all CSS styles
+    remove existing HTML elements and attributes
+    add new HTML elements and attributes
+    react to all existing HTML events
+    create new HTML events
+
+The DOM standard is separated into three parts:
+    Core DOM - standard model for all document types
+    XML DOM - standard model for XML documents
+    HTML DOM - standard model for HTML documents
+
+
+--------------------
+
+
+DOM Methods and Properties
+    HTML DOM methods are actions you can perform on HTML elements.
+    HTML DOM properties are values of HTML elements you can set or change.
+    In the DOM programming interface, all HTML elements are defined as objects.
+
+    .getElementById("id")           // method to access and HTML element by its id attribute
+    .innerHTML                      // property that holds the content of an HTML element
+
+
+--------------------
+
+
+DOM Document
+    In the DOM, the document represents the webpage. It is the owner of all other objects in
+    the webpage. To access anything you always start by accessing the document object:
+        Syntax:         document.
+
+    Finding HTML Elements:
+        document.getElementById("id")
+        document.getElementsByTagName("tagname")
+        document.getElementsByClassName("classname")
+        document.forms[]                            // finding elements by HTML element objects
+
+    Changing HTML Elements:
+        document.write(text)                        // write into the HTML output stream
+        document.getElementById(id).innerHTML=      // change the content of an HTML element
+        document.getElementById(id).attribute=      // change the attribute of an HTML element
+        document.getElementById(id).style.attribute=    // change the style of an HTML element
+
+    Adding and Deleting HTML Elements:
+        document.createElement()
+        document.removeChild()
+        document.appendChild()
+        document.replaceChild()
+
+    Adding Event Handlers:
+        document.getElementById(id).onclick=function() { code... }
+
+
+--------------------
+
+
+DOM Elements
+    var x = document.getElementById(id);      // find an HTML element, if not found x = null
+
+    var x = document.getElementBYId(id);
+    var y = x.getElementsByTagName(HTML tag);   // puts all of those tag elements inside the
+                                                // element with the id into an array, y
+
+    var x = document.getElementsByClassName(class);     // x gets an array of all elements
+                                                        // with that class name
+
+    Finding HTML Elements by HTML Object Collections:
+        Examples of HTML object collections are:
+                    document.forms, document.anchors, document.images, document.links
+
+        The following code gets an HTML form, puts it in x, then loops through the elements
+        of that form, placing the value of each form element in a string.
+                var x = document.getElementById(someForm);
+                var txt = "";
+                for (var i=0; i<x.length; i++)
+                    txt = txt + x.elements[i].value + "<br>";
+
+
+--------------------
+
+HTML DOM
+    Can change the contents of HTML elements (already shown above).
+    Can change the value of an attribute in an HTML element.
+            document.getElementById("someImage").src="newImage.jpg";
+
+
+--------------------
+
+
+DOM Changing CSS
+    document.getElementById("someID").style.color="blue";
+
+    Using an event to make a change, like a button click:
+        <button type="button" onclick="document.getElementById('someId').style.color='red'">
+            Click Me </button>
+
+
+--------------------
+
+
+DOM Events
+    To execute code when a use clicks on an element, add JavaScript code to the HTML onclick
+    attribute:              onclick=JavaScript
+
+    Examples of HTML Events:
+            -user clicks the mouse
+            -a web page has loaded
+            -an image has been loaded
+            -mouse moves over an element
+            -input field is changed
+            -a form is submitted
+            -user strokes a key
+
+    Examples:
+        <h1 onclick="this.innerHTML='blah'"> Click this text </h1>
+
+        <h1 onclick="myFunc(this)"> Click this </h1>          // "this" arg is the element id
+
+        <button onclick="displayDate()"> Click this Button </button>
+        function displayDate() { document.getElementById("demo").innerHTML=Date(); }
+        <p id="demo"></p>
+
+        document.getElementById(id).onclick=function(){displayDate()}   // note: have to put
+                                                            // function() {funcName()} for this
+                                                            // to work
+
+    Onload and Onunload Events:
+    The onload and onunload events are triggered when the user enters or leaves the webpage.
+    The onload event can be used to check the visitor's browser type and browser version. These
+    two events can be used to deal with cookies.
+        i.e.        <body onload="checkCookies()">       // checkCookies() is a custom function
+
+    Onchange Event:
+    Often used in combination with validation of input fields. This will perform some function's
+    actions when an input element has been changed (after it has been clicked off of or Enter
+    is pressed).
+            i.e.    <input type="text" id="fname" onchange="myFunc()">
+
+    Onmouseover and Onmouseout Events:
+    Can be used to trigger a function when the user moves the mouse over, or out of, an element.
+            i.e.    <div onmouseover="myFunc(this)" onmouseout="myOtherFunc(this)"> blah </div>
+
+    Onmousedown, Onmouseup, and Onclick Events:
+    These events are all part of a mouse-click. onmousedown event is triggered when mouse button
+    is pressed down, onmouseup is triggered when mouse button is released, and finally onclick
+    is triggered when the mouse-click is completed.
+
+    Onfocus Event:
+    Event can call a trigger when an element, like an input field, gets focus.
+        i.e.    <input type="text" onfocus="myFunc(this)">
+
+
+--------------------
+
+
+DOM Navigation
+    With the DOM you can navigate the node tree using node relationships.
+    The entire document is a document node.
+    Every HTML element is an element node.
+    The text inside HTML elements are text nodes.
+    Every HTML attribute is an attribute node.
+    All comments are comment nodes.
+    You can access all of these using JavaScript.
+    New nodes can be created, and all nodes can be modified or deleted.
+
+    The terms parent, child, and sibling are used to describe the hierarchial relationship of
+    the nodes. <html> is the root node, it is the parent to its children, who are siblings - 
+    the <head> and <body>, the <head> being the firstChild, the <body> being the lastChild.
+    This hierarchy goes along all the way though the HTML document.
+
+    Use the following properties in JavaScript to navigate between the nodes:
+            .parentNode
+            .childNodes[nodeNumber]
+            .firstChild
+            .lastChild
+            .nextSibling
+            .previousSibling
+
+    Use this to get the value of, for instance, text node:     .nodeValue
+        -nodeValue for element nodes is undefined
+        -nodeValue for text nodes is the text itself
+        -nodevalue for attribute nodes is the attribute value
+
+    Use this to get the name of a node:                        .nodeName
+        -nodeName is read-only
+        -nodeName of an element node is the same as the tag name
+        -nodeName of an attribute node is the attribute name
+        -nodeName of a text node is always #text
+        -nodeName of the document node is always #document
+
+    Use this to get the type of a node:                         .nodeType
+        The most important types are:
+            Element     -   NodeType = 1
+            Attribute   -   NodeType = 2
+            Text        -   NodeType = 3
+            Comment     -   NodeType = 8
+            Document    -   NodeType = 9
+
+    Two special properties that allow access to the full document:
+        document.documentElement    -   the full document
+        document.body               -   the body of the document (contains the source code of
+                                        the body)
+
+
+--------------------
+
+
+DOM Elements (Nodes)
+    Creating new HTML elements/nodes (must append the new element to an existing one as its
+    last child node):
+        
+        var parag = document.creatElement("p");                 // create a new <p> element
+        var node = document.createTextNode("This is new");      // create new text node
+        parag.appendChild(node);                                // gives <p> text(new text node)
+        var element = document.getElementById(existingNode);    // finds an existing element
+        element.appendChild(parag);                              // adds new <p> to existing one
+
+
+    Creating new HTML element with insertBefore(), instead of appending the new node as the
+    last child of an existing node you can insert it into the list of the existing nodes
+    children before some specified node:
+        
+        var parag = document.createElement("p");
+        var node = document.createTextNode("This is new.");
+        parag.appendChild(node);
+        var element = document.getElementById("someID");
+        var child = document.getElementById("otherID");
+        element.insertBefore(parag,child);              // inserts parag node before child node
+
+    Remove existing HTML elements:
+        
+        var parent = document.getElementById("someID");
+        var child = document.getElementById("otherID");
+        parent.removeChild(child);
+
+    Replacing HTML elements:
+        
+        var parag = document.createElement("p");
+        var node = document.createTextNode("This is new.");
+        parag.appendChild(node);
+        var parent = document.getElementById("someID");
+        var child = document.getElementById("otherID");
+        parent.replaceChild(parag, child);               // replaces child node with parag node
+
+
+--------------------
+
+
+DOM Node List
+    A node list is an array of nodes.
+    The getElementsByTagName() method returns a node list.
+
+    i.e.
+            var x = document.getElementsByTagName("p");     // x becomes an array of all <p>'s
+            x[0].innerHTML;   // gives access to the contents of the first node in the node list
+            x.length;         // gives access to the length of the node list
+
+
+
+
+************************ BROWSER OBJECT MODEL (BOM) ************************
+
+
+There is no BOM standard, so they methods and properties may vary a little between the browsers.
+
+
+The Window Object
+
+    Supported by all browsers. Represents the browser's window. All global JavaScript objects,
+    functions, and varaiables are members of the window object, including the document object.
+
+    window.document.getElementById("blah");   is the same as   document.getElementById("blah");
+
+    Window Size:
+        The window size is the browser viewport, not including toolbars and scrollbars - so the
+        actual size of where the web content displays.
+
+        For most browsers:
+            window.innerHeight  -   the inner height of the browser window
+            window.innerWidth   -   the inner width of the browser window
+        For IE 5,6,7,8:
+            document.documentElement.clientHeight
+            document.documentElement.clientWidth
+                        or
+            document.body.clientHeight
+            document.body.clientWidth
+
+        A solution for covering all browsers is in this example:
+            var w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+
+    Other window methods:
+
+        window.open()       -       opens a new window
+        window.close()      -       close the current window
+        window.moveTo()     -       move the current window
+        window.resizeTo()   -       resize the current window
+
+
+    Properties of the Window object, shown below, don't need the window prefix when using them.
+
+
+--------------------
+
+
+The Window Screen Object
+
+    window.screen contains info about the user's screen.
+    window.screen can be written without the window prefix, so just:     screen
+
+    screen.availWidth       -       available screen width.
+                                    returns the width of the user's screen in pixels, minus
+                                    interface features like the windows taskbar.
+
+    screen.availHeight      -       available screen height.
+                                    returns the height of the user's screen in pixels, minus
+                                    interface features like the windows taskbar.
+
+    Other Screen object properties:
+        screen.width        -       total width in pixels of entire screen
+        screen.height       -       total height in pixels of entire screen
+        screen.colorDepth
+        screen.pixelDepth
+
+
+--------------------
+
+
+The Window Location Object
+
+    window.location can be used to get the current page address (URL) and to redirect the
+    browser to a new page.
+
+    location.hostname       -       returns the domain name of the web host
+
+    location.pathname       -       returns the path and filename of the current page's URL
+
+    location.port           -       returns the port of the web host (80 or 443)
+
+    location.protocol       -       returns the web protocol used (http:// or https://)
+
+    location.href           -       returns the URL of the current page
+
+
+
+    location.assign("URL");       -       this method loads a new document
+
+
+--------------------
+
+
+The Window History Object
+
+    window.history object contains the browser's history.
+
+    To protect the privacy of the users, there are limitations to how JavaScript can access
+    this object.
+
+    history.back()      -       same as clicking back in the browser
+
+    history.forward()   -       same as clicking forward in the browser
+
+
+--------------------
+
+
+The Window Navigator Object
+
+    window.navigator object contains info about the user's browser.
+
+    Note: the info from the navigator object can often be misleading and should not be used to
+          detect browser versions. Instead, use object detection to figure out what browser is
+          being used. Since different browsers support different objects you can use that to
+          detect browsers. For example, only Opera supports the window.opera property.
+
+    Some properties:
+
+        navigator.appCodeName       -       returns the browser's codename
+        navigator.appName           -       returns the browser's name
+        navigator.appVersion        -       returns the browser's version
+        navigator.cookieEnabled     -       returns if browser has cookies enabled
+        navigator.language          -       returns the language being used by the browser
+        navigator.onLine            -       returns true/false based on if the browser is online
+        navigator.platform          -       returns the platform the browser is running on??
+        navigator.userAgent         -       returns the user-agent header
+        navigator.systemLanuage     -       returns the user-agent language
+
+
+--------------------
+
+
+Popup Boxes
+
+    JavaScript has three kinds of popup boxes:    alert box, confirm box, prompt box
+
+    Alert Box
+        An alert box pops up and requires the user click "OK" to proceed.
+        
+        Syntax:     window.alert("sometext");
+                    alert("sometext");
+
+    Confirm Box
+        A confirm box pops up and makes the user confirm by either pressing "OK" or "Cancel".
+        It returns true if use pressed OK and false if user pressed Cancel.
+        
+        Syntax:     window.confirm("sometext");
+                    confirm("sometext");
+
+    Prompt Box
+        A prompt box requires the user to enter input and then press either "OK" or "Cancel".
+        If the user clicks "OK" the box returns the input value, if user presses "Cancel" the
+        box returns null. The second parameter is what goes in the input text box, if anything,
+        when the prompt box opens.
+
+        Syntax:     window.prompt("sometext", "defaultTextForInputField");
+                    prompt("sometext", "defaultTextForInputField");
+
+
+--------------------
+
+
+Timing Events
+
+    With JavaScript it is possible to execute code at specified time-intervals, called timing
+    events. The two key methods are setInterval() and setTimeout().
+
+    setInterval()
+                executes a function, over and over again, at specified time intervals.
+                This function is useful for say making a clock where you want to display the
+                time every second and keep doing it.
+
+                Syntax:         window.setInterval("javascript function", milliseconds);
+                                setInterval("javascript function", milliseconds);
+
+    clearInterval()
+                used to stop further executions of the function sent to the setInterval()
+                method. To use this method you must make a global variable to get the return
+                value of the setInterval() method and pass that variable as the argument to
+                this method.
+
+                Syntax:         clearInterval(setIntervalVariable);
+
+    setTimeout()
+                executes a function, once, after waiting a specified number of milliseconds.
+
+                Syntax:         setTimeout("javascript function", milliseconds);
+
+    clearTimeout()
+                used to stop the execution of the function sent to the setTimeout() method.
+                Same deal with the argument as in the clearInterval() method, but here you have
+                to send the return variable from the setTimeout() method.
+
+                Syntax:         clearTimeout(setTimeoutVariable);
+
+
+--------------------
+
+
+Cookies
+
+    Cookies let you store user information in web pages.
+    Cookes are data, stored in small text files, on the user's computer.
+    
+    When a web server has sent a webpage to a browser, the connection is shut down and the
+    server forgets everything about the user. Cookies were invented to solve the problem of
+    how to remember information about the user.
+    i.e.
+            When a user visits a web page his name can be stores in a cookie.
+            Next time the user visits the page, the cookie remembers his name.
+
+    Cookies are saved in name-value pairs.
+
+    When a browser reqeusts a webpage from a server, cookies belonging to the page are added
+    to the request, this way the server gets the necessary data to remember info about users.
+
+    The document.cookie property is used to create, read, and delete cookies.
+
+
+
+    Creating a cookie in JavaScript:
+
+        document.cookie="key=value";            i.e.        document.cookie="username=Krone";
+
+        The key is the name of the cookie.
+
+        Can add an expiration date to the cookie (by default the cookie is deleted when the
+        browser is closed):
+                    
+            document.cookie="username=Krone; expires=Sun, 9 Mar 2014 12:00:00 GMT";
+
+        Can throw in variables into the cookie string using the + operator. Treat it like a
+        normal string when using this line of code (although it isn't a normal string).
+
+        With a path parameter you can tell the browser what path the cookie belongs to (by
+        default the cookie belongs to the current age):
+                    
+            document.cookie="username=Krone; expires=Sun, 9 Mar 2014 12:00:00 GMT; path=/";
+
+
+
+    Reading a cookie:
+
+        var x = document.cookie;
+
+        The above line of code will return all cookies in one string much like:
+        cookie1=value; cookie1=value; cookie3=value;
+
+
+
+    Change a cookie:
+
+        This is the exact same as creating a cookie shown above.
+
+
+
+    Deleting a cookie:
+
+        Just set the expires parameter to a passed date:
+
+            document.cookie="username=; expire=Thu, 01 Jan 1970 00:00:00 GMT";
+
+
+
+    The Cookie String:
+
+        The document.cookie property looks like a normal string but it is not.
+        If you set a new cookie, older cookies are not overwritten, the new cookies is appended
+        to the document.cookie. If you want to find the value of one specific cookie you must
+        write a JavaScript function that searches for the cookie value in the cookie string.
+
+
+
+
+************************ PROGRAMMING IN THE HTML <CANVAS> ************************
+
+
+The HTML5 <canvas> element is used to draw graphics on the fly, via scripting. <canvas> is only
+a container for graphics, JavaScript actually draws the graphics.
+You can have multiple canvas objects on a single page.
+
+
+--------------------
+
+
+Creating a Canvas in HTML
+
+    A canvas is a rectangular area on an HTML page. By default the <canvas> element has no border
+    and no content. You must always specify an id attribute so that the JavaScript code can refer
+    to the canvas to draw in it, as well as a width and height to define the size of the canvas.
+
+            <canvas id="myCanvas" width="200" height="200"></canvas>
+
+    To add a border just use the CSS border attribute.
+
+    You can add some fallback content, in case someone is using an old browser that doesn't support
+    the canvas element, simply by putting something between the opening and closing canvas tags,
+    like say an image or something.
+
+    You can put the JavaScript code for the canvas in function and then call that function in
+    the body tag of the HTML document using the onload property:        <body onload="draw();">
+
+
+--------------------
+
+
+Getting the Canvas in JavaScript
+
+    Need to declare a variable in JavaScript that is initialized to the HTML canvas element.
+    Need to then set a context variable using the getContext() method called on the canvas variable.
+    Must pass the string "2d" to the getContext() method. This accesses the drawing context and
+    sets it to 2D.
+    All drawing methods to the canvas are methods of the context object.
+
+            var canvas = document.getElementById("myCanvas");
+            var ctx = canvas.getContext("2d");
+
+    This code should go in a script in the head of the document. But the canvas element must be
+    loaded before this runs, so put it in a function, and then use the onload attribute in the
+    HTML body tag and set it to call this function, so that the function isn't called until the
+    document is loaded and therefore the canvas element is loaded.  i.e.  <body onload="paint();">
+
+
+--------------------
+
+
+Draw a rectangle
+
+    Canvas only supports one primitive shape: rectangles. All other shapes are made by combining
+    one or more paths. But there are an assortment of path drawing functions that make drawing
+    more complex shapes possible.
+    Set the fill style (color) and then specify a rectangle to draw. The fill style will inhabit
+    the rectangle. The fill style can be in hex, rgb(values), rgba(values), or color names.
+
+    There are three functions that draw rectangles:
+        fillRect(x,y,width,height)          -       draws a filled rectangle
+        strokeRect(x,y,width,height)        -       draws a rectangular outline
+        clearRect(x,y,width,height)         -       clears the specified rectangular area, making it
+                                                    transparent
+
+    Unlike the path functions, all three rectangle functions draw immediately to the canvas.
+
+    i.e. of a filled rectangle:
+
+            ctx.fillStyle = "rgb(255,0,0);"
+            ctx.fillRect(x, y, width, height);      // x, y coords define element's top-left corner
+                                                    // from the top-left corner of the canvas
+
+
+--------------------
+
+
+Drawing a point
+
+    To draw a point, a single pixel, just use the fillRect() method using the desired point as the
+    (x,y) coordinates and a width and height of 1.
+
+    i.e.        ctx.fillRect(100,200,1,1);      // will draw a point at (100,200)
+
+
+--------------------
+
+
+Drawing text
+
+    Most important property is "font":
+
+        context.font = "size type"              i.e.    context.font = "20px Arial";
+
+    Other properties:
+        textAlign       -   values: left, right, center, start(default), end
+        textBaseline    -   values: top, hanging, middle, alphabetic(default), ideographic, bottom
+
+
+    Most important methods:
+
+        fillText()  -   The texit is filled using the current fillStyle.
+                        Syntax:     fillText("text", x, y [, maxWidth]);
+
+            Parameters x and y are the coordinates to being drawing the text, maxWidth is an
+            optional parameter specifying the max width to draw (if the text is too big for this
+            width then then a smaller font is used or the font is adjusted to a more horizontally
+            condensed font).
+
+        strokeText()    -   draws the text with the current strokeStyle setting.
+                            Syntax:     ctx.strokeText("text", x, y [, maxWidth]);
+
+        measureText()   -   returns an object containing the width, in pixels, that the specified
+                            text will be when draw in the current text style.
+                            Syntax:     measureText("text");
+
+
+--------------------
+
+
+Drawing paths to make other shapes
+
+    First create the path, then use the draw commands to draw into the path, then optionally you
+    can close the path which will try to close the shape by drawing a straight line from the
+    current point to the start of the shape.
+
+    beginPath()
+        Creates a new path. Once created, future drawing commands (between the beginPath() and
+        closePath() functions) are directed into the path and used to build the path up.
+
+    closePath()
+        Close the path so that future drawing commands are once again directed to the canvas
+        context instead of this drawing path.
+
+    stroke()
+        Draws the shape by stroking its outline. You call this after closing the path.
+
+    fill()
+        Draws a solid shape by filling the path's content area.
+
+    moveTo(x,y)
+        Moves the starting point (the pen) to a point on the canvas to begin drawing from there.
+
+    lineTo(x,y)
+        Draws from the current point to the point given as this functions arguments.
+        Draws straight lines.
+
+    arc(x, y, radius, startAngle, endAngle, anticlockwise)
+        Used to draw arcs or circles.
+
+    Internally, paths are stored as a list of sub-pahts (lines, arcs, etc) which together form a
+    shape. Every time this method is called, the list is reset and we can start drawing new shapes.
+    You always want to specifically set your starting point after resetting a path.
+
+    When you call fill(), any open shapes are closed automatically, so you don't have to call
+    closePath(), this is not the case when you call stroke().
+
+    Drawing a triangle example:
+        ctx.fillStyle = "black";
+        ctx.beginPath();
+        ctx.moveTo(50,50);
+        ctx.lineTo(100, 50);
+        ctx.lineTo(75,75);
+        ctx.fill();             // automatically closes the shape so no need to draw the last line
+
+
+    Drawing arcs and circles:
+        Syntax:     arc(x,y,radius,startAngle,endAngle,anticlockwise)
+
+        The x and y parameters are the coordinates of the center of the circle on which the arc
+        should be drawn.
+        The startAngle and endAngle parameters define the start and end points of the arc in
+        radians, along the curve of the circle. 2*pi radians is a full circle.
+        Note:   radians = (Math.PI/180)*degrees     <-- to convert degrees to radians
+
+
+    Bezier and Quadratic curves:
+
+        Quadratic Bezier Curve
+            Has the two end points and only one control point.
+            Syntax:         quadraticCurveTo(cp1x, cp1y, x, y)
+            Draws a quadratic bezier curve from the current pen position to the end point specified
+            by x and y, using the control point specified by cp1x and cp1y.
+
+        Cubic Bezier Curve
+            Has the two end points and two control points.
+            Syntax:         bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
+            Draws a cubic bezier curve from the current pen position to the end point specified by
+            x and y, using the control points specified by (cp1x, cp1y) and (cp2x, cp2y).
+
+        The x and y parameters for both functions specifies the endpoint of the curve.
+
+        With a lot of practice very complex shapes can be drawn using a succession of bezier curves.
+
+
+    Rectangles in the drawing path:
+        Syntax:         rect(x, y, width, height)
+        The rect() function adds a rectangular path to a currently open path. When this function
+        is executed the pen position is automatically reset to (0,0).
+
+
+--------------------
+
+
+Using Images
+
+    In canvas you can use images to do dynamic photo compositing or as backdrops of graphs, for
+    sprites in games, etc.
+
+    Importing images to the canvas is a two step process:
+        - get a reference to an HTMLImageElement object or to another canvas element as a source.
+        - draw the image on the canvas using the drawImage() function.
+
+    Canvas can use the following four data types as an image source:
+        HTMLImageElement    -   these images created using the Image() constructor, as well as any
+                                <img>
+        HTMLVideoElement    -   Using an HTML <video> element as your image source grabs the
+                                current frame from the video and uses it as an image
+        HTMLCanvasElement   -   Can use another canvas element as the image source
+        ImageBitmap         -   This is a high performance bitmap that can be rendered with low
+                                latency. It can be created from all of the above sources plus
+                                several others.
+    The above sources are collectively referred to by the type: CanvasImageSource
+
+    Can get references to images on the same page as the canvas by using one of these:
+            document.images
+            document.getElementByTagName()
+            document.getElementById()
+
+            i.e.    ctx.drawImage(document.getElementById("imageId")), 0, 0)
+
+    Using the crossOrigin attribute on an HTMLImageElement you can request permission to load an
+    image from another domain for use in your call to drawImage(). If the hosting domain permits
+    cross-domain access to the image then the image can be used in your canvas without tainting it,
+    otherwise using the image will taint the canvas.
+    (A tained canvas means you can no longer pull data back out of the canvas, so you can no
+    longer use the canvas toBlob(), toDataURL(), or getImageData() methods, doing so will throw
+    a security error. Note that you can still use an image that doesn't give cross-domain access,
+    it just taints the canvas).
+
+    You can also create an image from scratch.
+    Create a new HTMLImageElement object by using the Image() constructor.
+            var img = new Image();
+            img.addEventListener("load", function() {       // this makes sure the image is done
+                // execute drawImage statements here        // loading before it is drawn
+            }, false);
+            img.src = 'filename';                           // image starts loading here
+
+    If you have lots of images to load instead of doing the above code you want to use the
+    JavaScript Image Preloader:
+                    http://www.webreference.com/programming/javascript/gr/column3/index.html
+
+    Can also include an image via the data:url, which allows you to completely define an image
+    as a Base64 encoded string of characters directly in the code.
+
+    Grabbing a frame from video:
+        Can grab a frame from an embedded video by returning from a function or assigning a
+        variable to:            document.getElementById("theVideoId");
+        This gets an HTMLVideoElement, which I guess captured the current frame of the video.
+
+    Drawing an Image:
+        Once you have the source image object you can use the drawImage() method to render it to the
+        canvas. The drawImage() method is overloaded and has several variants. Its most basic form
+        is:
+            drawImage(image, x, y)
+                Draws the CanvasImageSource specified by the image parameter to coordinates (x,y).
+        i.e.
+            var img = new Image();
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0);
+                ctx.beginPath();
+                ...//draw stuff over the image if you want...
+            };
+
+        A variant of drawImage() lets you place scaled images on the canvas:
+            drawImage(image, x, y, width, height)
+        Can tile an image using this function and a couple for loops.
+
+        The third and last variant of the drawImage() method has eight parameters. It lets you cut
+        out a section of the source image, then scale and draw it to the canvas.
+            drawImage(iamge, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+        The parameters:
+            (The "s" parameters refer to the source image, the "d" parameters refer to the
+            destination.)
+            
+            sx, sy   -  the x and y coordinates from the top left corner of the source image
+                        where the clipped image's top left corner starts
+            sWidth, sHeight -   the width and height to slice out of the source image
+            dx, dy   -  the x and y coordinates on the destination canvas of where to put the 
+                        sliced image
+            dWidth, dHeight -   the width and height that the sliced image will have on the
+                                destination canvas
+        You can use this slicing version of the drawImage() function like in game making putting
+        one big sprite map in the game so everything loads in one image, and then slicing it up
+        into individual sprites to improve performance.
+
+    When images are scaled some scaling algorithms are used to smooth the image. This is controlled
+    by the mozImageSmootingEnabled property, which by default is set to true. If you don't want
+    this smoothing of images when they are scaled you can set this method of the canvas context
+    to false:           ctx.mozImageSmoothingEnabled = false;
+
+    One use of drawing images on canvas is you could make a photo gallery where each photo is
+    drawn on its own canvas, against a background, with a frame also in the canvas.
+
+
+--------------------
+
+
+Applying Styles and Colors
+
+    Applying colors to a shape, there are two important properties:
+        fillStyle = color
+                Sets the style used when filling shapes
+        strokeStyle = color
+                Sets the style for shapes' outlines
+    The color can be a CSS color (hex, rgb, rgba, color name), a gradient object, or a pattern
+    object. By default the stroke and fill colors are set to black.
+    Once a color style is set, that becomes the default color for all shapes made after that, so
+    you always have to re-assign the color style before drawing an object.
+
+    globalAlpha
+        Can set an alpha value for all new shapes being drawn by changing the globalAlpha property,
+        which by default is 1.0. It is a property of the canvas context.
+        ctx.globalAlpha = 0.4;
+
+
+    Line Styles
+        lineWidth = value
+                Sets the widths of lines drawn in the future
+        lineCap = type
+                Sets the appearance of the ends of lines
+        lineJoin = type
+                Sets the appearance of the "corners" where lines meet
+        miterLimit = value
+                Establishes a limit on the miter when two lines join at a sharp angle, to let you
+                control how thick the junction becomes
+
+    i.e. ctx.lineWidth = 1.0
+         ctx.beginPath(); ...
+
+    Note that for lines drawn, if a light is drawn directly on a pixel coordinate, [i.e. (2.5)],
+    and the width is odd, like lineWidth=1, then that means the line will extend to half a pixel
+    from the stated coordinate, and a blur effect will happen to the line. To make this not happen
+    and odd width'd line must go from .5 coordinate to .5 coordinate. Or just use even-width'd
+    lines.
+
+    lineCap
+        Choices for the type are:
+            butt    -   ends are squared off at the endpoint
+            round   -   rounded edge just past the endpoint
+            square  -   ends of lines are squared off by adding a box with an equal width and half
+                        the height of the line's thickness
+
+    lineJoin
+        Choices for type are:
+            round   -   rounds off the corners by filling an additional sector of disc centered at
+                        the endpoint
+            bevel   -   fills an additional triangular area between the common endpoint. Basically,
+                        this ends in a flat top at the endpoint
+            miter   -   connected line segments are bought to meet at a single point, so this makes
+                        a charp edge to the connection of the lines
+
+    miterLimit
+        Determines how far the outside connection point can be placed from the inside connection
+        point.
+        WILL HAVE TO LOOK THIS UP AGAIN TO REALLY FIGURE IT OUT.
+
+
+
+Gradients
+
+    You can fill and stroke shapes using linear and radial gradients. Create a canvasGradient object
+    by using one of the following methods, then assign this object to the fillStyle or strokeStyle:
+
+        createLinearGradient(x1, y1, x2, y2)
+                Creates a linear gradient object with a starting point and an end point as
+                parameters
+
+        createRadialGradient(x1, y1, r1, x2, y2, r2)
+                Creates a radial gradient. The parameters represent two circles, one with its
+                center at (x1, y1) and radius r1, and so on.
+
+    The above methods are methods of the canvas context.
+    Once a canvasGradient object has been created (assign it to a variable), you can assign colors
+    to it by using the addColorStop() method.
+
+        gradient.addColorStop(position, color)
+                Creates a new stop color on the gradient object. The position is a number between
+                0.0 and 1.0 and defines the relative position of the color in the gradient, and
+                the color parameter must be a CSS color.
+
+                i.e.
+                    var lineargradient = ctx.createLinearGradient(0,0,150,150);
+                    lineargradient.addColorStop(0, 'white');
+                    lineargradient.addColorStop(1, 'black');
+
+    To make a very sharp color transition you can assign two color values to one position using
+    two addColorStop() methods.
+
+    With the radial gradients you can make something that looks like a sphere with a sheen on it.
+
+
+Patterns
+
+    createPattern(image, type)
+        This method creates and returns a new canvas pattern object to create a pattern of images.
+        Parameters:
+            image   -   a CanvasImageSource object (i.e. an HTMLImageElement, another canvas, a
+                        <video> element,etc.)
+            type    -   a string indicating how to use the image. Possible values are:
+                            repeat  -   tiles the image in both vertical and horizontal directions
+                            repeat-x    -   tiles only horizontally
+                            repeat-y    -   tiles only vertically
+                            no-repeat   -   doesn't tile the image, only displays it once
+
+        i.e.
+            var pattern = ctx.createPattern(imgVar, 'repeat');
+            ctx.fillStyle = pattern;
+            ctx.fillRect(0,0,150,150);
+
+
+Shadows
+
+    Using shadows involves four properties:
+        shadowOffsetX = float
+                indicates the horizontal distance the shadow should extend, default is 0.
+        shadowOffsetY = float
+                indicates the vertical distance the shadow should extend, default is 0.
+        shadowBlur = float
+                indicates the size of the blurring effect (doesn't refer to pixels), default is 0.
+        shadowColor = color
+                a standard CSS color value indicating the color of the shadow effect, default is
+                a fully transparent black
+
+
+--------------------
+
+
+    Saving and Restoring State
+
+        NOTE:   THIS DOES NOT ACTUALLY SAVE AND RESTORE THE CANVAS DRAWINGS THEMSELVES, IT JUST
+                SAVES AND RESTORES CANVAS PROPERTIES. SO THIS CANNOT BE USED AS AN UNDO BUTTON.
+
+        save()
+            Saves the entire state of the canvas
+
+        restore()
+            Restores the most recently saved canvas state
+
+        These methods are called on the canvas context object.
+        Canvas states are stored on a stack. Everytime the save() method is called the current
+        drawing state is pushed onto the stack. Every time the restore() method is called the last
+        saved state is poopped off the stack and all the saved settings are restored.
+
+
+--------------------
+
+
+Transformations on the Canvas itself
+
+    It is a good idea to save the canvas state before doing any transformations so you can revert
+    back to a previous state if needed.
+
+    translate()
+        Used to move the canvas and its origin to a different point in the grid.
+        Translation can be useful when doing some complex drawing that needs to move around to
+        different parts of the canvas but where changing the coordinates in the function might
+        be a little confusing so just changing the coordinates of the grid itself makes it a bit
+        easier to understand. If the drawing is done in a loop, you can save the canvas state
+        at the beginning of the loop, do the translation, do the drawing, and then restore the
+        original canvas state at the end of the loop.
+        
+        Syntax:     context.translate(x,y);
+
+    rotate()
+        Used to rotate the canvas around the current origin.
+        The rotation center point is always the canvas origin. To change the center point you need
+        to move the canvas with translate().
+        This method is useful if drawing something figure in a circular mosaic, using for-loops
+        to adjust the rotation and the distance from the center
+
+        Syntax:     context.rotate(angle)           <-- angle is in radians
+
+    scale()
+        Used to increase or decrease the units in the canvas grid.
+        The x and y parameters are the factors by which you scale the canvas. Negative values
+        reduce the unit size and positive values increase the unit size.
+        By default, one unit of the canvas is one pixel. For example, a scaling factor of 0.5
+        would make the unit size 0.5 pixels and so all shapes would be drawn at half size.
+        In this way you can stretch or condense, horizontally or vertically, a figure drawn on
+        the canvas. You scale the canvas, then do the drawing. Scale (>1.0) up to make drawing
+        bigger, scale down (<1.0) to make the drawing smaller.
+
+        Syntax:     context.scale(x,y)
+
+        Using a translate and scale in the following way would mirror the y-axis so that you have
+        a cartesian coordinate system:
+                translate(0, canvas.height);
+                scale(1,-1);
+
+    transform() and setTransform()
+        Allows modifications directly to the transformation matrix.
+        The parameters refer to spots in a 2D matrix (i.e. m12 means first column, second row),
+        and dx and dy are the x and y factors of the 2x1 matrix that multiplies the matrix created
+        by the first four parameters, like so:
+
+            [m11  m21] * [dx]
+            [m12  m22]   [dy]
+
+        Syntax:     context.transform(m11, m12, m21, m22, dx, dy)
+
+                    context.setTransform(m11, m12, m21, m22, dx, dy)
+
+        If any of the arguments are Infinity the transformation matrix must be marked as infinite
+        instad of the method throwing an exception.
+
+        The setTransform() method resets the current transform to the identity matrix and then
+        invokes the transform() method with the given arguments. Basically, this resets the
+        tranform matrix and then applies the new one given in the arguments, so if you already
+        have a transform and want to do a different one, use transform() for the first one, and
+        then use setTransform() for the second one.
+
+
+--------------------
+
+
+Compositing
+
+    Normally shapes are just drawn one on top of the other. Compositing is used to draw shapes
+    behind existing ones and also to mask off certain areas, clear sections from the canvas (not
+    limited to rectangles like clearRect()) and some more stuff.
+
+    globalCompositeOperation
+        This sets the type of compositing operation to aply when drawing new shapes. The value it
+        is set to (the type) is a string identifying which of the twelve compositing operations to
+        use.
+        
+        Syntax:     globalCompositeOperation = type
+
+        Types:
+            source-over         -   (default) draws new shapes on top of the existing canvas content
+            source-in           -   new shape is drawn only where both the new shape and the
+                                    destination canvas overlap, everything else is made transparent
+            source-out          -   new shape is drawn where it doesn't overlap the existing content
+            source-atop         -   new shape is only drawn where it overlaps the existing content
+            destination-over    -   new shapes are drawn behind the existing content
+            destination-in      -   the existing canvas content is kept where both the new shape
+                                    and the existing canvas content overlap, everything else is
+                                    transparent
+            destination-out     -   existing content is kept where it doesn't overlap the new shape
+            destination-atop    -   existing content is only kept where it overlaps the new shape,
+                                    the new shape is drawn behind the canvas content
+            lighter             -   where both shapes overlap the color is determined by adding
+                                    color values
+            darker              -   where both shapes overlap the color is determined by subtracting
+                                    color values
+            xor                 -   shapes are made transparent where both overlap, and drawn normal
+                                    everywhere else
+            copy                -   only draws the new shape and removes everything else
+
+
+    Clipping Paths
+        A clipping path is liek a normal canvas shape but it acts as a mask to hide unwanted parts
+        of shapes. Everything that falls outside of the path won't get drawn on the canvas.
+
+        Using a clipping path is ideal for drawing multiple shapes in a restricted area.
+        The two already mentioned drawing paths are stroke() and fill(), clip() is the third.
+
+        clip()
+            Turns the path currently being built into the current clipping path. (by default the
+            canvas element has a clipping path that is the same size as the canvas itself so that
+            no clipping occurs, clip() just allows you to change that for a given path).
+            
+            You use clip() instaed of closePath() to close a path and turn it into a clipping path
+            instead of stroking or filling the path.
+
+            The clipping path after using the clip() method is kept as part of the canvas state,
+            so to revert back to the default clipping path (the whole canvas) you need to save the
+            canvas state and then restore it once you are done drawing in the clipping path.
+
+
+--------------------
+
+
+Basic Animation
+
+    The biggest limitation is that once something is drawn it stays that way, so to move something
+    you have to draw it and everything that was drawn before it.
+
+    Steps to draw each frame:
+        1. Clear the canvas
+                Need to clear any shapes that have been drawn previously. The easiest way is using
+                the clearRect() method.
+        2. Save the canvas state
+                If you're changing any setting, such as styles, transformations, etc) which affect
+                the canvas state and you want to make sure the original state is used each time a
+                frame is drawn, you need to save that original state.
+        3. Draw animated shapes
+                The step where you do the actual frame rendering.
+        4. Restore the canvas state
+                If you've saved the state, restore it before drawing a new frame.
+
+    Controlling an animation:
+        Normally you only see what is drawn to the screen when the script finishes executing. So
+        to do animations you need a way to execute drawing functions over a period of time. to do
+        this you use the following JavaScript functions (actually these are no longer the
+        recommnended way to schedule animations):       window.setInterval(function, delay) and window.setTimeout(function, delay).
+        
+        The above two functions are no longer the recommended way to schedule animations, instead
+        use the following functions:
+
+                window.requestAnimationFrame()
+
+        You can set event listeners for keyboard or mouse events to allow the user to control the
+        animation.
+
+        For timing use stuff like the Date object methods like .getSeconds(), .getMilliMilliseconds,
+        .getMinutes(), .getHours(), etc.
+
+        window.requestAnimationFrame()
+            This tells the browser you wish to perform an animation and requests that the browser
+            call a specified function to update an animation before the next repaint. Your callback
+            function must itself call requestAnimationFrame() if you want to animate another frame
+            at the next repaint. Call this method whenever you're ready to update your animation
+            screen. The number of callbacks is usually 60 times per second.
+
+            Syntax:
+                requestAnimationFrame(callback);    // Firefox23 / IT 10 / Chrome / Safari 7 / iOS
+                mozRequestAnimationFrame(callback);    // Firefox < 23
+                webkitRequestAnimationFrame(callback);    // Older versions of Safari and Chrome
+
+            Parameters:
+                callback -  is the name of the function to call when it's time to update the
+                            animation for the next repaint. In the function definition the callback
+                            function must take one argument, a DOMHighResTimeStamp, which indicates
+                            the current time for when requestAnimationFrame starts to fire
+                            callbacks.
+
+            The requestAnimationFrame() function does have a return value which is a long integer
+            that uniquely identifies the entry in the callback list. This is a non-zero value, but
+            you may not make any ther assumptions about its value. You can pass this value to
+            window.cancelAnimationFrame() to cancel the refresh callback request.
+
+            Can handle all the requestAnimationFrame version for different browsers with this code
+            before actually calling the requestAnimationFrame() function.
+
+                window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+            See this webpage for an example:
+                    https://developer.mozilla.org/en-US/docs/Web/API/window.requestAnimationFrame
+
+
+--------------------
+
+
+Optimizing canvas
+
+    Tips to improve canvas performance:
+        - pre-render similar primitives or repeating objects on an off-screen canvas
+        - batch canvas calls together (for examle, draw a poly-line instead of multiple separate
+          lines)
+        - avoid floating-point coordiantes and use integers instead
+        - avoid unnecessary canvas state changes
+        - render screen differences only, not the whole new state
+        - use multiple layered canvases for complex scenes
+        - avoid the shadowBlur property whenever possible
+        - with animations, use window.requestAnimationFrame()
+        - can test performance with JSPerf
+
+
+----------------------------------------------------------------------------------------------------

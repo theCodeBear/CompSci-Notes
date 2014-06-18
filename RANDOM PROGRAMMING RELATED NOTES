@@ -1,0 +1,12 @@
+RANDOM PROGRAMMING RELATED NOTES
+
+To make my profile see where an executable is located so I can use it from the command line
+I don't need to make a symbolic link and put it in /usr/bin, instead I can just configure a
+path variable by going to my .bash_profile file and typing in:
+        export PATH="$PATH:absolute-path-to-exe"
+Since I have macports I might need to add this line also to the file:
+        .bash_profile.macports...etc.
+And then running my .bash_profile by typing in this at the command line:
+        source .bash_profile
+Although you only need to run the .bash_profile once ever like this and then the terminal
+will always run the bash profile when it is opened.

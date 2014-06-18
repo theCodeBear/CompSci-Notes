@@ -1,0 +1,263 @@
+Git
+
+-download git
+-go to command line and type in git to make sure it is set up correctly
+-set up your name that will be attached to all the files in git with
+this CL command:
+            git config --global user.name "Todd Kronenberg"
+- set up your email similarly to the name:
+            git config --global user.email toddkronenberg@gmail.com
+
+- now set up a git repository, which is simply a place to store git
+files. So go to a directory that you have source code files in and type this command:
+            git init
+That command initializes the git repository for the files in that directory.
+
+A git commit is saving a current version of a file.
+
+Each individual project needs to be in its own git repository. Which means that
+each project needs to be in its own folder/directory (and then you make that
+directory a git repository).
+
+
+
+
+
+Command:     git status
+- type the "git status" command in the command line when inside the
+directory in which a git repo is stored. It'll show what files have
+been committed.
+
+Command:     git rm --cached filename
+This command removes a specific file from the index of files listed
+in the git status, so it removes a file from being ready to commit
+
+Command:     git rm filename
+This I believe removes the actual files from the directory. So this
+is only if you want to actually delete files I think…. or maybe it
+adds their removal from the repository to the staging area. Have to
+look up.
+
+Command:     git add filename.blah
+             git add --all
+Use the "git add" command to either get a single file in that directory
+or all the files in that directory (and all sub-directories)ready to be
+committed to the git repository.
+Then need to type the command:      git commit
+
+Command:     git commit
+The "git commit" command commits/saves all the files/changes listed
+in the git status (ready to be committed) to the git repository. This
+commits a snapshot of these files to the git repo. Need to then type
+in a commit message that is a comment on why the file was committed
+(i.e. what changes were made or whatever). When committing like this
+you must put -m before the commit message, but the message doesn’t
+need to have any quotes around it. Notice that the commit
+message opens up in Vim so need to use "i" to go into edit mode and
+then type it and then exit by saving & quitting back in the command
+mode or whatever it's called by hitting escape and then ":wq"
+
+Command:     git commit -a -m ‘commit message’
+The "-a" adds all the files to the commit. The "-m" lets you specify
+the commit message right here. So this is one command to do the add,
+commit, and commit message all together. The commit message must be
+in single quotes. Can’t be in double quotes or won’t work.
+
+Command:     git log
+Shows the history of the commits. Shows each commit with a commit ID,
+which is just a really long alpha-numeric sequence, shows the author,
+date, and the commit message, and the linear history of the commits.
+The HEAD is the most recent commit. Can refer to each committed
+instance of the file by its commit ID, but can easily refer to the
+most recent commit by just the word HEAD. The most recent commit will
+be at the top.
+
+command		git log —-graph
+Shows a graphical representation of branches and merges in the log.
+
+command:     git show
+             git show theCommitID
+The "git show" command outputs a specific commit on the terminal. It
+will show all changes that were committed in the last commit if no
+argument is given, or it will output a specific commit if the
+commit ID is typed in as an argument, just need to type in the first
+few (maybe five) characters of the commit ID for git to figure out
+which one. So git show will show the changes in the last commit, but
+to see previous commits you need to do git show and then the first
+five characters of the Commit ID.
+i.e.	git show 75f2b
+Note: git show only shows the actual changes that were made in the
+commit, not the whole files.
+
+
+Branching:
+Non-linear development process. Changes on one brach do not affect
+other branches. Can create a branch, delete a branch if you no
+longer want it, or you can merge a branch back into the main file
+if you like the changes. The main branch for any project is called
+Master.
+
+command:	git branch branchName
+Creates a branch with all your files in it.
+
+command:	git checkout branchName
+Switches the branch you are working on to the one specified.
+
+command:	git branch
+Shows the names of all the branches. There will be an asterisks next
+to the branch that you are currently on.
+
+command:	git merge branchName
+Type this when in the side branch to merge it into the Master branch,
+that way the changes you made in the side branch will be part of the
+Master branch. Makes a new commit representing the point at which
+the two files are merged.
+If there is a file that has recent changes in each branch when they
+are merged git won’t be sure which one to make the new version so
+it’ll tell you there is a conflict and put both the versions of the
+code in the file and tell you where the conflict is so you can choose
+for yourself in the code which one should be used. The changes from
+the two different branches are separated by “========“ some equal signs.
+If you get a conflict, you can go to “git status” and it’ll show you
+what files had conflicts, so you can then go into the files, find
+the conflicts and resolve them. Once resolved you want to re-commit
+that file so its committed with the conflicts resolved.
+
+command:	git mergetool
+Brings up a tool to go through all the conflicts from a merge.
+
+command:	git branch -D branchName
+Deletes the branch specified.
+
+command:	git rebase branchName
+Merges but without making a new commit representing the merge, so it
+keeps the linear history of the commits. What it does is take the
+commits back to when you branched, and then put the new commits from
+the branch as commits on the Master branch.
+
+command:	git revert CommitID
+Can go back to a previously saved version, in case you screw something up
+later on. So this makes a new commit based on an old commit so you can
+jump back and make the current version an older version.
+
+command:	git checkout —- filename
+Replaces current version with the version in the index, I guess in case
+you added a file to the index but didn’t commit it, and since then you
+made changes to the file and saved them, then doing this command will
+revert your file back to what is still left sitting in the index waiting
+to be committed.
+NOTE: that checkout does not make a new commit, it just replaces the
+currently saved file with an older version, you then have to commit it
+to get this newer version back in the HEAD commit.
+
+command:	git checkout CommitID filename
+Replaces the specified file with an older version of it from a past commit
+and commits that older version as the newest commit. It is like revert
+but only with a single file instead of a whole commit.
+To go back to the last commit, so to revert a single file back to what it
+was in the last commit say:		git checkout HEAD filename
+because the HEAD is the name of the last commit.
+
+command:	git reset —-hard CommmitID
+I think this gets rid of all the commits going back to the specified commit
+and gets rid of the later commits. However, git doesn’t totally get rid
+of anything, it keeps track of everything you do.
+The command:	git reset filename	can also just remove a file from
+the staging area.
+
+command:	git reflog
+This gives a history of everything you’ve done, not just a history of commits
+like git log. So you can use the CommitID hashes listed in the git reflag
+to revert back to a previous version before a hard reset.
+
+command:	git bisect bad CommitID
+		git bisect good CommitID
+		git bisect start
+Do a binary search over all of your commits. Helpful for finding a bug but
+you don’t know when it was introduced. You tell git which commit definitely
+has the bug and which commit definitely doesn’t have the bug. Then
+git bisect does a binary search through the in-between commits. So what it
+does is brings you into that middle commit to find the bug, you can then
+just look in your files or run them or whatever you have to do to see if
+the bug is in there, and if it is you type:		git bisect bad
+and that way it’ll move ahead in the binary search closer to the commit
+that you said was good. When you find a commit that doesn’t have the bug
+you type:	git bisect good		and then git will tell you based
+on what you said was bad and good as you were going through the binary
+search which commit seems to have had the bug.
+During this process you are not in an actual branch. So after the search
+is done you just type:		git checkout master		to get
+back to a branch (the master branch).
+
+command:	git checkout CommitID
+This takes you to a previous commit based on the CommitID given. You are
+no longer on the master branch now, you’re not in a branch. Here you can
+play around and make commits without affecting the master branch. I guess
+while checking out an old commit you can branch that, and then when you
+go back to your master branch you’ll see that this new branch has been
+created with the old commit.
+
+command:	git diff CommitID
+Shows you the changes between the last commit and the current state of
+the files…I think. Something like that. Can also use:  git diff —-staged
+to see differences between the staged and something else, I guess the
+last commit.
+
+
+
+Git allows distributed development, so multiple people can be working on
+a project each with the same history.
+
+ssh-keygen
+An ssh key allows you to log into a server without using a password. This
+allows you to interact with sites like GitHub. So you want to set up an
+ssh key on GitHub so that you don’t have to type in your password every
+time you want to send something to GitHub, because your computer will have
+a key on it and GitHub will know its you that way.
+An ssh key has a private and public key
+
+
+command:	git push theURL branchName
+To send commits to GitHub, or even to send all the histories of your
+files that you’ve been committing to git and now want to send to GitHub.
+So to push the Master branch of a git repository to GitHub you just do:
+	git push theGitHubURL master
+URL format for GitHub is:	git@github.com:theCodeBear/repositoryName.git
+
+command:	git remote add remoteName theURL
+To make a shortcut for the URL so you don’t have to type in the long URL
+every time you push to GitHub, you can create whats called a remote, which
+acts as an alias for the URL for the repository on GitHub.
+
+command:	git clone URL
+If you haven’t created a repo for a project cloning a project from the internet
+will pull the repo to your local computer with all the histories. The branches
+won’t be pulled down when cloning.
+
+command:	git pull URL branchName
+If you already have a repo for a project you use pull instead of clone. This
+takes all the changes that have been made since the last pull, and merge
+them into the current local git commit version.
+
+command: 	git branch -a
+Lists all the branches that currently exist on a server.
+
+command:	git checkout -b URLalias/branchName
+The -b means to create a new branch. This command creates a new branch and pulls
+the branch from the server to your local computer.
+
+
+You can use git to actually deploy changes to a website. Set up an ssh key. Copy
+the public key into the server in a directory called .ssh and in a file named
+authorized_keys. This file contains a list of every ssh key that can access the
+server, and you put all of the developers public keys (to the authorized_key file)
+that should be able to access the server.
+command:	git init —-bare
+This makes a repository that does not actually contain any files, but this is
+just a place to send files to.
+command:	git remote add alias
+		git push alias master
+Sends files to website server to put new website files right onto the server.
+
+Hooks:
+A git hook is a script that fires when you do some predetermined action.
