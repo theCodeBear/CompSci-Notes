@@ -64,6 +64,7 @@ Command Line Arguments
         Python          library to use:     import sys
                         number of args:     len(sys.argv)
                         values of args:     sys.argv[]
+                        assign args:        script, arg1, arg2 = argv
         
         JavaScript      
         PHP             
@@ -150,6 +151,18 @@ Strings and Arrays
         Python          len(str)
         JavaScript      
         PHP             
+
+
+Text Processing
+
+    Reverse a String
+        C
+        C++
+        Java
+        Python          reversedStr = str[::-1]
+        Javascript
+        PHP
+
 
 
 Functions

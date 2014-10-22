@@ -179,9 +179,16 @@ Operators:
 ************************ FUNCTIONS ************************
 
 
-Syntax:         function myFunc(var1, var2) {
+Syntax (Declaration Notation):
+                function myFunc(var1, var2) {
                     code...
                     return blah;
+                }
+
+OR
+
+Syntax:         var myFunc = function(params) {
+                    code...
                 }
 
 Can return a value by either assigning it to a variable, or you can put that value straight
@@ -193,6 +200,55 @@ Can call functions when events happen, like on button clicks. Some examples:
         <button onclick="myFunc(args)"> Click Me </button>
         <input type="button" value="blah" onclick="myFunc(args)">
 
+
+Functions in JavaScript are first order objects (I think that's what it's called), which means functions are data too. This allows functions to be sent as arguments to other functions.
+
+Anonymous functions are functions that don't have a name because the functions are defined in-place in argument fields of a function call.
+Syntax:
+                myFunc(var1, function(params) {
+                    // code for anonymous function...
+                });
+
+The above anonymous function is also an example of a callback function, which is a function that is called after the calling function (myFunc) is finished executing. So in the above example, myFunc() will finish executing and then call the anonymous function from the argument list. This creates asynchronous execution because JavaScript will keep executing other pieces of code while myFunc() is executing, and then the anonymous function is executed once myFunc is finished.
+
+Note that when using the Declaration Notation for creating a function that any function created
+this way is conceptually moved to the top of their scope. This means that function declarations are not part of the regular top-to-bottom flow of control. So you can declare a function in this way below a piece of code that uses it. This only works for declaration notation, if you define a function as a variable this does not work - the function variable must be created in the code above where it is used.
+Note also that in JavaScript you should never declare a function using declaration notation inside a conditional block or loop. Only use declaration notation to create a function in the outermost block of a function or program.
+
+Optional Arguments:
+    JavaScript isn't too strict on the number of arguments sent to a function. If you give too many, the extra arguments are ignored. If you give too few, the missing parameters get assigned the value of undefined.
+    This functionality allows you to make a function take optional arguments, which would just entail having an if-statement in the function that asks if an argument is undefined and if it is then give it some default value. So you could have two parameters, and if the user only gives one parameter then the function definition assigns a default value to the second parameter.
+
+Closure:
+    Closure is being able to reference a specific instance of local variables in an enclosing function. A function that "closes over" some local variables is called a closure. A closure frees you from having to worry about lifetimes of variables, and also allows for some creative use of function values.
+    So a closure is a function that is returned by another function, and this closure that is returned includes a local variable from the outer function. In this case the closure keeps the local variable alive even after the outer function is exited. And so if that outer function was called again you would then have two instances of the local variable of that function still in existence out of that function because they exist in the closures.
+
+    i.e.
+            function wrapValue(n) {
+                var localVar = n;
+                return function() { return localVar; };
+            }
+            var wrap1 = wrapValue(1);
+            var wrap2 = wrapValue(2);
+            console.log(wrap1());       // outputs: 1
+            console.log(wrap2());       // outputs: 2
+
+    i.e.
+            function multiplier(factor) {
+                return function(number) {
+                    return number * factor;
+                }
+            }
+            var twice = multiplier(2);
+            console.log(twice(5));      // outputs: 10
+
+
+Note that iteration in JavaScript tends to be faster than recursion. So for simple problems just use iteration. But for more complex problems where iteration would make the code really complex, if recursion simplifies the code a lot then use recursion and just give up some of the speed you lose from recursion.
+The general rule of programming is to not worry about efficiency until you know for sure that the program is too slow. If it is, then find the parts you can make more efficient.
+
+
+Using two sets of parenthesis:
+    In JavaScript you can use two sets of parenthesis when calling a function if the function has a closure.
 
 
 
@@ -233,6 +289,12 @@ for/in-loop:
                 for (var x in obj) {
                     code...
                 }
+
+forEach:
+                The forEach is a method to use on arrays.
+                arr.forEach(function(item) {
+                    code for each item of the array...
+                });
 
 while loop:
                 while (condition) {
@@ -330,6 +392,8 @@ Nearly everything in JavaScript can be used as an object. Booleans, Numbers, Str
 Math, Regular Expressions, Arrays, and even Functions are either always objects or can be
 treated as either primitive data or objects.
 
+See this:  http://phrogz.net/JS/classes/OOPinJS.html    for info about creating public and private variables and methods of objects. (var means private, this. means public).
+
 Since functions are objects, you can create an object simply calling a function (with the "new"
 keyword) whose arguments act as a constructor and assigning them to values using the "this" keyword, and assigning that new object/function to a variable.
 i.e.
@@ -346,12 +410,63 @@ i.e.
             }
 
         }
-        someDude = new person("Jonas", "Simbacca", 55, "gray");     // this creates an object
-        someLady = new person("Angie", "Lovelace", 23, "green");
+        var someDude = new person("Jonas", "Simbacca", 55, "gray");     // this creates an object
+        var someLady = new person("Angie", "Lovelace", 23, "green");
+
+Instead of creating an object constructor as a function you can also just straight up create an object as a variable instead of constructing an object off a constructor blueprint:
+i.e.
+        var obj1 = {
+            // data...
+            // methods...
+        };
+
+There are two ways to make methods of objects during the object definition.
+    
+    1. Create a member variable to reference the function:
+
+                this.funcName = funcName;
+                function funcName(params) { body }
+
+    2. Assign an anonymous function directly to a member variable:
+
+                this.funcName = function(params) { body };
+
 
 You can add properties (variables and methods) to already existing objects.
 i.e.
         person.hairColor = "blonde";
+    or
+        person['hairColor'] = "blonde";
+
+Properties of values can be accessed or created using either dot notation or brackets. If a property name is not a valid variable name (like a string with spaces, or a number) then it can only be accessed through bracket notation.
+
+
+You can delete a property from an object using the delete keyword.
+Syntax:
+            delete myObj.propName;
+
+The "in" operator, when applied to a string on its left side and an object on its right side, returns a boolean value indicating whether that object has a property of that name (the string).
+i.e.    This checks if myObj has a property called todd:
+            "todd" in myObj                 // returns true if myObj has a todd property
+
+
+JavaScript's == operator, when comparing objects, will return true only if both objects point to exactly the same value. If two objects hold the same values but don't point to the same spot in memory then == will return false.
+
+
+
+************************ DATA STRUCTURES ************************
+
+
+Data Structures can be made by making an object with just data.
+You can make an object with just data (no methods) with a little bit different syntax than the objects shown in the section above. It is similar to the second way shown in the previous section except that instead of using (this.myVar = value) you just use (myVar: value), or if the property name is not a valid variable name (like numbers or text with spaces) you can just put it in quotes like you normally would in such situations. And you separate the properties in the data structure object with commas. And don't forget to put a semi-colon after the object definition, just like when you declare any object directly as a variable.
+
+i.e.
+    var dataStructObj = {           // { } creates an object
+        myVar: true,
+        myArr: ["yo", "man", 56],
+        "my string": "Me llamo Todd",
+        "3": false
+    };
 
 
 
@@ -435,6 +550,8 @@ Use \ for escape characters.
 
 Strings can be primitive strings or objects.
 
+String variables are immutable, they cannot be changed.
+
 
 
 
@@ -475,6 +592,11 @@ i.e.
             for (i=0; i<this.length; i++)
                 this[i] = this[i].toUpperCase();
         }
+
+Some methods for arrays:
+    .push(elements);             // appends one or more elements onto an array
+    .pop();                     // removes and returns the last element of the array
+    .join(delimiter);           // Joins the elements into a string separated by the delimiter
 
 
 
@@ -1158,7 +1280,7 @@ Draw a rectangle
 
     i.e. of a filled rectangle:
 
-            ctx.fillStyle = "rgb(255,0,0);"
+            ctx.fillStyle = "rgb(255,0,0)";
             ctx.fillRect(x, y, width, height);      // x, y coords define element's top-left corner
                                                     // from the top-left corner of the canvas
 
@@ -1190,7 +1312,7 @@ Drawing text
 
     Most important methods:
 
-        fillText()  -   The texit is filled using the current fillStyle.
+        fillText()  -   The text is filled using the current fillStyle.
                         Syntax:     fillText("text", x, y [, maxWidth]);
 
             Parameters x and y are the coordinates to being drawing the text, maxWidth is an
@@ -1757,6 +1879,53 @@ Optimizing canvas
         - avoid the shadowBlur property whenever possible
         - with animations, use window.requestAnimationFrame()
         - can test performance with JSPerf
+
+
+
+
+
+
+****************************************************************
+NOTES FROM LEARNING ADVANCED JAVASCRIPT (EJOHN.ORG/APPS/LEARN)
+****************************************************************
+
+
+~ is the bitwise "not" operator in javascript. Using a double bitwise not operator (~~) can truncate a float into an integer:
+
+~~3.15;  // = 3
+
+Or you can use Math.floor(3.15);    // = 3
+Or you can use parseInt(3.15);       // = 3
+
+You can give a function two names, one global and one local to only the function (I guess just to use during recursion, but I don't see why you would bother doing this). So in the example below doThisFunc == yaFun would return true if compared inside the function definition. But yaFunc() is undefined outside the function definition.
+i.e.
+          var doThisFunc() = function yaFunc() { }
+
+One way to define an object is of course like so in JavaScript:
+
+var psych = {
+  // properties
+};
+
+And you can define a function as a property of an object like so:
+
+var psych = {
+  yell: function() { //code }                                       // the function's name is "yell"
+};
+
+Then you can of course call that function from inside (for recursion) or from outside the function using psych.yell(), both using object.method (i.e. pysch.yell()). However, you can also assign a name to an anonymous function which lets you use just the method name for recursion inside that function:
+var pysch = {
+    yell: function yell(params) {
+        yell(params);                // this works, if didn't name anonymous function then
+    }                                // we'd have had to use ninja.yell(params) for recursion.
+};
+
+You can assign a method of one object to another object like so (given the last example):
+
+var yoyo = { yell : psych:yell };                     // now yoyo.yell == psych.yell
+
+
+On #14: Lets give the anonymous function a name.
 
 
 ----------------------------------------------------------------------------------------------------

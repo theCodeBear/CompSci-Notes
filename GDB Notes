@@ -1,0 +1,43 @@
+GDB (GNU Debugger)
+
+Compile a C file
+    gcc -g -o EXENAME source.c
+
+To launch the debugger on a specific file or without specifying a file first:
+    gdb EXENAME     or      gdb
+
+Set up a breakpointat beginning of main function:
+    break main          or          b main
+
+Start program or restart it when already running it:
+    run         or      r
+
+Step through each line of code:
+    next        or      n
+
+Show source code (centered around current line):
+    list        or      l
+    i.e.    list 13         would show source code centered around line 13
+
+Shows value of a specified variable:
+    print VARIABLE      or      p VARIABLE
+
+Set breakpoint at specific line:
+    break LINENUMBER        or      b LINENUMBER
+In case of using multiple files can also specify the file:
+    b SOURCEFILE.C:LINENUMBER               i.e.    b helloworld.c:12
+
+Go to the next breakpoint:
+    continue        or      c
+
+Set the value of a variable during runtime in debugger using print command:
+    print VARIABLE = VALUE          or      p VARIABLE = VALUE
+
+Print out all of the currently in-scope local variables:
+    info locals
+
+Disable all breakpoints previously made:
+    disable
+
+Exit GDB:
+    quit        or      q

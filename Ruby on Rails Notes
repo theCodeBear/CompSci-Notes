@@ -1,0 +1,113 @@
+Ruby on Rails Notes
+
+
+
+Rails is a web framework for Ruby. Framework's are crazy. I don't like them.
+Ruby is the language you use, but Rails sets up all sorts of stuff for you to get you
+started on your website or web application.
+
+
+
+************************ DESCRIPTION OF RAILS ************************
+
+
+As a framework, Ruby on Rails (RoR) creates all sorts of files when you start a new project.
+So until you're an expert in RoR I expect that it would just be really confusing, but I
+guess that is the deal with frameworks. The upside is apparently once you understand and
+are comfortable with a framework like Rails it is supposed to make it way easier and
+quicker to make websites.
+
+You're gonna want to build Rails applications using the command line.
+
+Two guiding principles of the Rails philosophy is DRY (Don't Repeat Yourself) and convention
+over configuration (instead of having to specify things in configuration files, Rails standards
+I guess are just followed by convention).
+
+As a framework, you put all your code in Rails. Unlike when using say PHP, where you have HTML
+files and CSS files and JS files and PHP files, everything in a Rails application goes in the
+Rails framework.
+
+Rails also uses eRuby, which is embedded Ruby. eRuby allows Ruby to be embedded within an HTML
+file.
+
+MVC:
+    Rails is a Model-View-Controller (MVC) framework. This means that it divides the work of
+    the application up into three cooperating subsytems.
+
+
+
+************************ STARUP / INSTALLATION ************************
+
+
+Ideally what you do to get Ruby and Rails on your computer is to download the Ruby Version
+Manager (RVM) and then use that to download the latest version of Ruby, gems (which I guess are
+libraries or something, not sure), and Rails. The RVM keeps track of different version of Ruby
+and Rails, and you can switch between versions in case you have websites running off older
+version of Ruby and Rails. Gotta look online to figure out how to get all this done.
+
+Once you've got Ruby and Rails (and possibly RVM) set up, along with a database on the command
+line (Mac OS X comes with sqlite3 for example), you are ready to create a Rails application.
+
+Rails Server:
+    First you can check to make sure the Rails server is working. Make sure you are connected to
+    the internet, and into the command line type:           rails server
+    Then go to the browser and type in the URL:             localhost:3000
+    This should show the Rails server welcome page. This is where your website will show up on
+    localhost.
+    To stop the web server just press Ctrl+c on the command line.
+
+Create a new Rails application:
+    To create a new Rails application on the command line simply type:      rails new project_name
+                        i.e.        rails new helloworld
+    You can see all the command line options that the Rails application builder accepts by running:
+                        rails new -h
+    After building your new application, move into its directory that Rails created. There is tons
+    of stuff that Rails builds for you in the new application directory.
+
+
+
+
+More needs to be added to this section.
+
+
+
+
+************************ x ************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+************************ x ************************
+
+************************ x ************************
+
+************************ x ************************
+
+************************ x ************************
+
+************************ x ************************
+
+************************ x ************************
+
+************************ x ************************
+
+************************ x ************************

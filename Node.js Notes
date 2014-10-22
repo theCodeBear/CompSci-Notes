@@ -1,0 +1,192 @@
+Node.js Notes
+
+
+
+
+Node.js is how you use JavaScript on the server. It is basically a runtime environment and a library, not a framework or a language (ExpressJS is a popular framework for Node.js).
+To install Node follow the instructions on the Node github page: https://github.com/joyent/node/wiki/Installation
+Note that installation will create a "node" directory on your computer.
+Some good tutorials to get started using Node.js are:
+        http://www.nodebeginner.org/
+        http://nodeguide.com/beginner.html
+Other articles and sources to get a better idea of what Node.js is and how to use it:
+        http://debuggable.com/posts/understanding-node-js:4bd98440-45e4-4a9a-8ef7-0f7ecbdd56cb
+        http://www.slideshare.net/simon/evented-io-based-web-servers-explained-using-bunnies
+        http://howtonode.org/
+
+
+
+
+************************ NODE.JS BASICS ************************
+
+
+When using PHP typically you are working with an Apache HTTP server that has PHP installed, so you don't need to actually implement the HTTP server in PHP (i.e. implementing the ability to serve web pages and receive HTTP requests). But when using Node.js you are not only implementing the application, but the HTTP server as well. In fact, the web application and its web server are basically the same.
+
+Save all the JavaScript files that are part of the Node.js web application in a folder for that project. To run a javascript file using node.js you just put the file path as an argument to the "node" keyword on the command line.
+Syntax:       node filename.js
+
+To make a Hello World application in node.js, which simply prints "Hello World" to the console, create a JavaScript file named helloworld.js with the code:    console.log("Hello World");
+and then with the command line being in the node directory, type:       node helloworld.js
+
+To organize a node.js application, you want to have a main file that you execute with Node.js and then put the rest of the code in modules which are called from the main file. This allows you to keep the code clean and simple to maintain. So the main file is used to start the application, and then you can make a module where the HTTP server code lives. It is pretty standard to name the main file "index.js", and you can put the server module into a file named "server.js".
+
+In PHP, the web server starts its own PHP process for every HTTP request it receives (so different processes for different users to a website). So if one user is requesting a page that loads slowly it won't affect other users that are requesting other pages.
+However, JavaScript doesn't work like this. There is only one single process, so if there is a slow request happening somewhere, like a big database query, it affects the whole process. To avoid this JavaScript and Node.js uses event-driven asynchronous callbacks, by utilizing an event loop. Using callback functions in JavaScript makes it asynchronous. Callback functions wait until the function being run completes and then the call-back function runs, so it doesn't tie up resources waiting for everything to complete. The event loop is a loop that Node.js continuously cycles through whenver there is nothing to do, waiting for events, like waiting for a slow process to finish and deliver its results.
+
+
+In Node.js you separate an application by logically splitting it up into different files which you make into modules, and then by including those modules in other files that use them you can  bring a full application together.
+
+
+
+
+************************ CREATING AN HTTP SERVER ************************
+
+
+The code to create an HTTP server, which you can put in a file called server.js, is as shown:
+
+var http = require("http");
+http.createServer(function(request, response) {
+    response.writeHead(200, {"Content-Type": "text/plain"});
+    response.write("Hello World");
+    response.end();
+}).listen(8888);
+
+
+That's it!
+To see this simple web application run, which just displays "Hello World", just run that file like so:
+            node server.js
+and then open a web browser and go to http://localhost:8888/ to see what you made!
+
+Going over each line of code:
+    var http = require("http");
+        This requires the http module that ships with Node.js and makes it accessible through
+        the variable http.
+    http.createServer(function(request, response) { ... }).listen(8888);
+        This calls the createServer() function of the http module. The function returns an object that has a method named listen(), which takes a numeric value that indicates the port number that the HTTP server is going to listen on, which is why we use the URL http://localhost:8888/ to view the webpage (port 8888).
+        The parameter to the createServer() function is a function itself that we define right in the parameter list (defining it in-place), which is called an anonymous function because it get no name since it is defined in-place. The anonymous function is used as a callback function. We also could have made it a non-anonmyous function simply by setting the function equal to a variable name and then putting that name as a parameter of createServer() instead of the anonymous function.
+        The callback function is called when a request is made to the server (i.e. someone requests a webpage).
+        If the only code we had was this:
+                    var http = require("http");
+                    var server = http.createServer();
+                    server.listen(8888);
+        that would start an HTTP server listening at port 8888 but do nothing else. So that is all that is required to actually start an HTTP server with no functionality.
+
+
+The two parameters in the function sent to createServer() are request and response. Request and response are objects whose methods can be used to handle the details of the HTTP request that occured and to respond to the request (to actually send something back over the wire to the browser that requested the server).
+The request object is a readable stream that emits data events for each incoming piece of data.
+The response object is a writable stream that is used to send data back to the client.
+
+response.writeHead()
+    The response.writeHead() function sends an HTTP status of 200 (meaning success) and the content-type in the HTTP response header.
+response.write()
+    The response.write() function sends the actual text that makes up the body of the HTTP response.
+response.end()
+    The response.end() function finishing the response from the server to the client that requested the server.
+
+
+
+
+************************ MAKING AND USING MODULES ************************
+
+
+To make a file a Node.js module just means you need to export those parts of its functionality that you want to provide to scripts that require that module.
+
+To do this you just wrap that code in a function and then export that function using:
+        exports.funcName = funcName;
+
+The exports object is available in every module and it is returned whenever a require function is used to include a module.
+
+Syntax:
+            function funcToExport() {
+                // code to be used in another file
+            }
+            exports.funcToExport = funcToExport;
+
+    or
+
+            exports.funcToExport = function() {
+                // code to be used in another file
+            }
+
+
+To use that module in another file you just do:
+            var myVar = require("./moduleFilename");
+            myVar.funcToExport();
+
+
+require()
+    When the argument to require() is not a relative path, Node.js first looks if there is a core module with that name, but if there isn't a core module with that name then Node.js will walk up the directory tree checking for a folder called 'node_modules'. If it finds the node_modules directory then it will look in there for the module. If it can't find the module and it reaches the root directory ('/'), then Node.js will give up and throw an exception.
+
+
+
+
+************************ CREATING A ROUTER FOR THE WEB APP ************************
+
+
+Making different HTTP requests point at different parts of the code is called routing. So you should make a module called "router".
+
+To do this you need to extract the requested URL as well as GET/POST parameters from the HTTP requests. We do this be accessing the request object parameter from the function where we started the server.
+
+Need to wire the router and the server modules together. You can hardcode that dependency into the server, or you can loosely couple the server and router by injecting the dependency.
+
+To interpret the request object you need to use two Node.js modules: url and querystring
+
+url module:
+    Provides methods which allow us to extract different parts of a URL (like the requested path and query string).
+
+querystring module:
+    Can be used to parse the query string (extracted using the url module) for request parameters.
+
+These to module can extract parts of a URL in the following ways:
+i.e. with GET parameters
+
+        URL:  http://localhost:8888/start?foo=bar&hello=world
+
+        url.parse(string).pathname          -->     /start
+        url.parse(string).query             -->     foo=bar&hello=world
+        querystring.parse(string)["foo"]    -->     bar
+        querystring.parse(string)["hello"]  -->     world
+
+    The string parameter in the above lines would be, for example:  request.url
+    request being the object parameter, and url being a property of the request object.
+
+
+
+
+************************ BUILT-IN MODULES ************************
+
+
+http module
+    Has stuff needed to build an HTTP server.
+
+net module
+    Has stuff needed to build a TCP server.
+
+
+
+
+
+************************ EXPRESS WEB FRAMEWORK ************************
+
+
+Express is a popular web framework for Node.js.
+To get Express you need to download the Node.js Package Manager (NPM), and then on the command in your home directory where the node and NPM directories are saved just type "npm install express". This should work and then you'll have Express.
+
+To use Express in a Node.js file you just require the Express module like so:
+            var express = require('express');
+
+To make a web server with Express is very simple (note that createServer() in Express is deprecated so we don't use it:
+
+        var express = require('express');
+        var app = express();
+        app.get('/', function(req, res) {
+            res.send("This will be display on the webpage at the chosen port");
+        });
+        app.listen(8000);
+
+
+
+
+************************ x ************************
+
+************************ x ************************

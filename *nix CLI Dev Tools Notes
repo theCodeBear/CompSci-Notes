@@ -1,0 +1,101 @@
+*nix CLI Developer Tools Notes
+
+
+These notes are for learning how to use developer tools commonly used on the *nix command line.
+
+
+This will cover such topics as gnu compilers like gcc/g++, javac, make and makefiles, gnu debugger gdb,
+valgrind, etc.
+
+
+
+Compilers
+
+    The GNU Compiler Collection, gcc, is a collection of free command-line compilers that are generally
+    used by people on a GNU/Linux system. The gcc includes compilers for C, C++, Objective-C, Java,
+    Fortran, Ada, and Go. All I care about right now are the compilers for C and C++.
+
+    gcc
+        This is the compiler command used for C code.
+            Syntax:     gcc sourcefile.c
+            Result:     creates an executable file from the compiled source code called a.out
+        
+        If you don't specify a name for your file that holds the compiled code then it will by default
+        be put in a file called a.out, which stands for assembler output. Use the -o flag to specify a
+        name for your compiled file / executable.
+        -o flag is followed by the name of the output file (the executable) from the compiled code.
+            Syntax:     gcc -o helloWorld sourcefile.c
+            Result:     sourcefile.c will be compiled into a file called helloWorld
+        
+        To use the GNU Debugger (gdb) to be able to step through your program on the command line and
+        debug it, you must specify a -g flag when compiling.
+        -g specifies you want compile the code to use the gdb debugger.
+            Syntax:     gcc -g -o helloWorld sourcefile.c
+            Result:     If compiles correctly executable will be file called helloWorld, if there are
+                        problems you can debug helloWorld using the gdb debugger.
+
+        To compile source code without making it an executable (like in a project that has multiple files and
+        you want to compile each one into object code first and then use them all to build the executable) use
+        the -c flag.
+        -c specifies you want to compile the code to an object file but not make an executable.
+            Syntax:     gcc -c main.c
+            Result:     An object file called main.o will be created. It is not an executable file.
+
+    g++
+        This is the compiler command used for C++ code.
+
+
+
+Make and Makefiles
+
+    Make is a command line program used to automate the building of a project from source code into
+    an executable.
+    Each software project should have its own directory. You can create a makefile (a file named makefile)
+    in that directory to write down the rules that 'make' follows when building your project. The 'make'
+    program looks in the current directory for makefile, which is why each project must be in its own
+    directory (putting each project in its own directory is just standard practice, you should always do
+    this. Git, for example, also requires a project be in its own directory since a git repository applies
+    to an entire directory).
+    To run 'make' on your source code you just simply type in the command:      make
+    But you have to have a makefile in that directory for 'make' to know what to do to build your program.
+
+    How to write a makefile:
+        Create a file named makefile in your project's directory. Makefile will hold the rules for building
+        your project by specifying target files and their dependencies and the associated compiler commands
+        for each target file.
+        
+        Syntax:
+                    targetFile1: dependencies
+                        compiling_command
+                    targetFile2: dependencies
+                        compiling_command
+                    clean:
+                        rm -f *.o targetFile1
+
+        Basically in a make file you write however many pairs of lines you need to build your project; each
+        pair of lines corresponds to tell the computer to build some target file out of some dependent files
+        along with the compiler command to do it. You makefile should always end by having a clean target to
+        remove all the generated object files from the final build so you can start fresh each time you
+        rebuild the project with 'make'. The clean target is shown in the syntax example above, bsaically it
+        says remove (rm) all files that are object files (*.o) and force (-f) the suppression of any warning
+        messages that might appear. You want to also remove the final target file (targetFile1 above), which
+        I guess is different than the outputted executable even though they should be the same name. See the
+        example below and the following explanation of it to understand makefile better.
+
+        Example:
+            reciprical: main.o reciprocal.o
+                g++ $(CFLAGS) -o reciprocal main.o reciprocal.o
+            main.o: main.c reciprocal.hpp
+                gcc $(CFLAGS) -c main.c
+            reciprocal.o: reciprocal.cpp reciprocal.hpp
+                g++ $(CFLAGS) -c reciprocal.cpp
+            clean:
+                rm -f *.o recipricol
+
+        Explanation of Example:
+
+
+
+
+
+

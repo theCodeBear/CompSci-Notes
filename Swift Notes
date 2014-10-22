@@ -1,0 +1,440 @@
+Swift Notes
+
+
+Swift is Apple's new language for developing iOS and OS X apps.
+It is set to replace Objective-C, which is good because Objective-C sucks hard!
+
+You can just mess around in Swift using Xcode by opening up a new playground, a playground is
+Xcode 6's new environment for seeing immediate results of each line of code, kind of like a shell
+for an interpreted language. The playground is just used for testing code, you can't use it to make an app.
+
+Swift has been built on top of existing Apple development framework, so it works with Objective-C and
+Objective-C can be used with Swift if for some reason that is needed. Swift also borrows some of the
+syntax style of Objective-C, but is much much cleaner thatn Obj-C and easier to program in and safer to
+program in as well.
+
+
+
+
+************************ BASIC SYNTAX ************************
+
+
+Nothing is put at the end of a line of code to end it (i.e. no semi-colon)
+
+Declaring variables:
+    var myVar = value
+
+Declaring constants:
+    let myConst = value
+
+There is also a variable called a Computed Property, which doesn't actually store a value, instead
+it gets its value computed each time based on other values.
+To declare a Computed Property you declare a variable but give it curly braces and use a get { }
+statement inside it to compute the value. The get{} statement is a getter method for the Computed
+Property. You can also make a setter if you want by doing set(params) { }. What the setter would do
+is just update the values that are involved in the calculation of the Command Property, it wouldn't
+actually directly change the value of the Command Property, because then it wouldn't be a Command
+Property! Here is the syntax:
+    var myVar: dataType {
+        get {
+            return // calculation of myVar
+        }
+        set(params) {
+            // code
+        }
+    }
+
+i.e. of Computed Property
+        var subtotal: Double {
+            get {
+                return total / (taxPct + 1)
+            }
+        }
+
+
+Comparative Operators:
+    Swift does use the === identical and !== not identical operators to check if two operands are not only the same value but of the same type as well.
+
+Logical Operators:
+    ||      // or
+    &&      // and
+    !       // not
+
+
+************************ iOS PLAYGROUND BASICS ************************
+
+
+To get another pane in the playground window to display console output go to View in the top menu, then Assistant Editor, then Show Assitant Editor.
+
+
+
+
+************************ iOS Basics ************************
+
+An iOS app is split into a model, views, 
+
+
+A model for an iOS app is a class or set of classes that represent that class's data and operations the
+app will perform on that data. So basically the app's model is all the programming logic that doesn't
+have to do with the user interface itself I believe.
+
+You create the User Interface for an iOS app in something callsed a Storyboard. Xcode
+comes with a built-in tool called Interface Builder that lets you edit Storyboards in
+a nice visual way. You can lay out all your UI elements (buttons, textfields, etc), which
+are called Views, in the app by just dragging and dropping.
+
+The View Controller, the file ViewController.swift, is the Swift code for the single
+view controller ("screen") in the app. It is responsible for managing the communication
+between the views and the model.
+
+iOs is split up into multiple frameworks, each of which contain different sets of code.
+Before you can use code from a framework in your app, you have to impport it, for example,
+importing the UIKit, which is the framework that contains the base class for view
+controllers, various controls like buttons and text fields, and more.
+The syntax:     class ViewController: UIViewController          means that ViewController
+is a subclass of the class UIViewController.
+
+Unlike with Objective-C, with Swift you don't have to put a class prefix on your class
+names to avoid namespace collisions because Swift has namespace support and the classes
+you create in your project are in their own namespace.
+
+
+In the View Controller, the viewDidLoad() method is called when the root view of the
+view controller is first accessed.
+In the View Controller, the didReceiveMemoryWarning() method is called when the device
+is running low on memory. It is a good place to clean up any resources you can spare.
+
+When making properties (variables) in the source code of the View Controller you have
+to begin the declaration with the @IBOutlet keyword to let the Interface Builder know
+that this property needs to be connected to their views.
+
+By putting an exclamation mark at the end of a variable declaration you are indicating
+that they are optional values but that they are implicitly wrapped. This basically means
+that you can write code assuming that they are set but your app will not crash if they
+are not set. Implicitly unwrapped optionals are a nice way to create variables that you
+know for sure will be set before you use them (like user interface elements created in
+the Storyboard) so you don't have to unwrap the optionals every time you want to use them.
+
+Special Characters:
+    Can print out special characters by going to the top menu Edit...Special Characters... and then drag the special character or symbol you want into the code.
+
+
+
+
+************************ FUNCTIONS / METHODS ************************
+
+
+Whenever you override a method in Swift you need to mark it with the override keyword.
+This is to help avoid a situation where you override a method by mistake.
+Syntax for overriding:
+        override func funcName() { }
+
+
+
+
+************************ SWIFT I/O ************************
+
+
+Output:
+    print()             // prints without an endline
+    prinln()            // prints with an endline
+
+Use a plus "+" symbol to join things in the print function.
+                    print("This is a variable: " + myVar)
+
+
+
+
+************************ VARIABLES ************************
+
+
+The types of variables are strings, ints, floats, doubles, booleans (true or false).
+
+To declare a variable use the var keyword:          var myVar = value
+To declare a constant use the let keyword:          let myConst = value
+
+Can implicitly declare variables/constants just by using var or let keywords, fractional numbers when implicitly declared are of type Double, not float.
+But you can also explicitly declare variable types by putting a colon and the data type after the identifier:
+                    var myVar : Int = 34
+                    let str : String = "yo man"
+                    var someNum : Float = 23.29
+                    var aBool : Bool = true
+                    var myArr [String] = ["yo", "man"]
+
+String interpolation:
+    Can use a variable or constant identifier directly in a quotation by using a backslash and then putting the identifier in parentheses, like so:
+                    print("This is a variable: \(myVar)")
+
+
+Type Casting:
+        String(34)     // String type-casting only seems to convert integers, not decimal numbers
+        Float(345)      // = 345.0
+        Double(23)      // = 23.0
+        Int(34.4)       // = 34, doesn't work on strings, instead use .toInt()
+    
+    The .toInt() method for Strings, which returns an Optional since it might not be able to convert the string to a number. This means to safely unwrap what toInt() returns you need to use an if-let statement, as described in the section below on Optionals.
+
+
+Incrementing/Decrementing:
+    ++ and -- are used for incrementing and decrementing.
+
+
+Equal sign and white space:
+    Note that Swift will throw an error is you put either a value or the identifier directly next to the equal sign. Swift requires spaces around the equal sign during assignment.
+        i.e.        var yo = 45             // this is okay
+                    var yo= 45              // THROWS AN ERROR
+                    var yo =45              // THROWS AR ERROR
+
+
+
+
+************************ ARRAYS ************************
+
+
+An array, like in Python, can hold values of different types. However if you explicitly declare the type of the array then the array can only hold the data type that you declared the array to be.
+
+Create an empty array:
+            var myArr = []
+
+Explicitly declare array type:
+            var myArr : [String] = ["joman", "checkyo"]
+            var myArr : [Int] = [23, 34, 2]
+
+Adding to an array:
+    You can add to an array that is either explicitly declared or is composed of elements of a single data type, using " += [value]".
+            var myArr = [34,45]
+            myArr += [67]           // myArr now is [34,45,67]
+
+    This won't work:
+            var myArr = ["hey", 34]
+            myArr += [56]           // throws an error
+
+Accessing array elements:
+    Just use simple square bracket notation as normal:
+            myArr[1]
+            myArr[1] = "changed element"
+
+
+Some Properties and Methods of arrays:
+    myArr.count                 // gives number of elements in array
+    myArr.append(value)         // appends new element to end of the array
+    myArr.removeAtIndex(index)  // removes and returns element at specified index
+    myArr.removeAll()           // removes all elements of array, can choose to keep capacity
+                                // in the argument like so:   myArr.removeAll(keepCapacity: true)
+    myArr.removeLast()          // removes and returns last element of array
+    myArr.insert(value, atIndex: index)     // inserts a value at a certain index, pushing later
+                                            // elements in the array back on index
+
+
+
+
+************************ DICTIONARIES ************************
+
+
+Create a dictionary similar to creating an array, using square brackets:
+        var myDict = [key: value, key: value, key: value]
+
+Accessing dictionary elements same as arrays:
+        myDict[key]
+        myDict[key] = "new value"
+
+Adding a pair to a dictionary is the same syntax as changing a value of a current pair:
+        myDict[newKey] = "value"
+
+Printing a dictionary value you print as: Optional(value)
+        print(myDict[key])       // if value of the key is "yes" it will output:  Optional("yes")
+
+Some Properties and Methods of dictionaries:
+    myDict.count                    // gives number of key:value pairs in dictionary
+    myDict.removeValueForKey(key)   // removes and returns value for the given key
+
+
+
+
+************************ LOOPS ************************
+
+
+Note that you don't need to put parenthesss around the conditions in loops, you can if you want though, it won't cause an error.
+
+for loop:
+    for var i=0; i<10; i++ { } 
+
+for-in loop:
+    for item in collection { }              // note that item is a constant in the loop
+    for num in 1...10 { }                   // ... gives a range inclusive on both ends
+    for num in 1..<10 { }                   // ..< gives a range non-inclusive of upper limit
+
+while loop:
+    while condition { }
+
+do-while loop:
+    do { } while condition
+
+
+
+
+************************ CONDITIONAL STATEMENTS ************************
+
+
+if-statement:                           // Note that in Swift you MUST always use curly braces!
+    if condition {
+
+    } else if condition {
+
+    } else {
+
+    }
+
+switch statement:
+    Note that switch statements must handle all possible case statements or have a default statement, otherwise it will cause an error.
+
+    switch variable {
+    case value:
+        // code
+    case value:
+        // code
+    default:
+        // code
+    }
+
+    Can also do number ranges or multiple values of any type in a case like so:
+        switch variable {
+        case 1...5:
+            // code
+        case value,value,value:
+            // code
+        }
+
+
+
+
+************************ FUNCTIONS ************************
+
+
+Functions can return all data types including tuples and arrays and dictionaries.
+
+To get some information on a function in Xcode just hold the "option" key on the keyboard and click on the function name and a bubble with information will pop up.
+
+
+To create a function use the func keyword:
+
+        func funcName(parameter: dataType, parameter: dataType) -> returnType { 
+            // code
+        }
+
+    i.e.
+        func area(height: Int, width: Int) -> Int {
+            // code
+            return someInt                              // use return keyword to return value
+        }
+
+
+To call a function:
+        funcName()
+
+
+Named Parameters:
+You can force the argument list of a function call to include labels (named parameters) by putting the named parameters before each parameter name in the function definitions. When you do this Xcode will display the named parameters when the function is called so the programmer. But if the local parameter and the named parameter are the same name there is a shortcut in which you don't need to write the same name twice, you just put:        #paramName
+Named parameters are used to remove all ambiguity as to what the parameters are when calling a function.
+
+    Function definition Syntax:
+        func myFunc(namedParam localParam: dataType, namedParam2 localParam: dataType) {
+            // code
+        }
+    or if namedParams and localParams are the same:
+        func myFunc(#param: dataType, #param: dataType) {
+            // code
+        }
+
+    Function call Syntax:
+        myFunc(namedParam: value, namedParam2: value)
+
+    i.e.
+        func area(squareHeight height: Int, #width: Int) {
+            // code
+        }
+        area(squareHeight: 20, width: 15)               // function call
+
+
+Returning tuples from a function:
+    To return a tuple from a function:
+        func myFunc(params) -> (dataType, dataType, dataType) { }
+
+    You can also return a tuple using named tuple values to access the values individually, but then still assign the return value to a single identifier and then instead of accessing the tuple values by their index you can access them by their names:
+        i.e.
+            func myFunc(params) -> (cat: String, age: Int, weight: Double) { // code... }
+            let result = myFunc()
+            result.cat                  // equivalent to result.0
+            result.weight               // equivalent to result.2
+
+
+
+
+************************ TUPLES ************************
+
+
+A tuple can hold different data types in a single tuple.
+
+
+Create a tuple by assigning it to a single identifier:
+    var tupleName = (value, value)
+
+Creating a tuple by assigning it to a tupe with each tuple value corresponding to a named value in the tuple it is being assigned to, so that you can directly access tuple values by name:
+    var (name1, name2, name2) = (value1, value2, value3)
+    i.e.
+        let (found, name) = (true, "todd")
+        print(found)                            // outputs: true
+
+    If you don't want to assign all the tuple values then use an underscore:
+        let (_, name) = (true, "todd")          // can't get access to the true value
+        print(name)                             // outputs: "todd"
+
+
+Access elements of a tuple by using dot notation and the index:
+    myTups.0
+    myTups.1
+
+
+
+
+************************ OPTIONALS ************************
+
+
+Swift has something called Optionals which allows you to return from a function a value or indicate the absence of a value by specifying nil. So an Optional just allows something to either be a normal data type value or nil, instead of just a normal data type.
+
+To return an Optional from a function you just add a question mark at the end of the return type in the function definition:
+
+    func myFunc(params) -> returnType? { }          // the ? makes the return type an optional
+
+Optionals are used so that you can return two different types of values from a function: the given return type, or nil. Since nil is not a normal data type you can't return nil unless you specify the return type as an Optional.
+
+The reason to use Optionals is when a function needs to either return a normal value or otherwise nil, like say a search function that should return a String if the argument matches a list of Strings, or if not found then it should return nil rather than some arbitrary String value to stand for an unsuccessful search.
+
+An Optional cannot be used as a boolean though, so you can't put a function that returns an Optional straight into a conditional. Instead you need to set the return value to a constant and then unwrap the value, which you do by putting a ! after an Optional value. But you cannot unwrap a nil value, it will cause an error. So what you have to do is use an if-statement but assign the Optional return value to a constant (an if-let statement) in the conditional and if it is nil then the if-block won't execute, but if the return value is not nil then the if-block will execute. And you don't need to use the ! mark at all to unwrap the value of the Optional.
+
+i.e.
+        if let result = myFunc() {
+            // code executes if myFunc() doesn't return nil
+        } else {
+            // code executes if myFunc() returns nil
+        }
+
+
+Optional Chaining
+    When an Optional is used as a return type for a function, those function calls can be chained using dot syntax.
+
+    When you use an if-let statement to handle an Optional return value of a function, if the function returns a String let's say (or nil, of course) and you want to convert the string to an integer using the toInt() method on the string, instead of having to make another if-let statement (since .toInt() itself returns an Optional), you can instead chain the toInt() method onto the original if-let statement by putting a question mark before the dot operator.
+
+    i.e.
+        if let result = myFunc()?.toInt() {             // result will now be an Int value
+            // code...
+        }
+
+
+
+
+************************ x ************************
+
+************************ x ************************
+
+************************ x ************************

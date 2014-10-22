@@ -1,15 +1,36 @@
 *nix Command Line and Shell (Bash) Programming
 
 
+These notes are for general command line usage and shell programming.
+There is a separate notes document for developer tools on the command line.
+
+
 -------------------- Command Line --------------------
 
 
 *nix systems' file structure is always a single tree with a root (/) directory, unlike Windows file
 systems that have each physical hard-drive be a different drive, therefore a different tree.
 
+You type commands into a command line using a shell. A shell is simply the program you
+use on the command line to enter commands to be run by the system. There are many different
+shells in the *nix environment. The most popular Linux shell is Bash, and it is the default
+shell used when you open a command line terminal. The four basic shells are:
+    Bash    (Bourne Again Shell)
+    sh      (Bourne Shell)
+    csh     (C Shell)
+    ksh     (Korn Shell)
+The Shell Scripting Notes further down in this document are for Bash scripting.
+
 Most programs are installed in the /usr/bin directory.
 
 Most commands operate like this:        command -options arguments
+
+
+Command Completion:
+    Pressing tab once will complete a command or filename if it is the only command or filename that
+    starts with the letters you've already typed.
+    If you can't remember exactly what a certain command is, if you can at least start the command,
+    then just press tab twice and all commands with those starting letters will be output.
 
 - vs -- options:
     Options for a command can come in a shortened form using -option or in long form using --option.
@@ -27,9 +48,9 @@ A note on paths:
     When you type in a command without specifying a path name then the system does not search the
     entire computer, it only searches a list of directories it maintains where executable files are
     kept. If it does not find the program in those directories, it will issue the "command not found"
-    error message. The list of directories is called your path. You can view the directories in your
-    path with "echo $PATH", which outputs a colon-separated list of the path names contains in your
-    path.
+    error message. The list of directories is called your path and is contained in the Path Variable.
+    You can view the directories in your path with "echo $PATH", which outputs a colon-separated
+    list of the path names contains in your path.
     You can add directories to your path with the command:      export PATH=$PATH:the_directory
     But a better way is to edit your .bash_profile or .profile file to include the above command, then
     the command will be done automatically every time you log in.
@@ -38,6 +59,10 @@ A note on paths:
     bin directory in your home directory, then add that directory to your path in the .bash_profile
     file. Now any shell scripts you put in there will be executed just by typing in the name of the
     program at the command prompt, no matter what directory you are in.
+    When a command is entered, the built-in commands are checked first to find a match, if
+    no match if found in the built-in commands then the PATH environment variable is checked
+    for the command. If the command isn't found there then the command canonot be executed
+    on the machine.
 
 
 File System
@@ -45,7 +70,18 @@ File System
     /boot   in linux the linux kernel and boot loader files are kept here, kernel is vmlinuz
     /etc    contains configuration files for the system, all file in here are text files.
             /etc/passwd - contains essential information for each user, this is where users
-                          are defined
+                          are defined. User information is shown in the following columns:
+                          username, password (encyrpted, displayed as just an "x"), UserID,
+                          GroupID, GECOS (usually the person's full name or a description of
+                          what the account is for), home folder location, and the shell.
+            /etc/group - contains essential information for each group on the system, this is
+                         where groups are defined. Group information is shown in the following
+                         columns:   name of group, group password (encrypted, displayed as just
+                         an "x"), GroupID, extra member of the group (separated by commas).
+            /etc/shadow - this is where the encrypted passwords for all users are held. They
+                          used to be shown in /etc/passwd, but now they are in this file for
+                          more security (this file isn't even accessible to normal users, only
+                          to the root).
             /etc/fstab - contains a table of devices that get mounted when your system boots
                          and defines the disk drives.
             /etc/hosts - lists the network host names and IP addresses that are intrinsically
@@ -53,7 +89,7 @@ File System
             /etc/init.d - contains the scripts that start various system services typically
                           at boot time.
     /bin, /usr/bin      these two directories contain most of the programs for the system.
-                        The /bin directory has the essential program the system requires to
+                        The /bin directory has the essential programs the system requires to
                         operate. The /usr/bin directory contains applications for the
                         system's users.
     /sbin, /usr/sbin    the sbin directories contain programs for system administration,
@@ -142,8 +178,50 @@ Commands
             Commands that you can define yourself, built from other commands.
 
 
+Text Editors
+    In Unix-like systems there are several text editors that are generally used. Nano or pico is simple
+    text editor that is good if you don't want to have to learn a bunch of stuff to use the text editor.
+    Vi or Vim (Vi iMproved) is a popular choice that comes installed in all versions of Unix-like systems
+    and it has tons of keyboard shortcuts to help editing go faster. However Vi or Vim is very hard for
+    beginners and you have to read up on it before you even try to start using it. Sames goes for Emacs,
+    which is the other really popular and powerful text editor on *nix systems.
+    To start editing or create a file using one of these text editors just type the name of the text
+    editor followed by the name of the file you want to edit or create.
+
+Changing the command line prompt
+    Can change the command line prompt in Bash by changing the PS1 variable.
+    i.e.    PS1="new_prompt"
+    Just type that into the command line and press enter.
+    You can see what the current value of the prompt is by typing: echo $PS1
+
+SuperUser (the Root)
+    The SuperUser for a system, called the Root, is a user who can do anything on the system. The
+    Root cannot be locked out of any files or directories. The Root has ultimate control of the
+    system. The Root's home directory is /root. A normal user can switch to being the Root with
+    the command "su", but you have to know the Root's password. The "sudo" command is used instead
+    of "su" usually because it is safer than "su". The sudo command only lets a user run a single
+    command as root at a time, and the System Admins can restrict what root-only commands are
+    allowed for certain people. Only System Admins should have Root access. No normal user should
+    have Root access because the Root can do anything and therefore a user with access could
+    destroy important data or cripple the system.
+    The Root always has a UID of 0. You can effectively duplicate the root account just by setting
+    the UID of any other account to 0 in /etc/passwd - this is a way to hack the system.
+    Some Unix systems have a special group called wheel, only group members of wheel may use 'su'
+    to Root and use the Root capabilities.
+
+
+
 ----COMMANDS----
 
+whoami
+    Outputs the name of the current user.
+
+who
+    Shows a list of everyone that is currently on the system (along with some other information).
+        Syntax:         who
+
+hostname
+    Outputs the name of the system you are using.
 
 pwd
     Print working directory.
@@ -156,11 +234,24 @@ ls
     ls pathname pathname    <- list contents of multiple directories
     ls -a                   <- list all files (including hidden files)
     ls -la                  <- list all files in long format
+    ls -F                   <- identifies directories from files by ending directory names with a "/"
     Long format shows the file permissions, the owner, the group, the size in bytes,
     modification time, and file name.
     When a file's first character in its file perissions is "l" it means that the file is a
     symbolic link. Also the filename will show the file (symbolic link) points ("->") to another
     file (the file that is run by the symbolic link).
+    ls -l:
+        The ls -l command displays 9 columns of information: the permissions, number of links,
+        owner of the file, what group the file belongs to, sizes in bytes, month file was created,
+        day file was created, time file was created, name of the file.
+        The different possible file types that are displayed by the first character in the
+        permissions column are as follow:
+                -       plain file
+                d       directory
+                l       link
+                p       pipe
+                b       block device            // device files that read info in blocks
+                c       character device        // device files that read info in a stream
 
 
 cd
@@ -170,10 +261,38 @@ cd
     cd -                        <- this changes the working directory to the previous one
     The pathname can be an absolute or relative pathname.
 
+pushd
+    Changes the working directory, saving the current directory to a directory stack so that
+    you can return to it using the popd command.
+    This is what you use instead of cd if you just need to go to another directory to do
+    something then you want to come back to your current directory.
+        Syntax:     pushd directoryPath
+
+popd
+    Changes the working directory back to whatever directory was last pushed to the stack
+    using pushd.
+        Syntax:     popd
+
+touch
+    Creates an empty file
+    Syntax:     touch filename
+
+more
+    View text files starting from the top of the file. Supports paging which means if the
+    text is larger than the console window you can press a button to move up or down in the
+    output document. Press "q" to leave the contents that less has displayed and get back to
+    the cursor on the command line. Similar to "less" as shown below, but less is more
+    popular to use because it has more functions.
+    Syntax:     more file_name
+
 
 less
-    View text files starting from the top of the file.
-    Syntax:     less textfile_name
+    View text files starting from the top of the file. Supports paging which means if the
+    text is larger than the console window you can press a button to move up or down in the
+    output document. Can also use the arrow keys to move by line up and down in the document.
+    Press "q" to leave the contents that less has displayed and get back to the cursor on
+    the command line.
+    Syntax:     less file_name
     Controlling less:
         Spacebar to scroll down by one full page
         "b" to scroll up by one full page
@@ -187,7 +306,7 @@ less
 
 
 file
-    Classify a files content's. Tells you what kind of data a file contains.
+    Classify a files contents. Tells you what kind of data a file contains.
     Syntax:     file filename
     Output of a python file for instance will be:
             filename: a path script text executable
@@ -201,12 +320,35 @@ file
         etc.
 
 ln
-    Creates a symbolic link.
+    Creates a link to another file.
+    There are two kinds of links, hard and soft (or symbolic).
+    The ln command takes two arguments, first argument is the file to link to, second argument
+    is the name of the new file being linked to the original file.
+
     Symbolic links are useful for say a file that the system uses but the system expects it to
     always have the same filename but say there are different versions of whatever thing it is,
     and the symbolic link will make it so even if the version changes it will always have the same
-    filename that the system can use, which points to the correct version.
+    filename that the system can use, which points to the correct version. This would be done by
+    just updating what file the link points to if a new version is to be used. To make a symbolic
+    link you just include the -s option.
+            Syntax for symbolic link:       ln -s file1 file2
 
+    Hard links make an exact clone of the file, rather than just pointing to a file somewhere else
+    on the system.
+            Syntax for hard link:           ln file1 file2
+
+    Differences between hard and symbolic links are as follows. Hard link won't show the "l"
+    when you use ls -l, because it doesn't know it's a link. A hard link won't take up any
+    disk space. Hard disk can't span filesystems (can't be used across partitions). A symbolic
+    link does show the "l" identifier when displayed with ls -l, a symbolic link does take up
+    space (albeit very little space since it is just a link to a file), and a symbolic link
+    can be used in other partitions on the system.
+
+
+
+cat
+    Outputs contents of a file to the command line. "cat" stands for concatenate. Can output
+    one or more files to the console window by listing one or more arguments.
 
 cp
     Copies files and directories.
@@ -230,6 +372,14 @@ cp
 
 mv
     Moves or renames files and directories depending on how it is used.
+    The reason it can move or rename files is because you need to think about it as renaming
+    an entire path, not just the filename. So you can rename the path in a way to move the file
+    to a different directory while keeping the same file name, oryou can rename the path by
+    keep everything the same except the last part of the path (the filename) which will just
+    rename the file and not move it.
+    When moving you don't have to put directory/filename if you aren't changing the filename,
+    Unix knows what is a directory and what isn't so if your second argument is just a path to
+    a directory it will just move the file there and keep the same filename.
     Syntax to rename a file:                                        mv filename1 filename2
     Syntax to move files/directories to a different directory:      mv file ... directory
     Examples of using mv:
@@ -271,7 +421,9 @@ rm
 
 mkdir
     Creates one or more directories.
-    Syntax:                 mkdir directory ...
+        Syntax:                 mkdir directory ...
+    Using the -p option and specifying a whole path will make directories in the path that
+    don't exist yet.
 
 
 type
@@ -323,6 +475,70 @@ man
     compression program. The gzip package includes a special version of less called zless
     that will display the contents of gzip-compressed text files.
 
+df
+    View the partitions on the system. "df" stands for "disk filesystems".
+    Partitions slice up the harddrive into pieces.
+    Using the -h option specifies "human readable" format, which will display sizes in megabytes
+    or gigabytes instead of kilobytes.
+        Syntax:     df -h
+
+groups
+    Outputs what groups the current user belongs to.
+
+cal
+    Displays a calendar in the console window.
+
+apropos
+    Used to find commands when you aren't sure of the spelling.
+    Takes a word as an argument and will output all available commands related to that word or
+    with that word in their spelling. Also outputs a short description of what each command does.
+        Syntax:     apropos word
+
+grep
+    Used to search for a particular string in a file and output all instances it finds to the
+    console window. Searches standard input if no files are given as arguments.
+    "grep" stands for Global Regular Expression Print.
+        Syntax:     grep string file
+
+wc
+    Outputs newline, word, and byte counts for each file listed.
+        Syntax:     wc file
+        Result:      lineCount wordCount charCount filename
+        Result ex:   5 28 107 filename
+    Various options to just print out a single count.
+        -c prints byte count
+        -m prints character count
+        -l prints line count
+        -w prints word count
+
+find
+    Search for files in a directory hierarchy (including the specified directory and all its
+    subdirectories).
+    Can search by name or type of item in the directory. Probably in some other ways too, not sure.
+        Syntax:     find directory searchType searchItem options
+        Example:    find . -name "*.txt"
+        Result:     Will display all files in the working directory that end in .txt
+        Example:    find /home -type -f | wc -l
+        Result:     Will output the number of files in the /home directory and all its
+                    sub-directories.
+
+export
+    Change value of environment variables.
+        Syntax:     export envVar="new value"
+    Note that you don't include the $ before the envVar when using this command.
+
+unset
+    Remove an environment variable from the environment.
+        Sytnax:     unset envVar
+
+xargs
+    Build and execute command lines from standard input.
+        NEED TO READ ABOUT THIS.
+
+passwd
+    Allows a user to change their password.
+        Syntax:     passwd
+
 
 
 
@@ -358,6 +574,51 @@ I/O Redirection
         arguments in the commnand.
 
 
+File Descriptors
+    Unix-like systems can support up to 10 file descriptors, numbered 0 to 9. But generally you
+    just use the first three:
+            Standard Input      STDIN       0
+            Standard Output     STDOUT      1
+            Standard Error      STDERR      2
+    When you use a redirect like > there is an implied 1 there like so: 1>.
+    Since > has an implied file descriptor of 1 (STDOUT), in order to redirect STDERR you need
+    to make it explicit that you want to redirect it by putting in the file descriptor 2, like so:
+            command argument 2> filename
+    In the above syntax example if the command causes an error it will redirect the error message
+    to the specified file.
+
+    Anytime a file receives more information (from adding text to a file, reading command line
+    arguments, or having information piped to a command) STDIN is used.
+    Any command that can take a file as an argument can also take its input by STDIN. This is
+    because all information received by a file/command is STDIN; if a command takes a file as an
+    argument then that file is sent to the command as STDIN, so instead of using a file you can
+    just use straight up STDIN, like echo or cat something into the command by piping it in. Piping
+    something takes STDOUT from the left operand of the pipe and sends it through STDIN to the
+    right operand of the pipe.
+        i.e.    wc file                 // this works
+                echo "yo man" | wc      // this works too
+                cat file | wc           // so does this
+
+    Combining File Descriptors:
+        Would do this if you wanted to save boththe input and output to a file.
+            i.e.    cat file.txt > file2.txt 2>&1           // combine STDERR and STDOUT
+        As shown in the example above you put the combined file redirect at the end of the
+        command and use a & on the final one I guess. This takes the output of file.txt, redirects
+        it into file2.txt, but the 2>&1 means that all STDERR will be redirected to STDOUT as well.
+        So if any errors pop up they will be saved to the file. So if there are no errors with
+        "cat file.txt" then that file will be saved to file2.txt, but if there are errors then the
+        error message(s) will be saved to file2.txt.
+        Note that using 'cat' as shown in the above example is known as a Useless Use of Cat
+        because using the redirct > will automatically take the contents of file.txt as STDOUT
+        and put them in file2.txt as STDIN, so no need for a cat.
+
+    Disabling all Output:
+        Sometimes when you run a command you don't want to see any output (no STDERR or STDOUT).
+        To do this you can redirect everything to a special device known as /dev/null.
+                Syntax:         file.txt > /dev/null 2>&1
+        /dev/null is like a black hole, anything that goes into it vanishes from the system.
+
+
 Pipelines
     The most useful and powerful thing you can do with I/O redirection is to connect multiple
     commands together with pipelines, a pipeline is the "|" pipe bar character. With pipelines
@@ -374,9 +635,13 @@ Pipelines
                     du | sort -nr                   // displays a list of directories and how
                                                     // much space they consume, sorted from
                                                     // largest to smallest
-                    find . -type f -print | we -l   // displays the total number of files in
+                    find . -type f -print | wc -l   // displays the total number of files in
                                                     // the current working directory and all
                                                     // of its subdirectories
+                    ls -l | grep b                  // will take the output of "ls -l" and send
+                                                    // it to "grep b" which will only output
+                                                    // lines from the "ls -l" output that contain
+                                                    // the letter "b"
 
 
 Filters
@@ -466,9 +731,9 @@ Expansion
     name. So for me the command:
             echo $USER          // outputs:    tkrone
     The environment variable $HOSTNAME contains the hostname for the system.
-    To see a list of all environment variables use this command:        printenv | less
+    To see a list of all environment variables use either of these commands:
+                printenv | less         or          env | less
     If you use a variable that doesn't exist with the echo command it will just print a blank line.
-
 
     Command Substitution:
     Command substitution allows us to use the output of a command as an expansion.
@@ -584,15 +849,27 @@ Permissions
                 5 = r-x     can enter directory and list the files
                 7 = rwx     no restrictions on the directory
                 0 = ---     no access to the directory
+            chmod Examles:
+                chmod u+wx filename
+                chmod 755 filename
+                chmod g-x filename
+                chmod o+rwx filename
+                chmod u+x, g-x, o-wx filename
+                chmod a+x filename              // "a" here stands for all (i.e. ugo,  i.e. user,group,owner)
 
         su/sudo
-            Allows the user to temporarily become the super user, in order to perform some important
-            system administration tasks.
+            Allows the user to temporarily become the super user (the Root), in order to perform some
+            important system administration tasks. You can also become any other user by sending a dash and
+            then a username as the argument to 'su', however to do this you must first be the superuser/Root.
             su stands for substitute user.
+            Putting a dash '-' after 'su' means you'll inherit all of Root's specific environment
+            variables (including the Path), but with no dash you just keep your own variables.
             When using the su command you will be prompted for the super user's password.
             After executing the su command a new shell session will start as the super user. To exit
             as super user type "exit" in the command shell.
             Syntax for su:      su              // then enter the superuser's password
+                                su -            // become superuser and inherit superuser's env variables
+                                su - username   // become another user (when you are already the superuser)
 
             In some distributions, like Linux, you use the sudo command instead of the su command.
             With sudo, one or more users are granted superuser priviledges on an as needed basis. To
@@ -628,6 +905,11 @@ Job control
             jobs    an alternate way of listing your own processes
             bg      put a process in the background
             fg      put a process in the foreground
+            top     displays in real time the system stats associated with each process
+
+    Daemons
+        Daemons are programs that run on the system on their own. They do a single job and just wait
+        on the system until something requires them to do their job, and then they do it.
 
     Running a program in the background:
         You can open up graphical programs from the CLI, however, if you do then you can't use the
@@ -653,6 +935,17 @@ Job control
             Use the ps command to list all processes.
             The ps command by itself only lists processes launched from the current terminal. Use
             the -x option to list all processes, even those not launched from the current terminal.
+                -a option shows all processes running for all users
+                -x option shows even processes run by the system (daemons)
+                -u option shows the user who is running the process
+            Syntax:    ps -aux
+            Some columns show in the ps output are the ProcessID (PID), TT which jdisplays a location
+            for your terminal, STAT which stands for "state" and gives the current state of the process,
+            TIME is how much processing time the system has used on the process, and COMMAND is the command
+            that it is.
+        top
+            Shows a bunch of real-time (as in it updates itself on the screen) stats associated with
+            all the processes running on the system.
 
     Killing a process:
         You can terminate a process (if it for example becomes unresponsive) using the kill command.
@@ -846,6 +1139,13 @@ Command Substitution and Constants
 
 
 
+-------------------- REFERENCE OF SHELL COMMANDS --------------------
+
+
+$SHELL          shows you what shell you're in
+$HISTSIZE       shows the number of commands stored in the shell's history
+$HISTSIZE=number        change the max size of the history. Can't go higher than 32,767
+history         shows the history of shell commands used
 
 
 

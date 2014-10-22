@@ -1263,7 +1263,7 @@ puts:
         Syntax:     puts "string #{var}"            puts var        puts var.method
 
 gets:
-    Takes any input fromthe user from STDIN. Adds a newline to the end of the input.
+    Takes any input from the user from STDIN. Adds a newline to the end of the input.
         Syntax:     var = gets          var = gets.chomp
 
 putc:

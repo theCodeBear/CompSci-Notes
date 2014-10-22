@@ -75,6 +75,13 @@ Syntax:     parentSelector > childSelector { }
 i.e.        p > i { }                           // only italics in paragraphs will be styled
 
 
+Ordering of element's styling in a CSS file matters because styling that comes later overrides styling that came before. For this reason you want to start with your basic element styling, then do classes which are more specific than general tag styling, then do styling for ID's. Like so:
+    CSS file:
+        /* All styling for general tags first */
+        /* All styling for classes second */
+        /* All styling for Id's third */
+
+
 
 
 ************ ID AND CLASS ************
@@ -1335,8 +1342,8 @@ User Interface
 **************** Random Notes ****************************
 
 
-To specify what a select is not do this:                selector:not(selector) { }
-You can specify multiple things it is not:              selector:not(selector):not(selector) { }
+To specify what selector's to exclude:                  selector:not(selector) { }
+You can specify multiple things to exclude:             selector:not(selector):not(selector) { }
 You can put selectors, classes, id's, etc, in the "not" part.
 
 

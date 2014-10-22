@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+''' ON CHAPTER 13 IN THINK PYTHON - HOW TO THINK LIKE A COMPUTER SCIENTIST'''
+
 
 #python guide
 
@@ -45,12 +47,19 @@
 # their value, if you do try to modify the variable Python will create a new local variable
 # with that same name. You can access the global variable (print it or use it in calculations)
 # as long as you haven't already created a new local variable with the same name 
-# previously in the function. 
+# previously in the function.
+# All non-local variables (not created in a function) are global, meaning they can be accessed
+# inside a function without being sent as an argument.
+# You can modify a global variable inside a function if you use the "global" keyword to
+# re-declare that global variable inside the function, then it will change the global variable.
 # In short, you can access global variables from inside a function, but trying to modify
 # one will create a new local variable with that name, at which point the global variable
 # can't be accessed afterword in the function because the function identifies the local
 # variable with that name. So you can access a global variable in a function as long as you
 # don't try to modify it.
+# Mutable global variables like lists and dicts can be modified inside a function without
+# using the 'global' keyword. But if you want to re-declare that global variable entirely,
+# then you have to use the 'global' keyword.
 
 # DELETE VARIABLES
 # use the "del" keyword to delete the reference to a variable:
@@ -77,6 +86,24 @@ myAge = 30
 # subsets of strings can be taken using the slice operator [] and [:]
 # indices start at 0 at the beginning and -1 at the end.
 # Can do 'print str * 2' to print it twice. print str[2:] prints from 2 to end.
+# To get rid of leading and tailing whitespace in a string use strip():
+"   yo man whats up    ".strip()
+"   yo man whats up    ".lstrip()     # only removes leading whitespace
+"   yo man whats up    ".rstrip()     # only removes trailing whitespace
+# To split words of a string up into a list:
+"yo man whats up".split()      # returns ['yo','man','whats','up']
+"yo-man-whats-up".split("-")   # returns ['yo','man','whats','up']
+# To concatenate elements of a list into a string using a delimiter use join():
+#Syntax:      delimiter.join(list)
+' '.join(['yo','man','dude'])   # returns "yo man dude"
+'#'.join(['yo','man','dude'])   # returns "yo#man#dude"
+
+# UNICODE
+# To get the Unicode representation of a character, use the ord() function.
+#     Syntax:   ord('char')       <-- returns unicode number of the character
+print ord('a')      # prints: 97
+print ord('A')      # prints: 65
+print ord('5')      # prints: 53
 
 # MULTIPLE ASSIGNMENTS
 # python allows for assigning a single or multiple values to multiple variables
@@ -91,7 +118,8 @@ size = width, height = 640, 480
 # OUTPUT
 #print function. automatically prints an endline
 print '7 years ago i was ', num1, " year old."
-# to print without an automatic newline character:
+# to print without an automatic newline character add a comma like so:   print "blah",
+# or use the sys.stdout.write() function like so:
 # import sys
 # sys.stdout.write("output here")
 
@@ -275,6 +303,11 @@ y=[1,2]
 x is y                # returns False
 y=x
 x is y                # returns True
+x='yo'
+y='yo'
+x is y                # returns True because for basic variables (i.e. not lists) python will point
+                      # two variables with the same value to the same memory location, to save space.
+
 
 # Order of Precedence for Operators:
 #   **,  ~+-,  */%//,  +-,  >> <<,  &,  ^|,  <= < > >=,  <> == !=,
@@ -512,7 +545,6 @@ print double
 
 
 
-
 ''' MODULES '''
 # A Python Module is a library in python. It is simply a file consisting of python code that
 # defines functions, classes, and variables. It can also include runnable code.
@@ -532,10 +564,15 @@ print double
 # the import keyword with the filename (not including the '.py'). See file tryEx25.py
 # which imports ex25.py
 # When you run the file that imports another file, the imported file creates a module
-# with the same name as the file being imoprted but it ends with a .pyc, the 'c' stands for 'compiled'.
+# with the same name as the file being imported but it ends with a .pyc, the 'c' stands for 'compiled'.
 # You can now see the homemade module in the help() menu in python or by using the
 # "python -m pydoc WHATEVER" command. It shows all the function names with arguments
 # and anything that was commented in docstrings, which are used to describe the functions.
+
+# If your module is in a different directory than your script you have to create a file that
+# tells Python the folder is a package, by putting a file in the same folder as the module and
+# calling it __init__.py. The file can be empty. Then you should just be able to import it from
+# your script. hmmm, will have to see if this actually works in this way ???????????????
 
 # NAMESPACES
 # Variables are names (identifiers) that map to objects. A namespace is a dictionary of
@@ -545,6 +582,18 @@ print double
 # own namespace. Python assumes any variable assigned a value in a functin is local.
 # Can make a global variable in a function using the keyword:   global
 # When using the global keyword you cannot set the value of the variable, only declare it.
+# But you can modify a global variable inside a function if you redeclare that global variable
+# using the "global" keyword.
+# But mutable global variables (like lists or dicts) can be modified within a function without
+# using the "global" keyword. But if you want to re-declare the global variable you have to
+# use the "global" keyword.
+def blah():
+    global n    # allows the global variable 'n' to be modified within the function
+    n += 1000   # modifies the global n, instead of creating a local n
+n = 200
+blah()
+print n         # n will now print as 1200 because you modified "global n" in blah()
+# an example:
 def funkytown():
     global myGlobalVar
     myGlobalVar = 100
@@ -619,6 +668,8 @@ if x in range(1,10):        # 1 <= x < 10, inclusive of min, exclusive of max
 
 
 ''' LISTS (WHAT ARRAYS ARE CALLED IN PYTHON) '''
+# Lists, unlike strings, in Python are mutable (they can be changed in-place, without having
+# to create a new list).
 # Methods of lists: append(), count(), extend(), index(), insert(), pop(), remove(),
 # reverse(), sort()
 # to copy a list do this:   result = list[:]    <-- to splice the whole list
@@ -626,6 +677,8 @@ people = ['todd', 'alicia', 'xun', 'lies', 'molly', 'deep']
 mixed = [1, 'stephanie', 2, 'julia', 3, 'ann']		# can have a mixed type list
 elements = []			# define an empty list and build later in a loop below
 # make a 2D List like:      list = [[2,4,5],[3,1,9]]
+# to initialize a 2D array use nested list comprehension:
+twoDarr = [["#" for i in range(3)] for j in range(5)]   # makes 3 columns and 5 rows
 # to access a specific element in a list:
 gotcha = mixed[3]
 print 'this is gotcha', gotcha
@@ -675,6 +728,7 @@ print range(10,4,-1)  # prints: [10,9,8,7,6,5]
 # max(list)
 # min(list)
 # list(seq)     <-- converts a tuple into a list
+# sorted(list)  <-- returns a sorted list while keeping the original unmodified (different than .sort())
 
 # METHODS ON LISTS
 # list.append(obj)      <-- no return value, just changes the list
@@ -685,13 +739,25 @@ print range(10,4,-1)  # prints: [10,9,8,7,6,5]
 # list.pop(obj=list[-1])    <-- eliminates and returns last element of the index, or specified index 
 # list.remove(obj)      <-- removes the object (value) specified
 # list.reverse()      <-- reverses the order of the list in place, but doesn't return a value
-# list.sort([func])   <-- sorts objects of list, use compare function if given
+# list.sort([func])   <-- sorts objects of list in-place, use compare function if given
 
 # Something called a list comprehension, where you can type cast all the elements in a list in one line
 # of code like so:
 # Syntax:  returnedList = [typecast(i) for i in list]
 someList = ["1","10","100","2","5","98"]
 someList = [int(i) for i in someList]
+
+# LISTS AS ARGUMENT TO FUNCTIONS
+# When you pass a list to a function the function gets a reference to the list. If the function modifies
+# the list in-place then those changes in the function also modify the list outside the scope of the
+# function, between the argument passed into the function and the parameter used in the function point
+# to the same memory location. But, if you do something in the function to the list that involves
+# creating a new list, even if you assign it back to the parameter variable, the parameter in the
+# function will now reference a different memory location than the argument outside the function, so
+# the changes will not be reflected outside the function's scope (unless of course you return the list
+# and set the function's return value to the list that was passed in). Basically, any sort of operation
+# on a list in a function that returns a list will sever the connection between the parameter in the
+# function and the list variable that was passed in to the function.
 
 
 
@@ -726,6 +792,10 @@ del tup3
 # max(tup)
 # min(tup)
 # tuple(seq)      <-- converts a list into a tuple
+# zip(seq)        <-- takes two or more sequences of equal length and returns a list of tuples where
+                    # each tuple contains an item from each sequence in order
+# sorted(seq)     <-- returns a new list with the same elements but in a sorted order
+# reversed(seq)   <-- returns a new list with the same elements but in reversed order
 
 # for a tuple that has a tuple inside it, you can reference the outer tuple element through an index,
 # and then reference the inner tuple element with a second index, like a multi-dimensional array.
@@ -755,7 +825,39 @@ sing1 = (1,)
 sing2 = ('tiny',)
 print sing1+sing2
 
+# Tuple Assignment can be used to easily swap values
+a, b = b, a       # this is a super simple way to swap values of variables by using tuple assignment
+# Tuple Assignment is just anytime you use commas to assign multiple values to multiple variables
+a, b = 10, 20
+# Tuple assignment can also be used for return values.
+# a, b, c = func()          where func() returns a tuple with 3 values
 
+# You can use relational operators with tuples, like < > <= >= etc. It performs the operation by
+# comparing the first element of each tuple, and continuing on as long as the elements are equal.
+# But once it finds a difference bewteen two elements it will just quit there and not look at any
+# other values in the tuples.
+(1,2,3,99) < (1,2,5,6)      # this returns true because 1==1, 2==2, but 3 < 5, it doesn't check 99 < 6
+
+# Tuples used to create Variable Length Arguments
+# Use an "*" before a function parameter to make the function take a variable number of arguments.
+# This is called the Gather Parameter.
+# There can be parameters before the Gather Parameter, but it must be the last parameter:
+def blah(*args):
+    return args
+a,b,c = blah(10,20,30)        # this is equivalent to a,b,c = 10,20,30
+def blah(x,y, *vars):
+    print x,y
+    return vars
+aVar = blah(99, 199, 1, 2, 3)    # this outputs "99 199" and returns to aVar the tuple (1,2,3)
+
+# The opposite of the Gather Parameter is Scatter. Scatter is when you use an '*' before an argument
+# in a function call, instead of using it in the parameter list of the function definition. What this
+# does is it takes a single sequence given as the argument and scatters the elements into their own
+# parameters as specified in the function's parameter list.
+def printTwins(twin1, twin2):
+    print twin1, twin2
+twins = ("todd", "kent")
+printTwins(*twins)            # the items of twins tuple will be sent to the twin1 and twin2 params
 
 
 
@@ -846,7 +948,9 @@ for num in numbers:
 # dictName = {key:value, key:value, etc}
 # del dictName[key]  <-- to delete a pair
 # Dicts do not have any order; the elements are unordered.
+# Dictionaries in python are implemented via a hashtable.
 # The keys must be an immutable object, which is any literal like a number,string,tuple (not a list).
+# Values can be anything, including lists and even other dicts.
 # Look at file dictionaryEx.py for an example of using a dictionary
 # dictName.items() gives a list of key,value pairs
 # NOTES ON KEYS: keys must be immutable, so they can be strings, numbers,
@@ -871,6 +975,14 @@ del stuff               # delete the entire dictionary
 # Can iterate over dictionaries
 # for e in dictionary:
 
+# Can iterate over key-value pairs of a dictionary like so:
+for key, value in dict1.items():
+    print key, value
+
+# You can also use a list of tuples to initialize a dict:
+tupList = [("todd", "straight shooter"), ("Deep", "baby"), ("joe", "scratch")]
+dict1 = dict(tupList)
+
 # Functions for dicts:
 # cmp(dict1, dict2)     len(dict)       str(dict)
 
@@ -881,11 +993,11 @@ del stuff               # delete the entire dictionary
 # dict.get(key, default=None)   <-- for the key, returns value or default
 #                                   if key not in the dict
 # dict.has_key(key)
-# dict.items()          <-- gives all item-pairs in a dict
+# dict.items()          <-- gives all item-pairs in a dict as a list of tuples
 # dict.keys()
 # dict.setdefault(key, default=None)    <-- similar to .get, but sets value
 #                                       to default if key is not in dict
-# dict.update(dict2)        <-- adds dict2's key-values pairs to dict
+# dict.update(dict2)        <-- adds dict2's key-values pairs to dict, can also just be a list of tuples
 # dict.values()
 
 
@@ -1192,9 +1304,21 @@ class Person:
 ## SEE EXERCISE 37 FOR A LOT OF KEYWORDS AND OTHER STUFF TO LOOK UP
 
 
+''' CGI PROGRAMMING '''
+# The CGI, or Common Gateway Interface, is a set of standards that define how information is exchanged
+# between the web server and a custom script - it's a standard for external gateway programs to
+# interface with information servers such as HTTP servers.
+# Basically, CGI is how you use a programming langauge to interact with data sent to the server. It is
+# a programming language's interface with web programming. CGI is the process by which, when a file on
+# the web server is requested, instead of just loading up the file, it executes it and displays to the
+# browser only what is output by that file. So a CGI script is any Python, Perl, Shell, etc script
+# that runs on a web server.
+# There should be a CGI config file on the web server at /var/www/cgi-bin, where all the CGI programs
+# are kept ?????
 
 
-# TIME MODULE  -- import time  (import calendar to use calendar)
+
+''' TIME MODULE  -- import time  (import calendar to use calendar) '''
 import time
 tick = time.time()      # number of ticks (sec) since 12am, 1/1 1970 (a float)
 # dates before 1970 and after sometime in 2038 don't work with these ticks.
@@ -1216,6 +1340,56 @@ print cal
 time.sleep(2)
 # There's also a bunch of "calendar." methods in the calendar module.
 
+''' RANDOM MODULE   --  import random '''
+import random
+random.randint(0,5)     # picks random number 1,2,3,4,5.  Note the first parameter is exclusive
+random.random()         # picks random float between 0 and 1
+# random.random() * n   # to get a random float between 0 and n
+# Can choose a random element from a set, such as a list, using choice(set):
+mylist = ['todd', 1, 29, ['hey', 'man'], 90]
+random.choice(mylist)
+
+''' MATH MODULE   --  import math '''
+# includes such variables and functions as:
+# math.pi
+# math.e
+# math.radians(deg)     # converts degrees to radians
+# math.degrees(rad)     # converts radians to degrees
+# math.sin(rad)
+# math.cos(rad)
+# math.tan(rad)
+# math.factorial(int)
+# math.sqrt(num)
+
+''' DATETIME AND TIME MODULE   --  import datetime '''
+# can also import the date functions and the time functions separately for convenience
+import datetime
+from datetime import date
+import time
+time.time()                 # returns second since UNIX epoch
+date.fromtimestamp(num)     # returns a date that is a given number of seconds from the UNIX epoch
+today = date.fromtimestamp(time.time())   # returns the current date
+today.strftime("%m/%d/%y")  # used to format a date, in this example to mm/dd/yy
+today.isoformat()           # formats a date to ISO standard (yyyy-mm-dd)
+
+
+''' OS MODULE   --  import os '''
+# This module provides functions that allow you to interface with the underlying operating system.
+# One of the main submodules is the path submodule, which allows you to manipulate and find the
+# properties of files and folders on the system (so this is the most useful for web development).
+# from os import path
+# path.exists("dir_path")     # checks if the  directory exists, returns True or False
+# path.getatime("dir_path")   # returns, as a timestamp, the last time the directory was accessed
+# path.getmtime("dir_path")   # returns, as a timestapm, the last time the directory was modified
+# path.getsize("file_path")   # returns the size of a file
+# path.join("C:", "Users")    # combines two paths into one, according to whatever format the OS uses for paths
+
+''' URLLIB2 MODULE  --  imoprt urllib2 '''
+# This module lets you interface with the web.
+# The most useful function in this module is urlopen, which downloads a page.
+import urllib2
+html = urllib2.urlopen("http://www.toddkronenberg.com").read(100)  # returns first 100 chars of the HTML 
+print html        # prints out the characters retrieved from the html file in the line above
 
 
 while True:
@@ -1225,7 +1399,7 @@ while True:
 # SOME USEFUL FUNCTIONS
 """
 sorted(iterable_list/string)	: returns a new sorted list
-string.split('delimiter')		: returns a list split up by the given delimiter
+string.split('delimiter')		: returns a list split up by the given delimiter, whitespace by default
 string.pop(0)					: pops the FIRST word off the string and returns it
 string.pop(-1)    or pop()		: pops the LAST word off the string and returns it
 print ' '.join(list)            : joins a list into a string with spaces between items

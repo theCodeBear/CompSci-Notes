@@ -222,7 +222,7 @@ Basic Programming and OOP Concepts
     Abstraction:
         Abstraction is an emphasis on the idea, qualities, and properties rather
         than the particulars. It is a suppression of detail. It hides irrelevant
-        details and involves using names to reference objects. It places empahasis on what an object does rather than what an object is. So it provides a
+        details and involves using names to reference objects. It places emphasis on what an object does rather than what an object is. So it provides a
         simple interface (generally a name and desired inputs) to work with some
         object.
 

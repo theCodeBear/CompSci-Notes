@@ -1,0 +1,140 @@
+Computer Network Notes
+
+
+Let's break down a Uniform Resource Locator (URL) into its parts:
+
+    URL:                http://www.toddkronenberg.com/SocialFit/index.html
+    Hostname:           www.toddkronenberg.com
+    File Location:      SocialFit/index.html
+
+
+Some terms to know:
+    IP - Internet Protocol - the addressing protocol of all addresses on the internet
+    ISP - Internet Service Provider - the company/organization that provides your internet service
+    DNS - Domain Name System - network of name servers that can query each other to find
+                               the location of any host's IP address on the internet
+
+
+How a computer connects to a website:
+    You type a URL into a browser and the browser attempts to make a connection with the
+    server where the document you are looking for lives. It must find the network location
+    of the host (aka: network host, host machine). The corresponding location is an IP
+    address. But to get the IP address of the host you are looking your computer must query
+    a program called a name server. This name server is most likely in your ISP's network,
+    so your machine contacts your ISP's name server for the IP address of the host you are
+    looking for. The name server will find this out by querying other name servers in a
+    worldwide network called the Domain Name System (DNS). The task of finding the IP
+    address of a hostname is called "resolving hostnames". Once the information gets back
+    to your nameserver, so that you have the IP address, your machine will go to that IP.
+
+Domain Name System (DNS):
+    The DNS is the whole network of programs and databases that cooperate together to
+    translate hostnames to IP addresses for any system on the internet that is trying to
+    locate an address.
+    It is made up of DNS servers (nameservers).
+    Internet hostnames are composed of parts separated by dots. A domain is a collection
+    of machines that share a common name suffix. Domains can live as subdomains inside of
+    other domains.
+    Each domain is defined by an authoratative name server that knows the IP addresses of
+    the other machines in the domain. The authoritative, or primary, name server may have
+    backups in case it goes down, which are referred to as secondary name servers or
+    secondary DNS. The secondaries usually refresh their information from the primaries
+    every few hours to keep up to date.
+    The key is that nameservers for a domain don't have to konw the locations of all the
+    machines in other domaines, including their own subdomains. They only have to know the
+    location of the nameservers. The whole network is a tree, with several root DNS servers.
+    All machines on the internet know the addresses of the root servers. The root servers
+    know the addresses of the servers on the next level down: the top-level domains, which
+    are things like .org, .com, etc. Each top-level domain server knows where the nameservers
+    for the domains directly beneath it are, and etc on down until there is a DNS server
+    that knows the IP address for a particular host.
+    The Domain Name System has been designed so that each machine can get by with a minimum
+    amount of knowledge and use the system to get locations of web hosts instead of having
+    each nameserver contain an enormous amount of information. Local changes to subtrees
+    in the system can be made by just changing one authoritative server's database of the
+    name-to-IP address mapping.
+    
+    So to locate www.toddkronenberg.com on the internet, a computer would as its authoritative
+    nameserver to find the host name's location. That nameserver would query a root server
+    to find hostname, that root server would query the hostname to the .com top-level domain
+    server, that server would query the toddkronenberg.com domain server with the host name,
+    and that name server would look in its database to find the IP address of the host name.
+    Notice that a dot in the URL separates each level in the Domain Name System.
+
+    Once your authoritative nameserver resolves a hostname to its IP address it caches that
+    information for some time period so that it doesn't have to go throught the whole Domain
+    Name System when people continually go to the same address. Nameservers do a lot of
+    caching to save time and resources. It is important that nameservers only cache IP
+    mappings for a time because addresses change and the nameservers need to keep up to date
+    and not have old and invalid information cached. The cached IP address for a site is
+    also deleted if the host is unreachable when a computer tries to connect to it.
+
+Packets and Routers:
+    A browser sends commands to hostnames as packets. A packet is a block of bits that has
+    three important things: the source IP address (of your machine), the destination IP
+    address (of the target machine) and the port number to use (80 is standard for HTTP
+    that indicates it is a world wide web request).
+    The packet is sent to your router, the router has a map of the internet in its memory
+    that completely describes the local network neighborhood so that it can send the packet
+    to routers on neighboring networks. A packet will travel through several routers on its
+    way to its destination. Routers keep track of how long it takes for other routers to
+    acknowledge having received a packet, and use this information to direct traffic over
+    the fastest links in the network. They also use this knowledge to know when a router
+    has dropped off the network. So the internet is a decentralized, distributed network
+    of tons of routers all around the world, so failures tend to be very localized and the
+    network can route around them.
+
+    Once your packet reaches its destination, that machine uses the port number to feed the
+    packet to the web server. The web server replies to the packet's source address. The
+    web server returns the document to the source address as a number of packets.
+
+TCP / IP:
+    TCP/IP are the main protocols of the internet. TCP (Transmission Control Protocol)
+    exists on the Transport Layer of the OSI model. IP (Internet Protocol) exists on the
+    Network/Internet Layer of the OSI model.
+    The lower level, IP, is responsible for labeling individual packets with the source
+    address and destination address of the two computers exchanging information over a
+    network.
+    The upper level, TCP, gives you reliability. When two computer negotiate an TCP
+    connection, using IP, the receiver knows to send acknowledgements of the packets it
+    sees back to the sender. If the sender doesn't see an acknowledgement for a packet within
+    some time period, it resends the packet. This way there is no loss of data (unlike
+    another protocol: UDP). The sender also gives each TCP packet a sequence number that
+    the receiver can use to reassemble the packet in case they show up out of order, which
+    can often happen). TCP/IP packets also contain a checksum to enable detection of data
+    corruption.
+
+HTTP:
+    HTTP (HyperText Transfer Protocol) is the main protocol at the Application layer of
+    the OSI network model. The Application layer is the layer on which web browsers and
+    servers speak to each other. This runs on top of the TCP/IP protocol. The application
+    layer protocol, HTTP, is a way to pass strings of yes back and forth. Two commands
+    that use HTTP are GET and POST. So the packets of data are sent through TCP/IP but the
+    actual information in those packets is text sent through HTTP. A typical group of
+    HTTP headers for a response to a request for a webpage will look something like this:
+        HTTP/1.1 200 OK
+        Date: Tue, 24 Jul 2014 14:27:48 GMT
+        Server: Apache/1.2.6 Red Hat
+        Last-Modified: Wed, 22 Apr 2013 04:49:11 GMT
+        Content-Length: 4928
+        Content-Type: text/html
+    The headers shown directly above would be followed by a blank line and then the text
+    of the web page. After all this information is sent the connection is dropped. The
+    browser displays the page; the headers tell it how to display the page.
+
+
+OSI Layer Model:
+    The OSI (Open Systems Interconnection) is a conceptual model that standardizes the
+    communication system between machines on the internet. There is a 7 layer model and a
+    4 layer model, which merely merges some of the 7 layers.
+
+    OSI 7 Layer Model:                      OSI 4 Layer Model:
+
+        Application Layer                       Application Layer
+        Presentation Layer
+        Session Layer
+        Transport Layer                         Tranport Layer
+        Network Layer                           Internet Layer
+        Datalink Layer                          Network Layer
+        Physical Layer
+

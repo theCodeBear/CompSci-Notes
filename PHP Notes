@@ -207,6 +207,18 @@ For both to display a value in an array you have to put curly braces around the 
 print_r($array)     -   print_r() will print an array in human-readable form
 
 
+json_encode():
+    To output the value of a php string (literal or variable) in JavaScript code you have to use
+    the json_encode() function like so:
+            echo json_encode($str);              echo json_encode("string");
+    Otherwise JavaScript won't recognize it as a string - won't include quotes around it. PHP works
+    by evaluating all PHP code in a file first, so if there is also HTML in a php file then the PHP code
+    gets evaluated and then the HTML document (including JavaScript) loads. So an echo statement
+    in a PHP block of code within JavaScript just leaves what the PHP code evaluates to, sitting in
+    the JavaScript, but without json_encode() it is not evaluated as a string.
+
+    There is also a json_decode() function which does the opposite - it takes a JSON encoded
+    string and converts it into a PHP variable.
 
 
 ************************ CONDITIONALS AND LOOPS ************************
