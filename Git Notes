@@ -48,10 +48,8 @@ This command removes a specific file from the index of files listed
 in the git status, so it removes a file from being ready to commit
 
 Command:     git rm filename
-This I believe removes the actual files from the directory. So this
-is only if you want to actually delete files I think…. or maybe it
-adds their removal from the repository to the staging area. Have to
-look up.
+This removes the actual files from the directory. So this
+is only if you want to actually delete files.
 
 Command:     git add filename.blah
              git add --all
@@ -97,8 +95,41 @@ instance of the file by its commit ID, but can easily refer to the
 most recent commit by just the word HEAD. The most recent commit will
 be at the top.
 
-command		git log —-graph
+command:	git log —-graph
 Shows a graphical representation of branches and merges in the log.
+
+command:    git log --oneline --graph
+Gives a visual representation of the branch mergin into master.
+
+command:	git log —-pretty=oneline
+Makes it so when you call git log each commit is just displayed on one
+line, with the SHA Hash on the left and the commit message after it.
+
+command:    git log --pretty=format:"xxx"
+Using this you can format the output of the log however you want. In
+place of the xxx you put your formatting. The place holders you can
+use are:    %ad     author date
+            %an     author name
+            %h      SHA Hash
+            %s      subject
+            %d      ref names
+
+command:    git log --oneline -p
+The -p flag, which stands for patch, lets you see what lines were
+removed and what lines were added in each commit.
+
+command:    git log --oneline --stat
+The -stat option shows you how many insertions and deletions were
+made for each file in each commit.
+
+command:    git log --until=1.minute.ago    git log --since=1.day.ago
+            git log --since=1.month.ago --until=2.weeks.ago
+Can specify date ranges to be output by the log. Can use the until or
+since options to specify a time range of the beginning of the log until
+some time ago, or since some time ago up to the present, or use both
+to output the commit log since some time ago until some time ago. You
+can specify times like shown above: number.timeUnit.ago     or you can
+specify times with a date in the form: year-month-day, like: 2012-04-22
 
 command:     git show
              git show theCommitID
@@ -237,10 +268,31 @@ back to a branch (the master branch).
 command:	git diff CommitID
 git diff shows you the changes between the last commit and the current state of
 the files that are not staged. If you then stage everything with git add then
-git diff won’t show anything.
+git diff won’t show anything. You can specify a CommitID, or use HEAD~3 to see
+the commit difference from 3 commits ago for instance, or just to see the
+differences since the last commit you can either just put HEAD for the
+Commit ID or put nothing and just leave the command as git diff.
+You can also compare two different commits against each other, for example:
+git dif HEAD^..HEAD compares the second most recent commit and the most
+recent commit.
 Can also use:       git diff —-staged
 to see differences between the last commit and what is currently staged to be
 committed.
+You can also use time based ranges for git diff, just like with git log.
+See the git log notes to see how to do this.
+
+command:    git diff branchName branchName
+The git diff command can also be used to compare the differences between 
+two branches.
+
+command:    git blame filename
+If you don't understand some changes made at a certain commit use git
+blame to see who made each commit, as well as the date of the commit
+and what lines were changed and the content that was changed. Specify
+the option:     --date short         to the date to output in a short
+format for easier readability.
+
+
 
 
 Git allows distributed development, so multiple people can be working on
@@ -281,7 +333,7 @@ command:	git remote
 Lists the remote you have to represent the URL in that repository. So if you don’t
 remember what you named the remote, just use this command to see it. Using a -v
 option like:    git remote -v       shows not just the name of the remote but
-also the URL it is used for.
+also the URL it is used for. The -v stands for verbose.
 
 command:	git clone URL
 If you haven’t created a repo for a project cloning a project from the internet
@@ -293,12 +345,43 @@ If you already have a repo for a project you use pull instead of clone. This
 takes all the changes that have been made since the last pull, and merge
 them into the current local git commit version.
 
+command:	git fetch URL branchName
+The fetch command is like the pull command except that pull will auto merge
+branches while fetch just updates the local branch information.
+
 command: 	git branch -a
 Lists all the branches that currently exist on a server.
 
 command:	git checkout -b URLalias/branchName
 The -b means to create a new branch. This command creates a new branch and pulls
 the branch from the server to your local computer.
+
+
+
+Excluding stuff from being track in the git repo:
+If you have something you are working on in the project directory but you
+don't want it to be committed to the git repo then git has a directory
+where you can exlude things from the repo so they just stay on your local
+computer. Keep whatever you are working on in a folder, and put that folder
+in the .git/info/exclude directory. Then the folder won't show up in git
+status anymore.
+You can make some exclude patterns like:
+    filename.ext        excluding a particular file
+    *.ext               exclude all files of a given extension type
+    folder/             exclude a directory
+    logs/*.log          exclude .log files in logs directory
+Log files should never be committed because they change for each user. To
+exclude log files you should put this pattern into the .gitignore file:
+    logs/*.log
+
+
+Making Aliases of git commands:         git config --global alias.theAlias theCommand
+For git commands that you use all the time you can make an alias to
+give yourself a shorthand for typing that command. The syntax is shown
+above, for example to turn status into st you would do:
+    git config --global alias.st status
+So then whenever you want to run git status you just have to type in git st
+
 
 
 You can use git to actually deploy changes to a website. Set up an ssh key. Copy
