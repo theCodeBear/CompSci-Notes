@@ -19,9 +19,24 @@ Each individual project needs to be in its own git repository. Which means that
 each project needs to be in its own folder/directory (and then you make that
 directory a git repository).
 
+Note that whenever you use the " -- " double dashes on the command line that
+treats anything that comes after it as a filename (note the space after the
+double dashes). If there is no space after the double dashes though then that
+is an option, like --all.
+
+Note that HEAD^ refers to the first parent of the HEAD commit. So HEAD^^ would
+refer to the grandparent of the HEAD commit (2 commits back).
+Equivalently, HEAD~n refers to the nth ancestor of the HEAD, meaning that
+HEAD^ equals HEAD~1 and HEAD^^ equals HEAD~2, and so on.
 
 
 
+
+
+
+command:    git help command
+Shows the manual for the specified command so you can read up on
+how it works.
 
 Command:     git status
 - type the "git status" command in the command line when inside the
@@ -62,6 +77,16 @@ The "-a" adds all the files to the commit. The "-m" lets you specify
 the commit message right here. So this is one command to do the add,
 commit, and commit message all together. The commit message must be
 in single quotes. Can’t be in double quotes or won’t work.
+NOTE: Doing a commit, using the -a, only commits tracked files, that
+is it doesn't commit any newly created files.
+
+command:    git commit --amend -m 'new commit message'
+The --amend option lets you add stuff to the last commit, in case you
+forgot to commit something. So just add whatever you want to the
+staging area and then use this command to add it to the last commit.
+Optionally you can do the -m 'message' to add a new commit message to
+that commit, overriding the previous message for that commit.
+Don't amend something after you've pushed the commit to GitHub.
 
 Command:     git log
 Shows the history of the commits. Shows each commit with a commit ID,
@@ -88,6 +113,7 @@ five characters of the Commit ID.
 i.e.	git show 75f2b
 Note: git show only shows the actual changes that were made in the
 commit, not the whole files.
+
 
 
 Branching:
@@ -140,15 +166,20 @@ Can go back to a previously saved version, in case you screw something up
 later on. So this makes a new commit based on an old commit so you can
 jump back and make the current version an older version.
 
-command:	git checkout —- filename
-Replaces current version with the version in the index, I guess in case
-you added a file to the index but didn’t commit it, and since then you
-made changes to the file and saved them, then doing this command will
-revert your file back to what is still left sitting in the index waiting
-to be committed.
+command:	git checkout —- filename(s)
+Reverts current version of specified files back to how they were at the
+time of the last commit.
 NOTE: that checkout does not make a new commit, it just replaces the
 currently saved file with an older version, you then have to commit it
 to get this newer version back in the HEAD commit.
+
+command:    git checkout CommitID
+This takes you to a previous commit based on the CommitID given. You are
+no longer on the master branch now, you’re not in a branch. Here you can
+play around and make commits without affecting the master branch. I guess
+while checking out an old commit you can branch that, and then when you
+go back to your master branch you’ll see that this new branch has been
+created with the old commit.
 
 command:	git checkout CommitID filename
 Replaces the specified file with an older version of it from a past commit
@@ -158,12 +189,26 @@ To go back to the last commit, so to revert a single file back to what it
 was in the last commit say:		git checkout HEAD filename
 because the HEAD is the name of the last commit.
 
-command:	git reset —-hard CommmitID
-I think this gets rid of all the commits going back to the specified commit
-and gets rid of the later commits. However, git doesn’t totally get rid
-of anything, it keeps track of everything you do.
-The command:	git reset filename	can also just remove a file from
-the staging area.
+command:	git reset HEAD filename
+Unstages the specified file that has been staged to be committed. To unstage
+all files that are currently staged you just do:	git reset
+Don't reset stuff after you've push to GitHub.
+
+command:    git reset --soft HEAD^
+Undoes the last commit and moves everything from that last commit back into
+staging. So do this if you forgot to make some changes or stage some of the
+files that you meant to commit for that last commit. The HEAD^ part of this
+tells git to move the HEAD back to the last commit before the current HEAD.
+
+command:	git reset —-hard HEAD^
+This not just unstages everything that is currently staged to be committed but also reverts the current working directory back to the last commit. In other words, it
+gets rid of all the changes since the last commit.
+To revert the current directory back to a specific commit that isn’t the last commit,
+and I think get rid of all the commits after the specified commit (though git doesn’t totally get rid of those commits, git reflog lets you see them), use:
+	git reset -—hard CommitID
+What git reset actually does is move the HEAD to a different spot on the timeline.
+Use HEAD^^ or HEAD~2 to revert back to two commits ago, or HEAD~3 for three
+commits ago, and so on.
 
 command:	git reflog
 This gives a history of everything you’ve done, not just a history of commits
@@ -189,20 +234,13 @@ During this process you are not in an actual branch. So after the search
 is done you just type:		git checkout master		to get
 back to a branch (the master branch).
 
-command:	git checkout CommitID
-This takes you to a previous commit based on the CommitID given. You are
-no longer on the master branch now, you’re not in a branch. Here you can
-play around and make commits without affecting the master branch. I guess
-while checking out an old commit you can branch that, and then when you
-go back to your master branch you’ll see that this new branch has been
-created with the old commit.
-
 command:	git diff CommitID
-Shows you the changes between the last commit and the current state of
-the files…I think. Something like that. Can also use:  git diff —-staged
-to see differences between the staged and something else, I guess the
-last commit.
-
+git diff shows you the changes between the last commit and the current state of
+the files that are not staged. If you then stage everything with git add then
+git diff won’t show anything.
+Can also use:       git diff —-staged
+to see differences between the last commit and what is currently staged to be
+committed.
 
 
 Git allows distributed development, so multiple people can be working on
@@ -224,10 +262,26 @@ So to push the Master branch of a git repository to GitHub you just do:
 	git push theGitHubURL master
 URL format for GitHub is:	git@github.com:theCodeBear/repositoryName.git
 
+command:    git push -u remoteName branchName
+To push commits to GitHub using an alias/remoteName. The -u option basically
+makes it so the next time you want to push to that GitHub repo you don't
+have to specify the remote name and the branch, instead you can just type
+git push.
+
 command:	git remote add remoteName theURL
 To make a shortcut for the URL so you don’t have to type in the long URL
 every time you push to GitHub, you can create whats called a remote, which
-acts as an alias for the URL for the repository on GitHub.
+acts as an alias for the URL for the repository on GitHub. By convention just
+use origin as the remote name for each github repo.
+
+command:    git remote rm remoteName
+Removes a remote from the repository.
+
+command:	git remote
+Lists the remote you have to represent the URL in that repository. So if you don’t
+remember what you named the remote, just use this command to see it. Using a -v
+option like:    git remote -v       shows not just the name of the remote but
+also the URL it is used for.
 
 command:	git clone URL
 If you haven’t created a repo for a project cloning a project from the internet

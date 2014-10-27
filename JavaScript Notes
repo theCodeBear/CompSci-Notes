@@ -189,7 +189,11 @@ OR
 
 Syntax:         var myFunc = function(params) {
                     code...
-                }
+                };
+
+When you create a function in the second way, by assigning a function to a variable, when
+the software runs it won't have to load up the function when the program starts, instead it
+will only load when the variable that holds the function is used.
 
 Can return a value by either assigning it to a variable, or you can put that value straight
 into the content of an HTML element like so:

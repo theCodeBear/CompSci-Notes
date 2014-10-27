@@ -1,0 +1,196 @@
+Notes on the Vim (Vi Impoved) Text Editor
+
+
+
+Use the vimtutor to learn Vim by just typing into the terminal:  vimtutor
+
+
+-- Doing stuff in Normal Mode --
+
+Commands have operators and motions. For example, when deleting "d" is the
+operator (the delete operator) and the letter that follows will be the motion,
+for example, 'w' is the motion for going to the beginning of the next word, so
+dw deletes from the cursos up to the beginning of the next word (excluding that
+begining).
+So 'w' by itself is just a motion, so it just moves the cursor to the beginning
+of the next word.
+Also typing a number before any motion or operator does that command that many
+times. So 5dw would delete up to the beginning of 5 words in front of the
+cursor, where as 5w would move the cursor up to the start of the 5th word past
+the cursor's current spot. Note that when there is an operation and a motion,
+like when deleting, the count specifier (the number) can be typed before the
+operation or between the operation and the motion. So 3dw is the same as d3w.
+
+d is the delete operator.
+c is the change operator, works on all the same motions as delete does. It also
+    deletes but the difference is that it puts you in Insert Mode so you can
+    make changes after you deleted the stuff.
+
+
+Moving the cursor:
+h - moves the cursor left
+j - moves the cursor down
+k - moves the cursor up
+l - moves the cursor right
+
+
+Getting Help:
+:help - this will bring you to the Vim help page where it describes all the Vim
+        commands. You can get help with a specific command by typing in the
+        command after :help. When in the help file type :exit to get out of it
+        and back to the file you were working with.
+
+
+Saving and Quitting:
+:w - Saves the file.
+:w filename - Saves the file under a specified filename, will create a new
+              filename is it hasn't yet been created.
+:q - exits the Vim text editor if nothing has been edited since the last save.
+:q! - quits and doesn't save anything that has been edited since last save.
+
+
+Switching to Insert Mode:
+i - switches to insert mode at the current cursor position
+o - opens a line below the cursor, moves there, and switches to insert mode 
+O - opens a line above the cursor, moves there, and switches to insert mode
+a - moves the cursor one spot to the right and switches to insert mode
+A - moves the cursor to the end of the line and switches to insert mode
+
+
+Selecting and doing stuff with selections::
+v - pressing v and then moving the cursor highlights the text. When something is
+    highlighted you can then save the selected text to anothing file by doing
+    :w filename. You can also use operators to do stuff to the text when it is
+    selected, like deleting it with d.
+
+
+Deleting:
+
+dw - deletes from the cursor's position to the end of the word that the cursor
+     is currently over.
+db - deletes from the cursor's position to the beginning of the word (note
+     though that the deletion excludes the character at cursor's current
+     position).
+d0 - deletes from the position directly before the cursor to the beginning of
+     the current line.
+d$ - deletes the rest of the line starting from where the cursor is.
+D  - does the same thing as d$ (deletes to the end of the line).
+de - deletes from the cursor to the end of the word
+dd - deletes the entire current line (5dd would delete the current line and the
+     next 4 lines after it).
+
+
+Moving:
+
+w - moves to the beginning of the next word
+b - the opposite of 'w'. Moves to the beginning of the previous word (starting
+    with the current word).
+e - moves to the end of the next word (starting with the current word)
+0 - moves to start of the current line
+$ - moves to end of the current line
+
+
+Undo/Redo:
+
+u - to undo previous commands just type u.
+U - undoes all the immediate changes to the last line that was changed. If you
+    go to a different line and make a change then U will just undo that one.
+CTRL-r - redo. opposite of using u.
+
+
+Replacing:
+
+r - press 'r' over a space and then type the character you want to be in that
+    space.
+R - allows you to replace more than one letter starting where the cursor is.
+    You just keep typing and the cursor moves along replacing what is there
+    with what you are typing. Then just press ESC to stop replacing.
+p - places whatever the last thing saved to the Vim register or whatever to
+    where the cursor is. That could be something that was copied with the 'y'
+    command or the last thing that was deleted.
+y - short for 'yank', it is the copy tool. Pressing y on a line will copy the
+    entire contents of that line. Press p to paste it. You can use v to
+    highlight text in conjunction with y to copy it, then p to paste it.
+    You can also use y as an operator, so yw copies from the current cursor
+    position to just before the beginning of the next word. Pressing 3y will
+    copy the 3 lines ending in the line the cursor is currently on.
+
+
+Changing:
+cd - deletes from the cursor to the end of the current word and puts you into
+     Insert Mode so that you can retype the rest of the word correctly.
+
+
+Cursor Location:
+CNTL-G - displays the filename, current line number, total number of lines in
+         the file, percentage of the way through the file, and the column
+         number.
+G - moves cursor to end of the file
+gg - moves cursor to start of the file
+:lineNum - moves cursor to specified line number. i.e. :45 would move to line 45
+
+
+Searching:
+/text - press the slash key and then type some text and press enter to search a
+        file for that text. Then press n to go to the next instance of that
+        text that was found in the file, or press N to go to the previous
+        instance.
+:set ic - this sets a search to ignore case. So once you've set the ic option
+          any search will not be case sensitive. To ignore case for just one
+          search you can just add \c to the end of your search.
+:set noic - disables the ignore case option so searches are once again case
+            sensitive
+:set hls is - this will highlight all the search terms in the text when a
+              search is being made, that is the hls part. The is option shows
+              partial matches for a search phrase. Disables these in the same
+              way you disable the ic option, with :set nohls and :set nois.
+?text - also a search but instead of searching forwards in the file it searches
+        backwards through the file.
+CNTL-o - note that o is the letter in "oh". This command takes you backwards in
+         your search, eventually taking you back to where you were before you
+         started the search. It is basically undoing each step of the search.
+         You can use it to find the place where you were in the file before
+         seraching.
+CNTL-i - opposite of CNTL-o, moves you forward in the search. Only works if you
+         have been using CNTL-o already to move backwards.
+% - does parenthesis matching, so if you are on a ( or { or [ or their matching
+    counterparts pressing % will move the cursor to the matching bracket or
+    parenthesis.
+
+
+Substituting:
+:s/find/replace - the word in the 'find' spot is replaced with word in the
+                  'replace' spot on the current line. Add on /g to the end
+                  of this command to find and replace all instances of the
+                  word on that line. /g stands for global.
+:#,#s/find/replace/g - to find and replace the word at every spot between the
+                       line numbers specified by the two # in the command
+:%s/find/replace/g - to find and replace the word throughout the entire file
+:%s/find/replace/gc - to find every occurance of the word in the file and ask
+                      if it should be replaced 
+
+
+Using Shell Commands:
+:!Command - typing in a command from the command line after :! will execute
+            that command. So :!ls will run the ls command in whatever directory
+            the file that you are working on is in. Press Enter to run the
+            command.
+
+
+Retrieving and Merging Files:
+:r filename - this will paste the contents of the specified file at the
+              position of the cursor.
+:r !Command - the output from the specified command will be pasted at the
+              current position of the cursor.
+
+
+Command Completion:
+When typing a : command, press CNTL-d to see possible completions of that
+command, then use the TAB key to scroll through them. For example, type :g
+and then hit CNTL-g and it will show you all the commands that start with g.
+
+
+
+There are a lot of options in Vim that aren't in Vi but that are disabled by
+default. To start using more features you have to create a vimrc file.
+Instructions can be found at the end of the vimtutor tutorial.
