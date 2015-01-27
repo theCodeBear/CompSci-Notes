@@ -349,7 +349,7 @@ Comparison operators:
                         <==>        # combines comparison operator, returns 0 if first operand equals
                                       the second, returns 1 if first operand is greater than the
                                       second, returns -1 if first operand is less than the second.
-                        ===         # used to test equality within a "when" cluase of a case
+                        ===         # used to test equality within a "when" clause of a case
                                       statement.        i.e.        (1...10) === 5     returns true
                         .eql?       # true if receiver and argument have both the same type and
                                       equal values (so like === in some other languages).
@@ -592,7 +592,7 @@ For-loop:
     You can end the conditional statement in the for-loop with a semi-colon, the "do" keyword, or
     nothing (just an endline).
 
-    Syntax:     for variable[,variable...] expression
+    Syntax:     for variable[,variable...] in expression
                     # code...
                 end
 
@@ -1578,8 +1578,7 @@ Creating an object:
 
 
 The Initialize Method:
-    This method is a standard Ruby class method and is I think the same as constructors in other
-    languages.
+    This method is a standard Ruby class method and is the same as constructors in other languages.
 
     Syntax:     class ClassName
                     def initialize(params)
@@ -1732,13 +1731,13 @@ Class Information:
 print outputs a string with no automatic endline
 puts outputs a string with an automatic endline
 
-.uppercase          # everything to uppercase
+.upcase          # everything to uppercase
 .downcase           # everything to lowercase
 .reverse            # reverses a string
 .capitalize         # capitalizes the first letter of a string
 !                   # putting this at the end of a method means you don't have to reassign the
                       new value to the variable, the ! modifies the variable the method was called on
-var = gets.chomp    # gets gets input automatically adding a newline, chomp gets rid of the newline
+var = gets.chomp    # gets the input automatically adding a newline, chomp gets rid of the newline
 
 ************************ x ************************
 

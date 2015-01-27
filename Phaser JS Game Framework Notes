@@ -1,0 +1,210 @@
+Phaser Notes
+
+
+Phaser is a HTML5/JavaScript Game Framework for making web games.
+
+
+
+
+********************** GETTING STARTED **********************
+
+
+There are several ways to include Phaser in your project.
+You can download all the files from github and copy them into your project folder (I think the phaser.min.js file in the build folder is all you need, and it contains all three physics systems bundled in). If you have bower you can just run "bower install phaser" in your project folder. Or run "npm install phaser" in your project folder. Or you can use a Phaser CDN at CDNJS, the links are shown on Phaser's github page.
+
+Note that to load the assets you have to be running a server in the project folder. So go to the root directory of the project on the command line and for testing run something like the python - m SimpleHTTPServer
+
+
+Good tutorials/articles are at:
+  *** Go through this ***     http://www.photonstorm.com/phaser/tutorial-making-your-first-phaser-game
+  http://gamedevelopment.tutsplus.com/articles/how-to-learn-the-phaser-html5-game-engine--gamedev-13643
+  http://www.html5gamedevs.com/topic/1372-phaser-function-order-reserved-names-and-special-uses/
+
+
+Include the phaser.min.js file in your HTML or use the CDN.
+
+You don't even need to include the canvas tag in the HTML, phaser does it for you. To get a game screen up and running just put this code in the JavaScript:
+
+  var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+  function preload() {
+  }
+
+  function create() {
+  }
+
+  function update() {
+  }
+
+This code instantiates a new Phaser.Game object and puts it in the game variable. The parameters for the Phaser.Game constructor are:
+    1. width of the canvas
+    2. height of the canvas
+    3. The third parameter can be either Phaser.CANVAS, Phaser.WEBGL, or
+       Phaser.AUTO. This parameter is the rendering context you want to use. The recommended parameter is Phaser.AUTO which automatically tried to use WebGL, but if the browser doesn't support it it'll fall back to the HTML5 Canvas.
+    4. The fourth parameter is an empty string. This parameter is the id
+       of the DOM element that you want to insert the cavas element into. Leaving it blank means the canvas element will just be appended to the <body> tag.
+    5. The fifth parameter is optional, here it is an object containing
+       references to three of Phaser's essential functions. Phaser supports a full State system allowing you to break your code into much cleaner single objects. But for beginners it is better to include this object and break the code up with those three functions.
+
+Preload():
+
+In the preload function you load the assets for the game. This loads all the assets when the game starts. You do this by making calls to game.load inside the preload function. The first argument in each asset function is the asset key, which is the name used to refer to that asset in the code. Note that a sprite sheet would be a series of sprites for animation and I believe the dimensions you specify in the game.load.spritesheet tells Phaser how large each image is so it can break up the spritesheet into images.
+  Syntax:
+        game.load.assetType('assetKey', 'filepath');
+  i.e.
+        game.load.image('sky', 'assets/sky.png');
+        game.load.spritesheet('hero', 'assets/hero.png', 32, 32);
+
+
+Create():
+
+Create game objects here.
+
+  Syntax:
+            game.add.assetType(x,y,assetKey)
+  i.e.
+            game.add.sprite(0,0,'star');
+
+The order in which items are rendered in the display matches the order in which you create them. So if you wish to place a background behind a sprite you need to add the background to the game first, then add the sprite. So backgrounds should be added first.
+Under the hood game.add.sprite creates a new Phaser.sprite object and adds the sprite to the "game world". The game world is where all the objects live. The game world extends infinitely in all directions, with 0,0 being the center of it. Phaser treats the top-left corner as coordinate 0,0. But you can move that around using the built-in camera.
+
+The world class can be accessed with game.world and comes with a bunch of good methods and properties.
+
+
+
+
+********************** GROUPS **********************
+
+
+Groups allow you to group together similar objects and control them all as a single unit. You can also check for collisions between groups.
+
+Add a group:        var newGroup = game.add.group();
+
+
+
+
+********************** POSITIONING ASSETS ON SCREEN **********************
+
+
+Use the game.world.height and game.world.width to position assets on screen. Since (0,0) is the top left corner of the screen you can subtract from the height or width to move an asset a certain number of pixels to the left of the right side of the screen or up from the bottom of the screen.
+i.e.
+      player = game.add.sprite(32, game.world.height - 150, 'dude');
+
+
+
+
+********************** BASIC PHYSICS **********************
+
+
+Phaser has three different Physics systems: Arcade Physics, Ninja Physics, and P2.JS Full-Body Physics. The Arcade physics system is simple and light-weight.
+
+
+You must enable the physics system in the create() function like so (here we enable the ARCADE physics system):
+        game.physics.startSystem(Phaser.Physics.ARCADE);
+
+
+You must give objects physics if you want the physics system to operate on them. If you are using the Arcade physics system use:
+                    game.physics.arcade.enable(object);
+
+You then need to give the object physics properties. Give the object a new body property, an instance of ArcadePhysics.Body by enabling the physics system on the object. This represents the sprite as a physical body in the physics engine. The ArcadePhysics.Body object has a lot of properties to use.
+          game.physics.arcade.enable(player);
+          player.body.bounce.y = 0.2;
+          player.body.gravity.y = 3000;
+          player.body.colideWorldBounds = true;
+
+To make give an object collision detection with the objects in the world you have to use the collide() method in the update() function. The Physics collide() method takes as arguments the object and the group of things to check collisions against, like here the player and platforms.
+          game.physics.arcade.collide(player, platforms)
+Also in the update function I think maybe you need to reset the player's velocity with player.body.velocity=0 at the beginning of the function.
+
+
+To give physics to a platform or the ground you can do stuff like this:
+          var platforms;      // outside the create() function
+      // inside the create() function:
+          platforms = game.add.group();
+          platforms.enableBody = true;    // enables physics in that group
+          var ground = platforms.create(x, y, 'assetKeyToUse');
+          ground.scale.setTo(2,2);    // scales to 2x original asset
+          ground.body.immovable = true;   // ground won't fall away when you jump on it
+
+You can check for overlaps between two objects and run a function when it occurs (like where you don't want to actually have collisions but want a player to be able to collect an item by calling a function to remove that object: objectName.kill() - this removes the object from the screen). Not sure what the last two parameters are for here. The function is put by itself outside of the three main functions and it's two arguments are the overlapping objects: object1 and object2;
+  Sytax:
+      game.physics.arcade.overlap(object1, object2, function, null, this);
+
+  i.e.
+      game.physics.arcade.overlap(player, stars, collectStar, null, this);
+      function collectStar(player,star) { star.kill(); }
+
+
+
+
+********************** ANIMATIONS **********************
+
+
+To do animations you first need to make an animation sprite sheet in the create() function.
+    Syntax:     game.load.spritesheet('assetKey', 'filepath', tileWidth, tileHeight);
+
+Then, still in the create() function, you need to create individual animations using that spritesheet.
+    Syntax:
+                object.animations.add('animeName', [array of which tiles to use in order], fps, booleanToLoopOrNot);
+    i.e.
+                player.animations.add('left', [0,1,2,3], 10, true);
+                player.animations.add('right', [5,6,7,8], 10, true);
+
+
+Note that Phaser supports flipping sprites to save on animation frames!
+
+
+
+
+********************** KEYBOARD INPUTS **********************
+
+
+Phaser has a built-in keyboard manager which makes it easy to get keyboard inputs.
+
+In the create() function put the following line of code to populate the cursors object with four properties: up, down, left, and right. These are all instances of Phaser.Key objects.
+        cursors = game.input.keyboard.createCursorKeys();
+Then you just need to check for inputs to these keys in the update() function.
+    i.e.
+        if (cursors.left.isDown) {
+          player.body.velocity = -150;
+          player.animations.play('left');
+        } else if (cursors.right.isDown) { ... and so on }
+
+If a player is not moving you probably have a frame of animation for the player just standing there, so if there is no movement you can play that frame with something like:
+        player.frame.4;     // if the 4th frame was the standing still one
+
+To jump with the up button you can do something like this:
+        if (cursors.up.isDown && player.body.touching.down)
+          player.body.velocity.y = -350;
+
+
+To make more complex motions, with momentum and acceleration, you can do other stuff, but just using velocity is the easiest for a simple example game.
+
+
+
+
+********************** WRITING TEXT TO SCREEN **********************
+
+
+Use the Phaser.Text object to write text to the screen. If you don't specify a font type it will use the browser's default font. In the examples below we don't specify the font type.
+
+Syntax:
+    var text = game.add.text(x-coord, y-coord, defaultText, {fontSize: 'XXpx', fille: 'hexColor' });
+
+i.e.
+    var scoreText = game.add.text(16,16, 'score: 0', {fontSize: '32px', fill: '#000' });
+
+
+
+
+********************** CAMERA **********************
+
+
+To make the camera follow the player put this in the create() function:
+      game.camera.follow(player);
+
+
+********************** x **********************
+********************** x **********************
+********************** x **********************
+********************** x **********************

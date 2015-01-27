@@ -1,0 +1,44 @@
+MongoDB
+
+
+MongoDB is a document-based database. It is part of the whole NoSQL movement of using something other than SQL-based relational databases to store data.
+
+MongoDB uses JSON objects, which it calls documents, to store data. You save these documents in databases, called collections.
+
+Save a document:
+	db.collectionName.save(theDocument);
+
+To view, or query, a collection:
+	db.collectionName.find();
+i.e.
+	db.blah.find({ name: “todd”, age: 31 });
+	db.blah.find(someJSONobject);
+	db.blah.find({a: {‘$gt’: 15}})		// queries all documents where a > 15
+
+There are many special query operators, like these:
+	{a: {$lt: 5}}			// less than
+	{a: {$gte: 10}}			// greater than or equal to
+	{a: {$ne: ‘b’}}			// not equal to
+	{a: {$in: [‘a’, ‘b’, ‘c’]}}	// exists in array
+
+
+Create documents:
+	db.collection.insert(theDoc);
+
+Update/Change a document:
+	db.collection.update({key: value}, {updated info for document});
+
+Apparently the update method can sometimes delete an entire document. That’s no good! To avoid this you can use update operators to only modify parts of documents.
+
+Update Operators in use:
+   // Update the document without overwriting it:
+	db.collection.update({key: value}, { $addToSet: {key: value}});
+   // Add a new field to a document:
+	db.collection.update({key: value}, { $set: {key: value}});
+   // Push items from arrays:
+	db.collection.update({key: value}, { $push: {key: value}});
+   // Pull items from arrays:
+	db.collection.update({key: value}, { $pull: {key: value}});
+
+Delete everything from a collection:
+	db.collection.remove({});

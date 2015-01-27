@@ -50,7 +50,7 @@ line (Mac OS X comes with sqlite3 for example), you are ready to create a Rails 
 
 Rails Server:
     First you can check to make sure the Rails server is working. Make sure you are connected to
-    the internet, and into the command line type:           rails server
+    the internet, and into the command line type:           rails server        or      rails s
     Then go to the browser and type in the URL:             localhost:3000
     This should show the Rails server welcome page. This is where your website will show up on
     localhost.
@@ -64,6 +64,11 @@ Create a new Rails application:
     After building your new application, move into its directory that Rails created. There is tons
     of stuff that Rails builds for you in the new application directory.
 
+Update Rails installation:
+    Anywhere in the terminal just type:      gem update rails
+
+To install missing Ruby gems in the project folder you have to run:         bundle install
+
 
 
 
@@ -72,33 +77,168 @@ More needs to be added to this section.
 
 
 
-************************ x ************************
+************************ Embedded Ruby ************************
+
+
+Embedded Ruby (ERb) is the templating language built into rails. It is like Embedded JavaSciprt (ejs) in Express. ERb files should have the extension .rb, even though they are html template files with ruby embedded.
+
+You just need to know two things to use ERb:
+    <% %>   -->     <%  #ruby code  %>
+    <%= %>  -->     <%=  #result of the code should be printed out  %>
+
+i.e.
+    <% page_title = "ERb stuff" %>
+    <title> <%= page_title %> </title>
 
 
 
 
+************************ MVC ************************
+
+
+The Model-View-Controller (MVC) architecture of web development frameworks separates
+fundmental functionality of a web application into 3 separate but closely cooperative subsystems.
+
+The model refers to the data that will be used in the website.
+The View is the actual content that is displayed to the user.
+The Controller is the logic of the website that connects the Model to the View.
+
+
+In Rails you have three primary tasks when making an application:
+    - Describe and model the application's domain. This means figuring out what data entities
+      exist in the website and how these items relate to one another. This is equivalent to
+      modeling database structure to figure out the entities and their relationships.
+    - Specify what can happen in the application's domain. This means making the controllers
+      of the application. So figuring out all the things that can happen on the website.
+    - Choose and design the publicly available views of the domain. At this point you decide
+      what the user can actually see. These are the Views. So you figure out how the data items
+      in the Model and the logic of the Controller get displayed to the user to create a
+      user experience.
+
+Rails MVC framework:
+    Model (ActiveRecord)
+        Maintains the relationship between Objects and Database and handles all database things.
+        This is implemented in the ActiveRecord library which provides an interface and binding
+        between tables in a relational database. You can just use Ruby code to manipulate database
+        records. Ruby method names are automatically generated from the field names of database
+        tables.
+
+    View (ActionView)
+        A script-based templating engine. Implemented in the ActionView library which is an
+        Embedded Ruby based system for defining presetnation templates for data presentation.
+
+    Controller (ActionController)
+        Queries models for specific data and organizes that data (seraching, sorting, etc) into a
+        form that fits the needs of a given view. Implemented in the ActionController which is a
+        data broker sitting between ActiveRecord and ActionView.
 
 
 
 
+************************ RAILS DIRECTORY STRUCTURE ************************
+
+
+When a Rails application is created it comes with a vast directory structure already set up.
+This way Rails can know exactly where stuff goes in the structure of the app so it is easy
+to move from one Rails project to another because the structure is always the same. But it
+can be very confusing, so here is a summary of the directory structure set up by Rails.
+
+demo/
+.../app
+....../controller
+....../helpers
+....../models
+....../views
+........./layouts
+.../components
+.../config
+.../db
+.../doc
+.../lib
+.../log
+.../public
+.../script
+.../test
+.../tmp
+.../vendor
+README
+Rakefile
+
+app:    organizes your application's components. It's got subdirectories that hold the view (views
+        and helpers), controller (controller), and the backend business logic (models).
+
+app/controllers:    The controllers subdirectory is where Rails looks to find controller classes. A
+                    controller handles a web request from the user.
+
+app/helpers:    The helpers subdirectory holds any helper classes used to assist the model, view,
+                and controller classes. this helps to keep the model, view, and controller code
+                small, focused, and uncluttered.
+
+app/models:     The models subdirectory holds the classes that model and wrap the data stored in
+                the application's database.
+
+app/view:       The views subdirectory holds the display templates to fill in with data from the
+                application, convert it to HTML, and return it to the user's browser.
+
+app/view/layouts:   This holds the template files for layouts to be used with views. This models the
+                    common header/footer method of wrapping views. In your views, define a layout
+                    using the <tt>layout: default</tt> and create a file named default.rhtml. Inside
+                    default.rhtml, call <% yield %> to render the view using this layout.
+
+components:     This directory holds tiny self-contained applications that bundle model, view, and
+                controller.
+
+config:     This directory contains the small amount of configuration code that your application
+            will need, including your database configuration (in database.yml), your Rails
+            environment structure (environment.rb), and routing of incoming web requests (routes.rb).
+            You can also tailor the behavior of the three Rails environments for test, development,
+            and deployment with files found in the environments directory.
+
+db:     Usually, your Rails application will have model objects that access relational datbase tables.
+        You can manage the relational database with scripts you create and place in this directory.
+
+doc:    Ruby has a framework, called RubyDoc, that can automatically generate documentation for code
+        you create. You can assist RubyDoc with comments in your code. This directory holds all the
+        RubyDoc-generated Rails and application documentation.
+
+lib:    You'll put libraries here, unless they explicitly belond elsewhere (such as vendor libraries).
+
+log:    Error logs go here. Rails creates scripts that help you manage various error logs. You'll
+        find separate logs for the server (server.log) and each Rails environment (development.log,
+        test.log, production.log).
+
+public:     Like the public directory for a web server, this directory has web files that don't
+            change, such as JavaScript files (public/javascripts), graphics (public/images),
+            stylesheets (public/stylesheets), and HTML files (public).
+
+test:   The tests you write and those Rails creates for you all go here. You'll see a subdirectory
+        for mocks (mocks), unit tests (unit), fixtures (fixtures), and functional tests (functional).
+
+tmp:    Rails uses this directory to hold temporary files for intermediate processing.
+
+vendor:     Libraries provided by third-party vendors (such as security libraries or database
+            utilities beyond the basic Rails distribution) go here.
+
+
+README file:    This file contains basic details about the Rails application and a description of the
+                directory structure.
+
+Rakefile file:  This file is similar to Unix Makefile, which helps with building, packaging, and
+                testing the Rails code. This will be used by the rake command line utility supplied
+                alongside Ruby installation.
+
+
+mysql -uroot to connect to mysql
+mysql.server start to start mysql server
 
 
 
+************************ DATABASES ************************
 
 
-
-
-
-
-
-
-
-
-
-
-************************ x ************************
-
-************************ x ************************
+By default Rails starts an app with SQLite3. If you want to use MySQL instead then create the
+Rails app like this:
+            rails new appName -d mysql
 
 ************************ x ************************
 

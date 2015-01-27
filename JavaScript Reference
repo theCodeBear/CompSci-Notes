@@ -1,0 +1,110 @@
+JavaScript Reference
+
+
+
+These notes will be a reference for JavaScript methods and functions.
+
+
+
+************************ STRINGS ************************
+
+Create a string:
+          var str = new String("yo");
+          var str = "yo";
+
+
+Properties:
+
+.length
+          gives the length of a string
+
+
+
+********************
+
+
+
+Static String Methods:
+
+
+String.fromCharCode(num1, ..., numN)
+          Examples:     String.fromCharCode(45);
+                        String.fromCharCode(65,66,67);    // returns "ABC"
+
+          Takes Unicode integer values and returns a string corresponding to their character values.
+
+
+
+
+
+
+
+
+
+
+
+.lastIndexOf()
+
+.match()
+
+.replace()
+
+.search()
+
+.slice()
+
+.split()
+
+.substr()
+
+.substring()
+
+.toLowerCase()
+
+.toUpperCase()
+
+.toString()
+
+.trim()
+
+.valueOf()
+
+
+
+********************
+
+
+
+Instance String methods:
+
+
+.charAt(index)
+          Examples:   "hey man".charAt(4);    // returns "m"
+                      str.charAt(0);          // returns first element of str variable
+
+          Takes an index integer and returns the character value at that index in the string.
+
+.charCodeAt(index)
+          Examples:   "hey man".charCodeAt(4);    // returns 109 (the unicode of "m")
+                      "A dragon".charCodeAt(0);   // returns 65 (the unicode of "A")
+
+          Takes an index integer and returns the unicode integer value of the character at that index.
+
+.concat(str1, ..., strN)
+          Examples:   "hi".concat(" there, whats ", "up?");   // returns "hi there, whats up?"
+
+          Concatenates two or more strings together, the first string being the string that concat() is called on.
+
+.indexOf()
+
+
+
+
+
+
+
+************************ x ************************
+
+************************ x ************************
+
+************************ x ************************

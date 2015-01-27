@@ -95,6 +95,14 @@ instance of the file by its commit ID, but can easily refer to the
 most recent commit by just the word HEAD. The most recent commit will
 be at the top.
 
+Command:    git log remote/branch
+Will show the log of the remote. So like:  git log origin/master
+Can only do this after you fetch so you know what is on the remote.
+
+Command:    git log remote/branch --not master
+Will show any commits on the remote that aren't in your local repo.
+So like:  git log origin/master --not master
+
 command:	git log —-graph
 Shows a graphical representation of branches and merges in the log.
 
@@ -180,8 +188,19 @@ what files had conflicts, so you can then go into the files, find
 the conflicts and resolve them. Once resolved you want to re-commit
 that file so its committed with the conflicts resolved.
 
+Command:    git reset merge
+To stop a merge.
+
+Command:    git reset --rebase???
+Remove a rebase.
+
 command:	git mergetool
 Brings up a tool to go through all the conflicts from a merge.
+
+command:    git cherry-pick commitID
+Duplicates the commit in the commitID and makes it the head of your
+local repo.
+
 
 command:	git branch -D branchName
 Deletes the branch specified.
@@ -240,6 +259,9 @@ and I think get rid of all the commits after the specified commit (though git do
 What git reset actually does is move the HEAD to a different spot on the timeline.
 Use HEAD^^ or HEAD~2 to revert back to two commits ago, or HEAD~3 for three
 commits ago, and so on.
+
+command:    git reset --hard origin/master
+Will reset your local repo to the head of the remote repo's master branch.
 
 command:	git reflog
 This gives a history of everything you’ve done, not just a history of commits

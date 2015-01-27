@@ -1,0 +1,48 @@
+Coding House Notes Day 2
+
+Can see all methods available to any native object in JavaScript by going into the Developer console in Chrome and creating an object and then typing in it's name and a dot and it will show a list of all possible methods.
+i.e.        var a  = [1,2];
+            a.          <-- developer console will show a list of all methods for arrays
+
+
+JavaScript forEach method used on arrays can take two arguments in the form (element, index) like:
+arr.forEach(e,i) {
+    // e is the current element
+    // i is the current index
+}
+
+
+
+To use variable arguments for a function in JavaScript use the arguments object.
+i.e.    function blah() {
+            arguments.length         // this will be the number of arguments sent to the function
+        }
+But arguments isn't technically an array so you can't use array methods on it like forEach(). You can
+get around this though by using the apply() method like so:
+        [].forEach.call(arguments, function(e) {
+            // code to be called on each element
+        });
+What this says is call the array forEach method but call it on the first argument in the call() method, which here is the arguments. Then the second argument to the call() method is the callback function that you would have used normally in the forEach call.
+
+
+Continuous Integration
+Test-Driven Development (TDD) is constantly testing. Anytime someone pushes something to a github project it gets automatically tested against all the tests to make sure it is running. If it breaks a test then the code is said to be red, if it checks out the code is said to be green.
+TDD takes testing to the extreme, in which you start with the test before the code! Because development is test-driven.
+
+In TDD always work test by test, one test at a time.
+Strategy in TDD is to write the minimal amount of code to satisfy the test.
+
+
+To reverse a string in JavaScript using built-in methods you first have to split it with split("") to make it an array with each character being an element, then use reverse() to reverse the array, then join("") to join all the characters back into a string. Like so:         str.split("").reverse().join("");
+
+
+// type in notes on reduce()
+The reduce() method on JavaScript arrays allows you to call a function on each element of the array.
+
+
+// type in notes on map()
+
+
+
+In JavaScript prototypes are like Classes, and you can make your own method additions to prototypes by using Object.prototype.methodName = function() {}    i.e.    String.prototype.normalize = function() {}.
+The jQuery equivalent is .fn.

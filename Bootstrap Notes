@@ -1,0 +1,13 @@
+Bootstrap Notes
+
+
+A CSS and JavaScript Front-end framework.
+Does a CSS reset automatically.
+The behind the scenes CSS that bootstrap uses to make it all work is the @media media queries.
+
+Bootstrap is made up of a 12 column grid.
+Sizing:
+xs - targets phones
+sm - targets tablets
+md - targets desktops
+lg - targets very large monitors

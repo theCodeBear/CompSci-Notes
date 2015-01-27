@@ -1,0 +1,173 @@
+Angular Notes
+
+
+
+AngularJS is a MVC (Model-View-Controller) framework for the Front-End.
+
+It is made for making Single Page Applications - applicaitons that switch content instead of loading up new pages to change content. You can create a multiple page website where each page has different views though.
+
+In AngularJS views are pure html pages, rather than some templating language. Controllers are written in JavaScript.
+
+To use Angular you can download it and place it into the project directory and reference Angular script from the views or you can just reference Angular from the views using a CDN.
+
+Make sure in the HTML to include any JavaScript files that hold AngularJS modules after the line including AngularJS, or else the JS files that use Angular won't work.
+
+
+
+
+************************ FEATURES OF ANGULAR ************************
+
+
+Data-binding:
+  The automatic synchronization of data between model and view components. It has two way data-binding so that something that is changed on the back end that Angular pulls from will be displays in the view and if the user changes something in the view it can be saved to the back end.
+
+Scope:
+  These are objects that refer to the model. They act as a glue between the controller and the view. The $scope variable is used, and whatever you put in the $scope variable back in the logic (controller/model ?) can automatically be used in the view through Angular.
+
+Controller:
+  JavaScript functions that are bound to a particular scope.
+
+Services:
+  There are several built-in services (i.e. $http to make XNLHttpRequests). These are singleton objects which are instantiated only once in an app.
+
+Filters:
+  Filters select a subset of items from an array and returns a new array.
+
+Directives:
+  Directives are markers on DOM elements that can be used to create custom HTML tags that serve as widgets. There are built-in directives but you can also make your own directives I think. Directives are called stuff like ng-app, ng-model, ng-repeat, etc.
+
+Templates:
+  The rendered views with information from the controller and model. These can be a single file, like index.html, or multiple views in one page using partials.
+
+Routing:
+  The concept of switching views.
+
+Model View Whatever:
+  MVC is a design pattern for dividing an applicatin into different parts called Model, View, Controller, each with distinct responsibilities. AngularJS implements more of a MVVM (Model-View-ViewModel).
+
+Deep Linking:
+  This allows you to encode the state of the application in the URL so that it can be bookmarked. The application can then be restored from the URL to the same state. So this is using the URL to keep track of the displayed views even though the actual page isn't changing since it is a single page application.
+
+Dependency Injection:
+  AngularJS has a built-in dependency injection subsystem that helps the developer by making the application easier to develop, understand, and test.
+
+
+
+
+************************ COMPONENTS ************************
+
+
+The AngularJS framework can be divided into three major parts:
+  ng-app
+      This directive defines and links an AngularJS application to HTML.
+  ng-model
+      This directive binds the values of AngularJS application data to HTML input controls.
+  ng-bind
+      This directive binds the AngularJS application data to HTML tags.
+
+
+
+
+************************ BASICS OF ANGULAR ************************
+
+
+In each view you use AngularJS you have to tell Angular what part of the HTML uses Angular. Do this by adding the ng-app attribute to the root HTML element of the AngularJS app. So you probably just want to add ng-app to either the html tag or the body tag. You set it equal to some name that you reference when creating the AngularJS module back in the front-end JavaScript file. This links the AngularJS module in the JavaScript file with the HTML file (the view):
+    i.e.  in the HTML:
+                        <body ng-app="myapp">
+          in Javascript:
+                        var modName = angular.module("myapp", []);
+          // in the second parameter, [], goes any dependencies of the myapp module, meaning any other modules that this module needs to work.
+
+
+In the html tag where you want your AngularJS controller to be used you put the ng-controller directive and set it equal to the name of the controller you want to be used there. The controllers are defined back in your AngularJS module (the JavaScript file). Controllers are properties of an Angular module that you define.
+    i.e.  in the HTML:
+                        <div ng-controller="myController">
+                          {{ some_$scope_property }}
+                        </div>
+          in the Angular Module:
+                        modname.controller("myController", function($scope) {
+                          // setting the logic to operate on the $scope properties
+                        })
+
+$scope
+  AngularJS has things called Services, and all these services are repesented by a built-in Angular object that starts with a $. $scope is the Service that connects data between the Angular module in the JavaScript and in the HTML. In other words, $scope handles the data-binding between the Angular controllers and the view.
+  It is two-way data binding. Meaning that as soon as the controller changes the value of a $scope property it is reflected in the view, and if the user is given the ability to change a $scope property (using the ng-model directive) then it is immediately reflected back in the controller. Basically $scope is an object that the controller and view share and any changes to its properties are immediately reflected in both.
+
+
+
+
+************************ DIRECTIVES ************************
+
+
+Directives
+  A way to teach HTML new tricks.
+  Anything with ng-something is an Angular directive.
+  Syntax:
+    <htmlTag ng-something>                      // one directive
+    <htmlTag ng-model="blah"> {{ blah }}        // another directive
+    <script src="angular.js script"></script>   // link to the angular.js file
+  You can do ng-blah or instead you can do data-ng-blah, not sure what adding the "data-" does.
+
+  ng-app
+    Starts an AngularJS application in a view (an html file).
+  ng-model
+    Defines the model that is a variable to be used in AngularJS.
+  ng-init
+      Initialize a variable, like a list, that can then be displayed using ng-repeat. It initializes application data.
+  ng-repeat
+      Basically a for each loop (using for-in syntax) to data bind (display) a list of things. Repeats html elements for each item in a collection.
+  ng-view
+
+Data Binding Expession
+  {{ dataname }}
+  Can't do conditional logic in there. Can put an ng-model="dataName" in an html tag and then bind the data using the {{ dataname }} data binding expression syntax.
+
+
+
+
+************************ EXPRESSIONS ************************
+
+
+Expressions in AngularJS are used to bind application data to html. They are written inside double curly braces {{ }}, just like Handlebars.
+
+Expressions are an alternative for ng-bind directives.
+Expressions are pure JavaScript expressions and output the data where they are used. So you put them where you want to display data from the module. You can do calculcations in them if you need to.
+
+i.e.
+    <p> Hello my name is {{ person.firstname }} </p>
+
+
+
+
+************************ CONTROLLERS ************************
+
+
+Controllers control the flow of data in the application.
+A controller is defined using the ng-controller directive.
+It is a JavaScript object containing attributes/properties and functions.
+Each controller accepts $scope as a parameter which refers to the module that the controller is to control.
+
+Set a controller to an html element under which it will be used.
+    <div ng-controller="controllerName">
+      // use the controller in here to display data to the view
+    </div>
+
+Define a controller in JavaScript (should be defined in an Angular module):
+    angModule.controller("controllerName", function($scope) {
+      // do some logic
+    });
+
+A controller is just a function and can be defined like so if you don't associate it with an Angular module:
+    function controllerName($scope) {
+      // do some logic
+    }
+
+
+
+
+
+************************ x ************************
+************************ x ************************
+************************ x ************************
+************************ x ************************
+************************ x ************************
