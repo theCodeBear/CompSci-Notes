@@ -71,7 +71,7 @@ To get another pane in the playground window to display console output go to Vie
 
 ************************ iOS Basics ************************
 
-An iOS app is split into a model, views, 
+An iOS app is split into a model, views,
 
 
 A model for an iOS app is a class or set of classes that represent that class's data and operations the
@@ -142,7 +142,8 @@ Output:
 Use a plus "+" symbol to join things in the print function.
                     print("This is a variable: " + myVar)
 
-
+You can also concatenate strings in Swift using:
+                    print("This is a variable: \(myVar)")
 
 
 ************************ VARIABLES ************************
@@ -171,7 +172,7 @@ Type Casting:
         Float(345)      // = 345.0
         Double(23)      // = 23.0
         Int(34.4)       // = 34, doesn't work on strings, instead use .toInt()
-    
+
     The .toInt() method for Strings, which returns an Optional since it might not be able to convert the string to a number. This means to safely unwrap what toInt() returns you need to use an if-let statement, as described in the section below on Optionals.
 
 
@@ -213,6 +214,7 @@ Accessing array elements:
     Just use simple square bracket notation as normal:
             myArr[1]
             myArr[1] = "changed element"
+            myArr.objectAtIndex(index)  // Accessing array elements in a more descriptive manner
 
 
 Some Properties and Methods of arrays:
@@ -257,7 +259,7 @@ Some Properties and Methods of dictionaries:
 Note that you don't need to put parenthesss around the conditions in loops, you can if you want though, it won't cause an error.
 
 for loop:
-    for var i=0; i<10; i++ { } 
+    for var i=0; i<10; i++ { }
 
 for-in loop:
     for item in collection { }              // note that item is a constant in the loop
@@ -318,7 +320,7 @@ To get some information on a function in Xcode just hold the "option" key on the
 
 To create a function use the func keyword:
 
-        func funcName(parameter: dataType, parameter: dataType) -> returnType { 
+        func funcName(parameter: dataType, parameter: dataType) -> returnType {
             // code
         }
 
