@@ -1,0 +1,496 @@
+SASS Notes
+
+
+STILL A LOT MORE TO INCLUDE ABOUT SASS, GOTTA GO THROUGH THE OFFIICAL DOCUMENTATION
+
+
+***************************** GENERAL NOTES *****************************
+
+
+SASS is a CSS preprocessor, meaning that it is a language that you develop
+your styles in and then it compiles into CSS when the website is built. This
+allows SASS syntax to be more powerful than CSS syntax because it lets you
+use more features and then compiles the SASS into the corresponding CSS code.
+
+SASS stands for Syntatically Awesome Style Sheets. It originally had a
+Python-like significant whitespace syntax with no curly braces or semi-colons.
+The file extension used for SASS files with this syntax was .sass, however
+there has been a syntax change to make SASS merely a superset of CSS by
+bringing back the curly braces and semi-colons and making whitespace
+insignifcant. For SASS to compile with this new, more CSS-like syntax you have
+to use a .scss file extension. Both version of the syntax/extension can be
+used, but .scss makes more sense as it is more familiar and a superset of CSS,
+meaning that any normal CSS code can go in the SASS file.
+
+In these notes I'll just stick to the .scss syntax of SASS.
+
+
+
+***************************** LINKS *****************************
+
+
+Sass website:
+      http://sass-lang.com/
+
+Sass official documentation:
+      http://sass-lang.com/documentation/file.SASS_REFERENCE.html
+
+
+***************************** FEATURES *****************************
+
+
+Some features of SASS:
+                        Variables
+                        Mixins
+                        Inheritance
+                        Nesting rules
+                        Operators
+                        Functions
+                        Formatting CSS
+                        File Imports
+
+
+***************************** USING SASS *****************************
+
+
+In order to use SASS you must use the SASS command line tool to compile the
+.scss file into a .css file.
+
+To use SASS you must install the SASS command line tool using Ruby gems,
+obviously you need Ruby intalled on your computer first. to install SASS
+type this on the command line:
+
+        gem install sass
+
+To compile SASS into CSS use the 'sass --watch' command using this syntax:
+
+        sass --watch fromDirectory:toDirectory
+
+where fromDirectory is the directory your SASS files are in, and toDirectory
+is the directory your CSS files will be output to. It will just convert your
+.scss files into .css files and convert SASS syntax into CSS syntax, while
+keeping the file names the same except for the extension of course. So if
+you have a directory called 'sass' that contains your SASS files and you
+want to compile the CSS into a directory called 'styles' you would use:
+        sass --watch sass:styles
+
+The --watch command not only compiles SASS into CSS, but it also puts a watch
+on the SASS files and re-run the compilation to update the CSS if any changes
+are made.
+
+To use your compiled CSS files in your HTML you just link as normal to whatever
+the CSS files are called, you never link to SASS files themselves because
+the browser can't understand SASS syntax.
+
+When using SASS you should only edit your SASS files, never edit your CSS files.
+This is because your CSS files are merely the outputted compilation from your
+SASS files. Any changes you make to the CSS files will be overridden the next
+time you change and compile your SASS files.
+
+
+You can compare your SASS files to the output CSS files to see what your SASS
+code compiles down into CSS code.
+
+When you install SASS on your computer you get both a sass command line tool and
+a scss command line tool. It doesn't matter which you use as long as your SASS
+files have the proper .sass or .scss file extension. But if they don't then the
+sass command line tool will default to looking for the original indented .sass
+syntax and when it finds .scss syntax it will break. Whereas the scss command line
+tool defaults to .scss syntax and if it instead finds .sass syntax it will break.
+You can use either the sass or scss command line tool if you always put proper
+file extensions on your SASS files, but if you don't then you can either use the
+scss command line tool as normal or pass an --scss option to the sass command like
+so:  sass --scss
+Long story short just give proper file extentions and it doesn't matter whether you
+use the sass or scss command line tool.
+
+
+
+***************************** VARIABLES *****************************
+
+
+Variables can be used in case you need to use a value multiple times in
+the CSS, instead of having to write that value everywhere you need it, you
+can just make a variable to hold that value and use the variable everywhere
+you need it. That way if you need to change all those values you just have to
+change the value of the variable in its declaration.
+
+To define and use variables in SASS you just use a dollar sign, and they
+are declared like CSS values:
+
+Definining variable syntax:
+
+        $color: #AAA;
+
+Using variable syntax:
+
+        background-color: $color;
+
+There are six different types of variables in SASS:
+        Strings:      $myStr: 'some text';
+        Numbers:      $myNum: 20px;
+        Color:        $myColor: blue;
+        Booleans:     $myBool: true;
+        Lists:        $myList: 2px solid black;
+        Nulls:        $myVar: null;
+
+Variable names have the same naming requirement as most programming languages,
+that is you can't start a name with a number and you can use letters or
+underscores anywhere in the name.
+
+Note that you can use multiple variables in one list. For example:
+
+        $thickness: 2px;
+        $border: dashed green;
+        #myDiv {
+          border: $thickness $border;
+        }
+
+
+
+***************************** NESTING *****************************
+
+
+With SASS you can define nested styles. This allows for easier to read code
+than using CSS.
+
+In CSS you have to select a new group of elements for each nested style you
+want to use. For example to target both <p> tags and <h2> tags inside of a
+<section> tag you would have to write CSS code for both 'section p { }' and
+'section h2 { }'. But in SASS you just put nested elements within the outer
+element just as you expect it should work:
+
+Syntax:
+        outertag {
+          /* styles... */
+
+          nestedtag: {
+            /* styles... */
+          }
+
+          nestedtag: {
+            /* styles... */
+          }
+        }
+
+Example:
+        form {
+
+          color: red;
+
+          input {
+            font-size: 20px;
+            padding: 10px;
+          }
+
+          label {
+            color: green;
+          }
+        }
+
+In the example above you give <form> tags styles and right in the same form
+braces you can define styles for any and all elements nested inside <form>
+tags in the HTML. This makes writing nested styles much more readable than
+standard CSS. The more nesting you have the better SASS's nesting syntax
+becomes compared to CSS.
+
+Normal CSS for above example:
+        form {
+          color: red;
+        }
+
+        form input {
+          font-size: 20px;
+          padding: 10px;
+        }
+
+        form label {
+          color: green;
+        }
+
+
+Parent referencing with ampersand:
+  While nesting you can reference a the parent selector with &. For example if we wanted
+  to specify a different color of a <p> tag on hover we would do:
+
+        p {
+          color: blue;
+          &:hover {
+            color: red;
+          }
+        }
+
+De-nesting:
+  If you decide you want to de-nest a style you can use the @at-root directive. Though I'm
+  not sure why you wouldn't just edit the code to put it outside of the nested part. Anyways,
+  in the code below .anotherClass would not be nested under .some-class in the CSS even though
+  it is physically nested within it here, thanks to the @at-root directive.
+
+        .some-class {
+          .someClass { /* style... */; }
+          @at-root .anotherClass {
+            /* style... */;
+          }
+        }
+
+
+
+***************************** MIXINS *****************************
+
+
+Mixins let you define common properties once and then re-use them anywhere you
+want. You use a mixin rather than a variable when you want to define a set or
+styles to be re-used rather than just a single style. There are two directives
+associated with mixin syntax: the @mixin and @include directives.
+
+Mixins are defined using the @ symbol followed by the mixin name in the following format:
+
+        @mixin mixinName {
+          /* styles... */
+        }
+
+To then use a mixin you use @include like so:
+
+        @include mixinName;
+
+You use the mixin just as you would any other line of styling in CSS.
+
+Example:
+
+        @mixin bigBlue {
+          font-size: 50px;
+          color: blue;
+          text-decoration: underline;
+        }
+
+        #header {
+          text-align: center;
+          @include bigBlue;
+        }
+
+
+Mixins also can be used something like functions, in that you can add arguments to a mixin
+in order to take variable values. This is pretty awesome.
+
+i.e.
+        @mixin bigBlue($textDecoration, $size) {
+          font-size: $size;
+          color: blue;
+          text-decoration: $textDecoration;
+        }
+
+        #header {
+          text-align: center;
+          @include bigBlue(line-through, 60px);
+        }
+
+You can even include an @include mixin call inside the @mixin definition of another mixin.
+i.e.
+        @mixin someMix {
+          @include anotherMix($someVar, someValue);
+        }
+
+
+
+***************************** OPERATORS *****************************
+
+
+SASS allows the use of operators to perform mathematical calculations so that
+you can dynamically create styles.
+
+Supported operators include:    +   -   /   *   %   ==    !=
+
+Note that because the '/' symbol is used in shorthand CSS font properties like
+'font: 14px/16px', if you want to use the division operator on non-variable values you
+need to wrap them in parentheses like this:
+      $fontDiff: (14px/16px);
+
+To use SASS operators you simply put the operator right in the style code.
+
+i.e.
+      $thickness: 20px;
+      #myDiv {
+        padding: $thickness+8;
+      }
+
+Note that you can't mix unit values, for example % and px. You could use the CSS calc()
+function in this case though because it needs to be interpreted at render time.
+
+
+***************************** FUNCTIONS *****************************
+
+
+SASS has a large number of built-in functions that allow you to manipulate
+your styles by calling those functions as the code for any given style.
+
+See the official documentation for all of the functions here:
+            http://sass-lang.com/documentation/Sass/Script/Functions.html
+
+For example, some color functions are:
+
+      darken(color, amount)
+      lighten(color, amount)
+      saturate(color, amount)
+      desaturate(color, amount)
+      alpha(color) 
+
+You call them right where you would put a style value, i.e.:
+
+      $myColor: #82828;
+      p {
+        color: lighten($myColor, 35%);
+      }
+
+
+
+***************************** OUTPUT FORMATTING *****************************
+
+
+With SASS you can format how the CSS is outputed from SASS.
+
+To format the compiled CSS output you use the SASS command line -style option.
+There are four different formatting styles that SASS lets you choose from.
+
+Nested Format:
+  This is the default format. It indents all of the styles in the compiled CSS
+  based on their nesting in SASS. So if you have styles for a <p> tag nested
+  within a .container class the CSS will be formatted with indentation like so:
+
+        .container {
+          /* some style */
+          /* some style */ }
+          .container p {
+            /* some style */
+            /* some style */ }
+
+  Since this is SASS's default format for outputting CSS you don't have to do
+  anything extra to get this nested format.
+
+
+Expanded Format:
+  This is a more readable format where the braces are properly expanded and each
+  property has its own line. This is generally how people write their CSS. To take
+  the same example as above, in expanded format it would be:
+
+        .container {
+          /* some style */
+          /* some style */
+        }
+        .container p {
+          /* some style */
+          /* some style */
+        }
+
+  To get your CSS to be output in this format you just have to set the 'expanded'
+  flag on the --style option when you run SASS on the command line. The CSS format
+  will be updated once you save your SASS file again. The command to get expanded
+  format is:
+
+        sass --watch fromDirectory:toDirectory --style expanded
+
+
+Compact Format:
+  This will output the CSS code in a condensed but still readable format. It puts
+  each style element on one line. The above example will look like this:
+
+        .container { /* some style */; /* some style */; }
+        .container p { /* some style */; /* some style */; }
+
+  To get this format you run sass with the 'compact' flag attached to the --style
+  option:
+
+        sass --watch fromDirectory:toDirectory --style compact
+
+
+Compressed Format:
+  The final format is the compressed format which has minimizes the CSS output.
+  This is what you should use in a production environment to minimize the sizes
+  of your CSS files. Compressed format cuts out all whitespace except one space that is
+  necessary before element selectors (notice that id or class selectors don't require that
+  space, only normal elements). It also does some other small compressions,
+  like choosing the smallest representation for colors. The above example will be formatted
+  like this:
+
+        .container{/*somestyle*/;/*somestyle*/;}.container p{/*somestyle*/;/*somestyle*/;}
+
+  Use it with:
+
+        sass --watch fromDirectory:toDirectory --style compressed
+
+
+
+***************************** FILE IMPORTS *****************************
+
+
+SASS can import files using the syntax:           @import 'path/to/file';
+Generally SASS libraries are set up with different partials that are then all imported
+into the main SASS file that is then compiled to CSS. This is what imports are used for.
+Basically it's just a code structuring thing.
+
+
+
+***************************** CONTROL STRUCTURES *****************************
+
+
+SASS provides basic programming control structures like if, if/else, each, for, and while. These aren't used a whole lot in day to day styling, they are mostly used in mixins.
+All of these are called with the @ symbol immediately preceeding them.
+
+
+if()
+  Syntax:     if (condition, trueValue, falseValue)
+  i.e.        if (1+1 == 2, 3px, 5px)                 // will return 3px
+
+
+@if @else if @else
+  The @if directive takes a Sass expression and uses the styles nested beneath it if the expression returns anything other than false or null.
+  i.e.
+          p {
+            @if 1+1==2 { border: 1px solid; }     // this gets styled
+            @if 5<3 { border: 10px dashed; }      // this DOES NOT get styled
+          }
+
+          p {
+            @if condition {
+              // style...
+            } @ else if condition {
+              // style...
+            } @ else {
+              // style...
+            }
+          }
+
+
+@for
+  The @for directive repeatedly outputs a set of styles. For each repetition, a counter variable is used to adjust the output. The directive has two forms:
+      
+      @for $var from <start> through <end>
+      @for $var from <start> to <end>
+
+  $var can be any variable and it is the counter that adjusts the output on each iteration.
+  <start> and <end> are Sass expressions. When <start> is greater than <end> the counter will decrement instead of increment.
+  The difference between the two forms is the 'through' and 'to' keywords. Using the 'through' keyword, the range includes the values of <start> and <end> but the 'to' keyword exlcudes the <end> value.
+
+  i.e.
+      @for $i from 1 through 3 {
+        .item-#{$i} { width: 2em * $i; }
+      }
+  The above compiles to:
+      .item-1 {
+        width; 2em;
+      }
+      .item-2 {
+        width: 4em;
+      }
+      .item-3 {
+        width: 6em;
+      }
+
+
+@each
+
+@while
+
+
+
+***************************** x *****************************
+***************************** x *****************************

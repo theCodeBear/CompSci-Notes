@@ -1,0 +1,120 @@
+Gulp Notes
+
+
+
+
+***************************** GENERAL NOTES *****************************
+
+Gulp is a streaming build system that uses node's streams, file manipulation is all
+done in memory and a file isn't written until you tell it to do so.
+
+It runs build tasks for you to build your application. It uses normal node.js code
+to accomplish this. You make a gulpfile.js in the root directory of your project.
+
+You need to install gulp globally on your computer using:
+          npm install -g gulp
+
+To use gulp in an application you also need to save it as a dev dependency in
+your project's package.json file:
+          npm install --save-dev gulp
+
+Once you've made your gulpfile.js you run it simply by typing in the gulp command
+into the terminal:      gulp
+
+
+
+***************************** LINKS *****************************
+
+The Gulp API docs:
+        https://github.com/gulpjs/gulp/blob/master/docs/API.md
+
+
+***************************** BASICS *****************************
+
+Gulp only has four top level functions, they are:
+        gulp.task
+        gulp.src
+        gulp.dest
+        gulp.watch
+
+gulp.task
+  Defines your tasks. It takes three arguments: task name, dependency array, and
+  the function that defines the task. The dependency array is a list of tasks that
+  will be completed before the current task is run. If you don't need any dependencies
+  for a given taks you can only give it two arguments: the name and function.
+
+        gulp.task('mytask', function() {
+          // code...
+        });
+        gulp.task('taskwithdependencies', ['mytask'], function() {
+          // code...
+        });
+
+gulp.src
+  Points to the files you want to use. It can take up to two arguments: the path
+  to the files you need for the task (a grouping of files, or glob), and an optional options object. It uses .pipe()
+  to chain its output into other plugins. You would use gulp.src() inside a gulp.task
+  to define where the task should get files from.
+
+  i.e.
+        gulp.task('copyHtml', function() {
+          // copy any html files in source/ to public/
+          gulp.src('source/*.html').pipe(gulp.dest('public'));
+        });
+
+  If you want to select multiple types of files in one directory you don't have to list
+  a bunch of different whole paths, you just need to put each file type in a no-spaces,
+  comma separated list inside of curly braces.
+
+  i.e.
+        gulp.src('source/img/*.{png,gif,jpg,tiff}');
+
+gulp.dest
+  As is shown in the gulp.src example, gulp.dest() point to the output folder you want
+  to write files to.
+
+gulp.watch
+  This watches the files listed in the argument and any time any of them are updated
+  this will make gulp run the tasks specified by gulp.watch(). The gulp.watch() function has
+  two main forms, just like gulp.task(). Both forms return an EventEmitter that emits change
+  events.
+
+  The first form take a path glob for all the files to watch, an optional options
+  object, and an array of the tasks to run when any of the files from the first argument
+  are updated. For example, the following line will watch all files in the source/javascript
+  directory and when any of them are updated it will run the jshint task against those files.
+
+        gulp.watch('source/javascript/**/*.js', ['jshint']);
+
+  The second form of gulp.watch() takes the path glob, an optional options object, and an
+  optional callback that will run when a change is made.
+
+
+
+***************************** COMMAND LINE TOOL *****************************
+
+When you run the 'gulp' command on the command line it runs the 'default' task in gulpfile.js.
+So you need to define the default task with all the dependency tasks you want to run on gulp.
+
+        gulp.task('default', ['all', 'the', 'tasks', 'you', 'want', 'run']);
+
+You can also run individual tasks from the command line by specifying the name of the task
+after the gulp command in the following syntax:         gulp task
+For instance, if you make a task called 'jshint' you can run that task alone without running
+the default task by running this on the command line:   gulp jshint
+
+
+
+***************************** COMMON TASKS *****************************
+
+Linting JavaScript files (checking for errors) using jshint is a common task to run as part
+of a build tool. To do this in gulp you need to install gulp-jshint as a dev dependency.
+You also need a reporter for jshint to make the output nicely formatted and color coded,
+you can use jshint-stylish for that.
+
+        npm install --save-dev gulp-jshint jshint-stylish
+
+
+***************************** x *****************************
+***************************** x *****************************
+***************************** x *****************************

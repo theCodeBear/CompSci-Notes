@@ -11,3 +11,82 @@ xs - targets phones
 sm - targets tablets
 md - targets desktops
 lg - targets very large monitors
+
+
+The container Class
+  This class will responsively add margins, and center and wrap the content. You want to put all of your content in a div whose class is container. This will make it so there is some padding between the content and the sides of the page.
+  The container-fluid class allows for stretching if it is desired on larger screens. So if you want some content of your page to take up the whole width of your page use the container-fluid class.
+
+Bootstrap Grides:
+  Any screen size is split up in 12 columns by Boostrap. The class names to assign thing a certain number of columns is:      col-size-#
+        i.e.      col-xs-6
+                  col-md-12
+                  col-sm-4
+  You want use the column classes in div's wrapped around the content you want to span that many columns.
+      <div class="col-md-6">
+        ...content...
+      </div>
+
+  By adding row classes, in div's, wrapped around content that has the column classes that add up to 12 columns, you can clearly separate out the content into columns and now rows. This uses a little bit more of the width of the screen and makes the HTML much easier to read.
+          <div class="row">
+            content that adds up to 12 columns...
+          </div>
+          <div class="row">
+            etc.
+          </div>
+
+  To space out things on the page horizontally you can add column offsets like so:
+    <div class="col-md-3 col-md-offset-2">
+  This would move that div to the right by 2 columns and its content would be 3 columns wide.
+
+  Bootstrap will put the next columned DOM element to wherever it will fit, meaning that if there isn't enough room at the end of a row it will move it to the next row on the screen.
+
+  The screen sizes in the column classes use media queries at some minimum pixel length, which means if you don't set the grid for larger screen sizes then whatever you set for the smaller ones will be applied to larger screen sizes too.
+
+
+Hiding and Showing Things
+  The hidden-size class can be used to hide an element only in certain screen sizes.
+      i.e.    hidden-xs
+              hidden-sm
+              hidden-md
+              hidden-lg
+
+  To ONLY show DOM elements in certain screen sizes you use the visible-size class:
+              visible-xs
+              visible-sm
+              visible-md
+              visible-lg
+
+
+Fonts:
+
+  To make some text be displayed a little more prominently use the .lead class directly in the DOM element that displays the text (no need to wrap an extra div around it). The lead class increases the font size a little bit, increases the font weight, and adds a little bit of padding.
+          i.e.    <p class="lead">blah blah blah</p>
+
+Centering Text:
+
+  Bootstrap has its own text alignment classes.
+        .text-center
+        .text-justify
+        .text-right
+        .text-nowrap
+        .text-left
+
+
+Icons:
+
+  Bootstrap comes with 200 font icons (glyphicons) to use just by including classes. You use the <i> element and then add the class for the glyphicon to that element:
+        i.e.    <i class="glyphicon glyphicon-random"></i>
+  The <i> element was originally the italic font element but it is no longer really used for that because it is bad practice to use HTML element for styling, so now it is accepted to be used for icons.
+
+  You can change the size of the glyphicons changing the font-size of the glyphicon in your custom css file. You can add a custom class to a div surrounding the glyphicon and then in the css do .customClass .glyphicon to only change the size of that glyphicon.
+
+  Because the icons are fonts you can change their coloring just like any other text.
+
+
+Classes for Unordered Lists:
+  Bootstrap class .list-unstyled gets rid of the bullets in unordered lists and also gets rid of the margins that are automatically created by <ul> elements.
+  The .list-inline class does the same thing but also causes the <li> elements to show up horizontally instead of vertically.
+
+
+

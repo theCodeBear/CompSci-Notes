@@ -45,7 +45,10 @@ been committed.
 
 Command:     git rm --cached filename
 This command removes a specific file from the index of files listed
-in the git status, so it removes a file from being ready to commit
+in the git status, so it removes a file from being ready to commit.
+This is how you can stop pushing files or directories to github in
+future commits. For this to work on directories you must use the -r
+option.
 
 Command:     git rm filename
 This removes the actual files from the directory. So this
@@ -167,6 +170,15 @@ Creates a branch with all your files in it.
 
 command:	git checkout branchName
 Switches the branch you are working on to the one specified.
+
+command:	git checkout filename
+If you have edited a file and it is currently unstated (not added) you
+can get rid of those edits by reverting it back to the state it was
+in during the last commit by using this command.
+
+command:	git reset filename
+Use this command to take a file staged for commit back to being
+unstaged.
 
 command:	git branch
 Shows the names of all the branches. There will be an asterisks next

@@ -1,0 +1,139 @@
+CoffeeScript Notes
+
+
+CoffeeScript is a language that compiles to JavaScript.
+It gets rid of some of the syntax of JavaScript to allow you to write less code that you would write in JavaScript.
+So basically it is just a language used to replace JavaScript for people who don't like the syntax in JavaScript.
+
+CoffeeScript website:       http://coffeescript.org/
+
+
+
+************************ INSTALLATION ************************
+
+
+You need the Node Package Manager (npm) and Node.js to install CoffeeScript.
+
+
+To install CoffeeScript globally on the command line so that you can use it anywhere on your system do:
+                npm install -g coffee-script
+
+If you need coffee-script as a dependency in a single project type this in the project directory:
+                npm install --save coffee-script
+
+
+
+
+************************ USAGE ************************
+
+
+The command to run CoffeeScript on the command line is:     coffee
+
+If you type coffee into the command line it will start up a REPL (read-eval-print-loop) right on the command line in which you can practice CoffeeScript right there on the command line.
+
+If you type coffee followed by the name of a CoffeeScript file then the file will be executed:
+            coffee myScript.coffee
+
+Note that CoffeeScript files are given the .coffee extention.
+
+In a project you can use CoffeeScript anywhere you would used JavaScript files.
+
+
+If you want to use JavaScript inside a CoffeeScript file you can as long as you put backticks around the JavaScript code. For example:
+    ` javascript code...
+      more javascript...
+      ... `
+If you don't put those two backticks surrounding the JavaScript code then it will cause an error.
+
+************************ BASICS ************************
+
+
+No semi-colons to end sentences.
+No {} to create blocks of code. Instead you just use indentation to create blocks of code.
+
+
+Variables:
+    myVar = 42
+    myVar = "yo man"
+    myVar = true
+
+if-statements:
+    Syntax:         result if condition
+    i.e.
+                    myVar = "it's true" if myVar
+
+Functions:
+    Syntax:         functionName = (arguments) -> functionCode...
+    i.e.
+                    square = (x) -> x * x
+                    cube = (x) -> square(x) * x
+
+Anonymous Functions:
+    Syntax:         (arguments) -> functionCode...
+    i.e.
+                    (x) -> x * x
+
+Call a Function:
+    Syntax:         functionName arg1, arg2, ...
+    i.e.
+                    square x
+                    sum x,y
+
+Arrays:
+    Syntax:         arrayName = []
+    i.e.
+                    myArr = [1,2,3,4]
+
+Objects:
+    Syntax:         objName = 
+                      key: value
+                      key: value
+    i.e.
+                    math = square : (x) -> x * x
+    Call it:        math.square 3
+
+Array Comprehensions:
+    This will allow you to loop through an array and send it element as the argument to a function, all in one line. The name to reference the elements has to be the same name as the name for the arguments
+
+    Syntax:         resultVar = (functionName args for elementReference in array)
+    i.e.
+                    result = (math.square num for num in myArr)
+
+
+Check for existence of a variable:
+    You can check to see if a variable exists and if it doesn't equal null or undefined. If a variable called myVar doesn't exist then 'if myVar?' will be false. If myVar has been declared but it equals null or undefined then 'if myVar?' will also be false. Otherwise 'if myVar?' will be true.
+
+    Syntax:         results if myVar?     // will run results code if myVar has been declared
+                                          // and doesn't equal null or undefined
+                    results if !myVar?    // will run results code if myVar hasn't been
+                                          // declared or equals null or undefined
+
+
+
+
+************************ CONDITIONAL STATEMENTS ************************
+
+
+if-statements:
+
+  Syntax:
+      if conditions
+        code...
+        code...
+      else
+        code...
+
+  Syntax:
+      myVar = if condition then results else results
+
+  In CoffeeScript there is no ternary if-else statement.
+
+
+
+
+
+
+
+************************ x ************************
+
+************************ x ************************

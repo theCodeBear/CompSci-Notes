@@ -1,6 +1,61 @@
 MongoDB
 
 
+
+
+
+db.collectionName.save({key:value});			// saves something to a collection
+
+db.collectionName.find();									// finds all data in that collection
+db.collectionName.find({key:value});			// query for a key:value hash in a collection. You
+																					// can even search for multiple key:value pairs.
+		The value can me a key:value hash in itself using one of the query operators, i.e. {$lt:10}
+
+it 																		// shows more of a collection??
+
+You can put this code in say a for-loop to save a whole bunch of records to a collection.
+
+
+========================
+Chyld Mongo Lesson:
+========================
+There is a server and a client part. Mongod is the server part of Mongo. That does all the work of MongoDB. The mongo command starts up the client part of it. That is where you issue your commands that interact with the server part of mongo (mongod).
+
+My databases are saved in /Data/DB/ - that is where I set up Mongo to save stuff.
+
+Can also use Robomongo instead of using mongo on the command line.
+
+ps -ef | grep mongo       <-- to check if mongo is running
+
+in Mongo client (after typed mongo command):
+
+To stop Mongod:
+use admin 						 - switches to admin database (admin database is hidden)
+db.shutdownServer()    - shuts down mongod, client will still be running, but it is dead
+exit 									 - exits the mongo client
+
+
+show dbs 							 - shows all your databases in your local mongoDB
+show collections 			 - shows all the collections in your current database
+
+use databaseName 			 - won't show the database in "show dbs" until you actually save a record
+
+db.collectionName.save({})		- save the object you pass into the collection (creates
+																collection if it doesn't exist)
+When you save MongoDB will create a unique id in the _id key and saves it as ObjectID("some id string").
+
+db.commandHelp()							- to see db commands
+
+db.collectionName.find() 			- to see all the records in the collection
+
+db.collectionName.remove({}) 	- removes all data from the collection
+db.collectionName.drop() 			- deletes the entire collection itself
+db.dropDatabase() 						- deletes the entire database that you are in
+
+========================
+
+
+
 MongoDB is a document-based database. It is part of the whole NoSQL movement of using something other than SQL-based relational databases to store data.
 
 MongoDB uses JSON objects, which it calls documents, to store data. You save these documents in databases, called collections.
@@ -31,9 +86,9 @@ Update/Change a document:
 Apparently the update method can sometimes delete an entire document. That’s no good! To avoid this you can use update operators to only modify parts of documents.
 
 Update Operators in use:
-   // Update the document without overwriting it:
+   // Push an element into an array (the key/field must be an array), and doesn't allow duplicates:
 	db.collection.update({key: value}, { $addToSet: {key: value}});
-   // Add a new field to a document:
+   // Updates an existing field, or adds a new field to a document:
 	db.collection.update({key: value}, { $set: {key: value}});
    // Push items from arrays:
 	db.collection.update({key: value}, { $push: {key: value}});
@@ -42,3 +97,7 @@ Update Operators in use:
 
 Delete everything from a collection:
 	db.collection.remove({});
+
+
+Example of checking if a document has a property and sorting:
+	db.meal.find({ $query: {isCloned: { $exists: false }, isPublic: true}, $orderby: { createdAt: 1}})

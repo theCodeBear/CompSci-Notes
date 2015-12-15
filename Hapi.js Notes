@@ -1,0 +1,62 @@
+module.exports = functionName;      <-- to export just one function. Can only export one thing.
+module.exports.name = name;   ??? does this work too? I think so.
+
+exports.functionName = functionName     <-- if you want to export multiple things make multiple
+                                            of these calls, one for each function.
+Then in the folder where you require it you require the file like normal, set it to a variable that is the file name, and then you can call each of the functions that you exported with dot notation.
+var fileName = require('filepath');
+fileName.functionName1();
+fileName.functionName2();
+
+When requiring, if it is a node module you have to just put in the module name, but if it is your own local file that you are requiring then you have to give it the path, like "./name".
+
+
+
+
+
+
+curl is basically a browser on your terminal
+can specify temporary variable from command line like PORT=3333.
+run it like PORT=3333 nodemon server/index.js
+Hapi.js will choose a random port if you don't specify the port
+In node __dirname means the the directory of the current file
+
+hapi plugins, one called "good" that does logging on the server.
+
+In happy, in the handler for a post from an html form request.payload is the form data object.
+
+If browser has a cookie it will send it in request.auth.credentials everytime it sends data to the server.
+
+lab runs the test, chai makes the test. save them in dev dependencies: --save-dev
+Want to make a folder on the same level as client and server to hold the tests, call it test. Make subdirectories: unit
+name the test file after the thing you are testing
+gotta change gulpfile.js to also work on the test directory: the filesrc line and the codesrc file (codesrc is used by jshint and jscs), restart gulp after gulpfile changed
+
+In TDD you start out by making the test fail, look at the error messages, which will drive you to the solution. Start out by having no function it is testing.
+
+to run test:
+./node_modules/.bin.lab -v test/unit/
+
+
+When testing you want to save results in database, you want to have a testing database and a production database, keeping testing results separate from rest of data. Make a "test" script in package.json to run the tests: MONGO_URL=mongodb://localhost/dbName lab -v -m 5000 test/unit
+The lab will use the lab module, will run everything in test/unit. The 5000 is the time to wait I think?
+There shouldn't be any assumptions made on the test database when a test is run. So you need to clear the database before each test is run:
+  var beforeEach = lab.beforeEach;    <-- part of lab, put this in the file that tests
+Put this code under the first describe line before the describe line that actually tests the function.
+  beforeEach(function(done) {
+    Model.remove(done);
+  })
+
+Each test is called by it('string', function(done) { // code for test... });
+
+response.headers['set-cookie']
+
+Mongoose middleware:
+can do pre-save, post-save, pre-validate, post-validate  <-- middleware
+Does this before the save is to the database is done, so you can do some processing on the input to get it in the form you want in the database.
+blahSchema.pre('save',function(next) {
+  do stuff here;
+  next();
+});
+
+new Date().valueOf()   <-- to get the current date/time in terms of the unix epoch

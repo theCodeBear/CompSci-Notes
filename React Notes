@@ -1,0 +1,326 @@
+React Notes
+
+
+
+Reactjs is a library made by facebook for UI interactions. It is the V in MVC, not a complete framework like Angular or Ember.
+
+React uses the idea of components to break up a website into invididual reusable parts that represent a whole UI element, with both presentation and logic (HTML and JS) wrapped up together within the component.
+
+Also developed by Facebook is Flux, which is an architectural system for building apps in React.
+
+React is very fast because it uses a Virtual DOM and a diffing algorithm. The diffing algorithm finds whatever changes need to be made in the DOM, it makes those changes in the Virtual DOM, and then only the actual changes that are needed to be made are made on the real DOM instead of updating the whole DOM. DOM manipulation is slow so doing it this way speeds up changing UI a lot.
+
+React uses a JavaScript-XML syntax called JSX to create the React components in because it makes it much more readable than using plain JavaScript, though you can use just plain JavaScript. Basically it just allows you to directly write the HTML in the component rather than having to put the HTML in several createElement-type functions.
+
+
+***************************** OVERVIEW *****************************
+
+
+React can run on both server side and client side, it is isomorphic. This fixes the problems that Angular has with SEO, by first rendering the page from the server so that Search Engines can read the HTML, and then rending on the client for the faster interactivity with the user.
+
+
+
+***************************** BASICS *****************************
+
+Include the React CDN or get it from Bower.
+Include the JSXTransformer CDN.
+
+In the HTML file when you link to your JS file where you have a component you have to tell the HTML that the type of file is 'text/jsx' like so:
+  <script type='text/jsx' src='youfile.js'></script>
+
+In React you basically put an element in your HTML file and then create a React component in JS that links to that HTML element. The component can insert a template and functionality.
+
+In your JS file you need to put:
+    /** @jsx React.DOM */
+at the top of the file so React knows you are using JSX. (THIS IS NO LONGER NEEDED AS OF REACT v0.12)
+
+
+***************************** COMPONENTS BASICS *****************************
+
+React is all about writing individual components that are pieces of the UI. Each component is linked to the main HTML files by 'mounting' a component to an element. You
+do this by say, giving an HTML element an ID and in the react code referencing that element as the mount element. You do this in the React.render() method, which takes two arguments, the component name (or HTML directly in there) in a tag format, and a reference to the DOM element it will be mounted to. Like so:
+
+  React.render(<Componentname />, document.getElementById('mountedId'));
+
+
+
+***************************** SIMPLE COMPONENT *****************************
+
+The simplest React component you can make is one that just renders a template without any functionality. To do this you can simply use the React.render() function, which takes two arguments, the template and a link to the HTML element that is the root of this component.
+  HTML
+    <div id='root'></div>
+    <!-- and you have to include the React CDN, JSXTransformer CDN and your JS file -->
+
+  JSX:
+      /** @jsx React.DOM */
+      React.render(
+        <h1>Hello World!</h1>,
+        document.getElementById('root')
+      );
+
+  Normal JS (not JSX):
+      React.render(
+        React.DOM.h1(null, 'Hello World!'),
+        document.getElementById('root')
+      );
+
+
+***************************** COMPONENT *****************************
+
+React has a createClass method used to create custom component classes. This is how you normally make components, whereas the simple component way shown above would obviously only be used for the most basic of components.
+
+The createClass method takes a JavaScript object as its argument which contains functions that operate on the react component, some of which are user-made and some are react functions that are specific to the react component lifecycle, but the only required function is the render() function, in which you put the JSX (HTML) that is to be rendered to the DOM for that component. The render() property of the argument to the createClass method just returns the JSX for the DOM part of the component.
+
+To do the above example using the createClass method (using JSX):
+
+    var ComponentName = react.createClass({
+      render: function() {
+        return (
+          <h1<Hello World!</h1>
+        );
+      }
+    });
+    React.render(<ComponentName />, document.getElementById('root'));
+
+
+
+***************************** PROPS AND STATE *****************************
+
+Every component has two objects, a state object and a props object. Props are passed into the component and don't change over the life of the component. State defines the inner state of the component and this can change.
+
+Props can be passed to a component and never change once passed to the component, though obviously the value of the prop that is passed into the component can change vary programmatically. You access props of the component with:    this.props.propName
+
+Props can be used in the reder method to render dynamic data.
+
+
+State is set using the this.setState() method, which triggers UI updates and is the core of React's interactivity. To set an initial state before any interaction occurs use the getInitialState method. You return an object containing the names and values of the state variables.
+
+Props are external and controller by whatever renders the component. State is internal and controlled by the component itself.
+
+When a state changes, through setState(), render is called with the new state and the UI is updated.
+
+If you have a child component and you give it a closing tag so that you can have some inner HTML for that component, then within that child component you can access that inner HTML that was put on it in the parent component through the this.refs.children value.
+i.e.
+  parent Component returns:
+      <Child>My child</Child>
+  Child Component returns:
+      <button>{this.refs.children}</button>
+
+In the above example the text on the button will be the 'My child' which is the innerHTML on the Child component which can be referenced in that child component using this.refs.children.
+
+You can even use this.refs.children with nested components deeper than just parent/child. Like so:
+i.e.
+  parent Component returns:
+      <Child> <GrandChild /> is a baby </Child>
+  Child Component returns:
+      <button>{this.refs.children}</button>
+  GrandChild Component returns:
+      <span> Little Timmy </span>
+
+In the above example the this.refs.children in the Child Component would grab all the innerHTML put in it from it's parent, which includes the GrandChild Component's return value of '<span> Little Timmy </span>' so the button would say 'Little Timmy is a baby'.
+
+
+
+***************************** EVENTS *****************************
+
+React has a built-in cross browser event system. The events are attached as properties of components or DOM elements in components (in the render function) and can trigger your own methods, triggered with {this.yourMethod}.
+
+You then put define method as a property on the object in the createClass() method.
+
+These built-in events are:
+    onClick={}
+    onChange={}
+
+The function that you call from the event curly braces get passed an event as an argument. If you say call it 'e', and lets say the element the event is watching is an input box. You can do e.target to get that input box, or e.target.value to get the value inside the input box. You can also set a this.ref on that input box instead and use this.refs.nameOfRef to get the reference to that element and then use React.findDOMNode(this.refs.nameOfRef) to get a reference to that element, and use the value property on that to get the value of that element.
+
+Refs would probably be used more for when you have multiple different elements calling an update function in the component, so you need different references to each one, so that you can update different variables according to correct input. Whereas if you only have one input that is change something then you can just use the e.target to get at it.
+
+If you have a ref on a component element and then you have refs on elements in that component you can reference those elements in the component by doing:
+        this.refs.refOnComponent.refs.innerRef
+Where refOnComponent and innerRef would just be whatever the names of the refs are.
+
+
+
+
+***************************** COMPONENT LIFE CYCLE AND SPECS *****************************
+
+Each component has several methods related to its lifecycle, as well as specs (built in react functions for components) that can be defined inside a component. Lifecycle methods are quite simply methods that are run at various points in a component's lifecycle.
+
+Life-cycle Methods:
+  componentWillMount()
+      - invoked once on both client and server before rendering occurs
+  componentdidMount()
+      - invoked once only on the client, after first rendering occurs
+  componentWillReceiveProps()
+      - invoked when a component is receiving new props, not called for the initial render. I think happens when props are updated, maybe when route changes.
+  shouldComponentUpdate()
+      - return value determines whether component should update. Takes next props and next state as arguments. Return true to update the component, or false to deny the component from updating. The state gets updated but render isn't called until this returns true.
+  componentWillUpdate()
+      - invoked immediately before rendering when new props or state are being received, not called for the initial render.
+  componentDidUpdate()
+      - invoked immediately after the component's updates are flushed to the DOM, not called for the initial render. Can use arguments prevProps and prevState
+  componentWillUnmount()
+      - invoked prior to unmounting component
+
+
+You can manually unmount a component from an element in the DOM using React.unmountComponentAtNode(document.getElementById('blah')), this will call the componentWillUnmount() method. Unmounting a component from the DOM is a way to remove it from the webpage.
+
+
+Specs:
+  render()
+      - the only required spec when calling createClass(). Renders the component to the DOM.
+  getInitialState()
+      - return value is the initial value for state
+  getDefaultProps()
+      - sets fallback props values if props aren't supplied
+  mixins
+      - an array of objects, used to extend the current component's functionality and share behavior among multiple components
+  propTypes
+      - an object that allows you to validate props beings passed to your components
+  statics
+      - an object that allows you to dinef static methods that can be called on the component class
+  displayName
+      - a string used in debugging messages. JSX sets this value automatically
+
+
+
+
+***************************** MORE COMPONENT LIFE CYCLE STUFF *****************************
+
+
+Once a component has mounted, for example in the componentDidMount() method, you can access the component's DOM node (what it returns) using this.getDOMNode().
+
+In componentWillUnmount() method you can stop any ongoing processes that are running while the component is there.
+
+
+
+***************************** MIXINS *****************************
+
+Mixins are just built in things like the Router which extend functionality of components. You can create your own mixin, which is just an object, and even put component life cycle method (or spec methods) inside that object, then you can pass that mixin in to multiple components and that component life cycle method will execute for each of those components. I guess that is one way to write a lifecycle method once and have it run in a bunch of different components. That is just one use of mixins though. Basically it's just an object that you can insert into components.
+
+Mixins allow you to apply behaviors to multiple comoponents.
+
+
+
+***************************** UNIDIRECTIONAL DATA FLOW *****************************
+
+When using React, application data flows only one way, via the state and props objects, unlike Angular and Ember which have two-way data binding. This means in a multi-component heirarchy a common parent component should manage the state and pass it down the chain via props. Your state should be updated using setState() to ensure a UI refresh will occur if necessary. The resulting values should be passed down to child components using attributes that are accessible in those children via this.props.
+
+
+
+***************************** PROPS *****************************
+
+You can have one React built-in function and one React built-in object in your Component that have to do with Props: getDefaultProps() and propTypes.
+
+The getDefaultProps: function() is where you can specify default props for that component. You return an object that has the default props. Here is an example:
+    getDefaultProps: function() {
+      return {
+        myProp: 'this is mine',
+        yourProp: 0
+      };
+    }
+
+The propTypes object is where you can specify validation on any incoming props to the component. This takes the form of the key being the name of the prop and the value being of the form React.PropTypes.theDataType.
+
+Like:   React.PropTypes.number        React.PropTypes.string
+
+You can require a given prop by tacking on isRequired:
+        React.PropTypes.func.isRequired
+You can specify the prop as being limited to specific values by treating is as an enum:
+        React.PropTypes.oneOf(['jennifer', 'susie'])
+
+An example
+    propTypes: {
+      txt: React.PropTypes.string.isRequired,
+      count: React.PropTypes.number
+    }
+
+See https://facebook.github.io/react/docs/reusable-components.html for the official React docs on prop validation.
+
+
+this.setProps():
+There is a this.setProps({}) method that can be called inside any component method, but only for a root component - that is a component that is declared directly in the React.render() method. So any component that is a child of another component cannot call the this.setProps() method. The method is formatted just like the setState() method, in that you simply give it an object with key-value pairs for the props.
+Calling this.setProps() will execute the componentWillReceiveProps() method on the component. Its argument is the updated prop.
+
+
+
+***************************** PASSING PROPS TO CHILD COMPONENTS *****************************
+
+When you render a child component tag inside a parent component you can send the child it's props through attributes on the child tag. The name of the attributes will be the props names in the child. To send a prop or state to the child as a child prop you do:
+
+    blah={this.state.someValue}       // send state down to child as this.props.blah
+    blah={this.props.someValue}       // send prop down to child as this.props.blah
+    blah={this.someFunc}              // send parent function down to child as this.props.blah
+    blah='some string'                // send a string literal down to child as this.props.blah
+    blah={34}                         // send a number literal down to child as this.props.blah
+
+
+
+***************************** RENDERING AN ARRAY OF ELEMENTS *****************************
+
+When render an array of elements each element must have a unique key associated with it, which you set simply by putting a key attribute on that element, like so:
+      <someElem key={obj.id}>{myArray}</someElem>
+
+The key must be unique in the array. You can for instance make each value in the array an object and give it an id property and set the key equal to the id property as I did in the above example.
+
+Setting the key attribute is only needed when sibling elements (standard HTML elements or child Components) are used. So basically anytime, like in the above example, you render an array as the content of an element/Component.
+
+
+
+
+***************************** x *****************************
+
+this.refs.  <-- put reg='blah' on a DOM element in component
+var blah = React.findDOMNode(this.refs.blah) <-- this is how you can get a reference to a DOM element
+
+In react you shouldn't pass the state into a component through props, it is considered an anti-pattern. But when setting an initial state or transferring a state from the server it is okay.
+
+The defaultValue property can be put on any rendered input tag (any kind of tag that can use a value attribute) to state that this is the default value but that the value can change. This is different from the value attribute in that if you assigned some value to the value attribute in the render method then you wouldn't be able to change that input I think, but defaultValue says this is just the starting value but the value can change.
+
+
+
+
+***************************** JSX DIFFERENCES FROM HTML *****************************
+
+Because JSX is a JavaScript XML syntax what you are writing it not actual HTML but XML based object representations. Therefore there are a few differences from HTML. Here are a few, but there are more:
+
+You must always close self closing tags with a slash:
+  i.e.  <input />
+
+You can't use 'class', instead you must use className:
+  i.e.  <button className='blue'></button>
+
+You can't use 'for', instead you must use htmlFor.
+
+All tag attributes are camelcase in React. So instead of autofocus you have to use autoFocus.
+
+
+
+***************************** FLUX *****************************
+
+Flux is an architecture that Facebook uses internally when working with React. It is their recommended react app architecture. It's not a framework or a library (though there is a library of tools to use provided by Facebook when making apps in the Flux architecture), it is more of a concept for app architecture using React and unidirectional data flow. For example, it is an alternative to MVC.
+
+The library for using Flux is the Dispatcher. A typical Flux architecture will leverage the Dispatcher library, along with Node.js's EventEmitter module in order to set up an event system that helps manage an application's state.
+
+Flux has four components to it:
+
+    Actions
+        - helper methods that facilitate passing data to the Dispatcher
+    Dispatcher
+        - receives actions and broadcasts paylods to registered callbacks
+    Stores
+        - containers for application state and logic that have callbacks registered to the dispatcher
+    Controller Views
+        - React components that grab the state from Stores and pass it down via props to child components
+
+So basically an event occurs in the UI which calls an action. That action can interact with an API or not, and then passes data to the Dispatcher. The Dispatcher receives actions and passes data to callbacks in the Stores. Stores hold application data as well as logic and have these registered callback that the Dispatcher calls. Controller Views grab the state from the Stores and pass it down to child components through their props. And that is the flow of a Flux app.
+
+See my Flux Notes for full notes on Flux.
+
+
+
+***************************** x *****************************
+
+
+***************************** x *****************************
+***************************** x *****************************

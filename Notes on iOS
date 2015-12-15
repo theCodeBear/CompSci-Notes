@@ -1,0 +1,21 @@
+Notes on iOS 8 (with Swift)
+
+
+
+Handling Segues:
+
+  For transitions between two views you don't want to just make the connection/segue straight from the button to the next view. You want to just do segue(s) from the entire view (the first little icon on the left at the top of the view in Main.storyboard) to the next view(s) and name each segue and then in the ViewController or class for that view. Then Ctrl+Drag the button(s) making the segues into the code and add a function to run on those button click(s). Add those functions to their appropriate buttons like so in the viewDidLoad() function:
+          self.buttonVarName.addTarget(self, action: "clickFunctionName:", forControlEvents: .TouchUpInside)
+  Now inside the "clickFunctionName" function (which is an @IBAction function), give it a parameter of (sender: AnyObject). Inside it ust call the prepareForSegue function that you will also create. This line goes like this:
+          self.performSegueWithIdentifier("nameOfSegue", sender: sender as! UIButton)
+  Now create the prepareForSegue function which allows you to add any code you want to run before the transition to the next view, for example passing data to the next view's controller/class or making it so the back button on the next page doesn't display this view's full view title. The segue function definition goes like this:
+          override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject) { }
+  Now to make it so the back button doesn't display this current view's whole name (taking up a bunch of space in the navbar of the next view) you just need to change this view's title before you leave this view. We do this with the line:
+          navigationItem.title = ""    or    navigationItem.title = " "
+  Leaving the title blank will make the default back button display which is "< Back", but leaving it as an empty space will make the back button just display "<" which keeps the navigation bar less crowded. To make this work though we need to update this view's navigationItem title back to its actual value everytime this page loads. We can't do that in viewDidLoad() because that only loads the first time the view is displayed. But the viewWillAppear() function will run everytime this view is shown, so we want to create that function and in it set the title to its appropriate value, which changes it from "" or " " back to its title. So write this code:
+          override fun viewWillAppear(animated: Bool) {
+            navigationItem.title = "theViewTitle"
+          }
+  Now you can have multiple segues all working and keeping the back button's on the succeeding views clean.
+
+  Note: You can instead do more of this connections in just the Main.storyboard, like setting up the connection between a button and it's @IBAction function, but then if you want to view it as an example of how to do this or copy the code for some reason you can't actually see/copy it because all the interactions are done in the Main.storyboard and therefore not expressed in code. That's no good.

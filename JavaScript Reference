@@ -95,8 +95,8 @@ Instance String methods:
 
           Concatenates two or more strings together, the first string being the string that concat() is called on.
 
-.indexOf()
-
+.indexOf(strSearchValue[, fromIndex])
+          Examples:   "yo guy".indexOf()
 
 
 

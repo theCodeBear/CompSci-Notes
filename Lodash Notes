@@ -1,0 +1,23 @@
+Lodash Notes
+
+
+Lodash is a JavaScript library based off of underscore that gives a lot of utility functions for handling common programming tasks.
+
+Use bower install --save lodash.
+And include it in the project with <script src='bower_components/lodash/lodash.min.js'></script>
+
+
+_.transform
+
+Transform works with objects or arrays.
+Arrays:
+  _.transform(someArr, function(result, elem) {
+    result.push(elem *= elem);      // do some transformation on elem, it gets pushed to the result array
+    return n * 2 === 0;             // an option return statement, when this returns false the transform will quit
+  });                               // but note that the elem that made it false is still returned because we already
+                                    // pushed it into the result array, the result array is returned from the transform.
+
+Objects:
+  _.transform({ 'a': 1, 'b': 2}, function(result, elem, key) {
+    result[key] = elem * 3;         // do some transformation on each value in an object
+  });

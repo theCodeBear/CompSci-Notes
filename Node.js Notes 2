@@ -1,0 +1,20 @@
+Node.js Notes 2
+
+
+
+Node.js was made to handle networking the correct way, of course it is also a general purpose programming language.
+
+
+----COMMAND LINE NOTE:
+  Command line program 'ab' is the apache benchmark program to run a bunch of processes and benchmark the time it takes.
+      ab -n 100 -c 100 http://127.0.0.1:3000/
+
+  telnet or nc (netcat) to do tcp connections. i.e. nc localhost 3000
+----END OF COMMAND LINE NOTE
+
+process
+  Process is the global object in node.js.
+  Some examples: process.pid, process.env
+
+
+Because node.js never waits for anything, it handles concurrency extremely well, it can pretty much always handle another connection. It performs much better with a lot of users than other web development technologies.

@@ -1,0 +1,800 @@
+ES6 Notes
+
+
+EcmaScript 6 is the next version of JavaScript.
+
+This is a great source for learning ES6:
+      https://leanpub.com/understandinges6/read
+
+
+
+
+***************************** COMPILERS *****************************
+
+
+ES6 to ES5 compilers:
+  babel:      use gulp-babel!
+
+  traceur:    https://egghead.io/lessons/traceur-js-and-grunt
+              npm install -g traceur
+              npm install grunt-traceur-latest grunt-contrib-watch
+
+
+
+
+***************************** ARROW FUNCTIONS *****************************
+
+
+Fat arrow doesn't create a new 'this' instance, so with the fat arrow, when you use the 'this' keyword inside the function it doesn't refer to 'this' of the function but rather the 'this' from the parent scope, so you don't need to use .bind and pass in the 'this' keyword or set this = that or whatever.
+        () => { }
+You can also get rid of the curly braces if the function is just one line, in which case you also don't need the return statement, it will just automatically return the line that is inside the function.
+
+Arrow functions are different than normal JavaScript functions for four reasons:
+
+  Lexical 'this' binding: the value of 'this' inside the function is determined by where the arrow function is defined, not where it is used.
+
+  Not new-able: arrow functions do not have a [[Construct]] method and therefore cannot be used as constructors.
+
+  Can't change 'this': You can't change the function's 'this' context.
+
+  No arguments object: You can't access the arguments object, you must use the named arguments or use ES6 features like the Rest parameter. Though you can access the arguments object inside an arrow function from an outer function in which the arrow function is defined.
+
+
+Instead of:       var myFunc = function(arg1, arg2) { return arg1 + arg2; };
+We can do:        var myFunc = (arg1, arg2) => arg1 + arg2;
+
+If there is only one parameter you can also get rid of the parentheses:
+                  var myFunc = arg1 => `hi ${arg1}`;
+
+If there are no parameters then you have to use an empty parenthesis.
+
+i.e. make a squared function:
+                  var squared = x => x * x;
+i.e.
+                  var myFunc = (arg1, arg2) => {p
+                    // some code...
+                  }
+
+If there is only one line in the function, and no curly braces are used, then it automatically returns that line.
+
+i.e.
+                  var double = someArg => someArg * 2;
+
+
+Arrow functions and IIFEs:
+
+You can use an arrow function as an IIFE as long as you wrap the arrow function in parentheses.
+
+
+
+
+***************************** CLASSES *****************************
+
+
+Proper classes have now been introduced to JavaScript. Classes in ES6 are simplyg just syntactic sugar over JavaScript's built in prototypal OO pattern. Classes support prototype-based inheritance, super calls, instance and static/class methods, and constructors.
+
+Classes are not hoisted.
+
+Allow a class to inherit from another with extends:
+
+      class ChildClass extends ParentClass { }
+
+Call a constructor function with the constructor keyword and call the parent constructor with super():
+
+      class ChildClass extends ParentClass {
+        constructor(arg1, arg2) {
+          super(arg1, arg2);
+          this.someArr = [];
+        }
+      }
+
+Define instance methods on the class, and define static/class methods using the static keyword, and using that static function by calling Class.staticFunc(); in another method of the class:
+
+      class ChildClass extends ParentClass{
+        constructor() {
+          this.someProp = ChildClass.someClassFunc();
+        }
+
+        someFunc() {
+          super.someFunc();             // call parent class method using super.method();
+        }
+
+        static someClassFunc() { }
+      }
+
+You can create a singleton using an anonymous class expression by immediately invoking the class constructor by using the new keyword:
+
+      let person = new class {
+        constructor(name) {
+          this.name = name;
+        }
+        sayName() {
+          console.log(this.name);
+        }
+      }('Todd');
+
+      person.sayName();           // prints 'Todd'
+
+You can create getters and setters the same way as the new object literal syntax for getters and setters:
+
+    class SomeClass {
+      constructor(someThing) { this.someThing = someThing }
+
+      get someThing() {
+       return someThing;
+      }
+      set someThing(someThing) {
+        this.someThing = someThing;
+      }
+
+    }
+
+You can extend built-in classes in ES6, like Array, Date, etc. to make a child class of a built-in JavaScript class.
+
+
+
+
+***************************** ENHANCED OBJECT LITERALS *****************************
+
+
+Old JavaScript sytntax:
+
+        var name = 'Todd';
+        var someObj = {
+          name: name,
+          myFunc: function() { }
+        }
+
+New ES6 syntax:
+
+        let name = 'Todd';
+        let someObj = {
+          name,                         // shorthand for foo: foo assignments
+          myFunc() { }                  // shorthand for method assignments
+        }
+
+Property Shorthand syntax example:
+
+      function blah(email, pword) {
+        return { email, pword };      // ES5 syntax:  return { email: email, pword: pword };
+      }
+
+Object literals also have some of the same functionality as classes now, such as setting the prototypal parent and making calls to that parent with the super keyword.
+
+        let someObj = {
+          __proto__: theProtoObj,       // set object to inherit from using __proto__ key
+          myFunc() {
+            super.someMethod();         // use super keyword to call a method on the parent
+          }
+        }
+
+You can have computed dynamic property names now. That is to say you can dynamically compute object key names in ES6. Use the square bracket syntax for computing a property just like you do when you create or reference an object property, and you can compute things inside it when defining the object literal. Take the example below, which creates a key named prop_42 and gives it a value of 42 using an IIFE:
+
+        let lastName = 'last name';
+        let obj = {
+          ['prop_' + (() => 42)()]: 42          // computes to a key:value of 'prop_42': 42
+          [lastName]: 'Smith'                   // computes to:   'last name': 'Smith'
+        }
+
+
+Changes to Object data type:
+
+  Object.is(arg1, arg2)
+    Object.is() takes care of the couple of outlier cases that === can't handle. Specifically, === equates +0 and -0 even though they are different, and it doesn't equate NaN and NaN. Object.is() takes care of these by identifying +0 an -0 as different and NaN and NaN as the same. Returns a boolean.
+
+  Object.assign(receiver, supplier)
+    A mixin is when one object receives properties and methods from another object. This allows a receiver object to gain new behaviors without inheritance. Object.assign() takes a receiver object and a supplier object and supplies mixin abilities built into ES6. Any number of suppliers can be given to Object.assign() and they get run in the order that they are given, so later supplier arguments will override earlier ones if they have properties named the same.
+    Note: that Object.assign() does not work with accessor methods. So any getters will return undefined for the receiver object. What happens during assign is that the accessor method gets run and therefore returns the gotten value and puts it in the accessor key.
+
+    i.e.
+          let objRec = {};
+          let objSup = {
+            get name() {
+              return 'jomomma.js';
+            }
+          }
+          Object.assign(objRec, objSup);
+          objRec.name();                    // returns undefined
+          objRec.name;                      // returns 'jomomma.js'
+          console.log(objRec);              // prints:  { name: 'jomomma.js'}
+
+  Duplicate Object Properties
+    In ES5 an error would be thrown if you try to assign a property twice in an object.
+    i.e.
+        var obj = {
+          name: 'Todd',
+          name: 'Joe'                 // error thrown
+        }
+    This is no longer the case in ES6. Now it just reassign the value.
+    i.e.
+        let obj = {
+          name: 'Todd',
+          name: 'Joe'
+        }
+        console.log(obj.name)         // prints: 'Joe'
+
+  Object.setPrototypeOf(object, newPrototype)
+    ES5 added the Object.getPrototypeOf() method to retrieve an object's prototype. Now ES6 offers the .setPrototypeOf() method which allows manually changing an object's prototype. The method takes two arguments, the first is the object whose prototype will be changes, the second is the object that will become the new prototype.
+
+    Before now there was no way to change the prototype of an object after it had been created. Though some browsers had implemented a __proto__ property which could both access and change an object's prototype, though it wasn't a standard part of ES5. Now also this __proto__ property has been made standard in ES6. In the background __proto__ calls Object.getPrototypeOf() or Object.setPrototypeOf() depending on whether it is getting or setting the prototype. Allowing duplicate object properties in ES6 does not apply to the __proto__ property. This is the only property in which you cannot set twice in an object literal, it will thrown an error. Also another gotcha is that the computer form ['__proto__'] is not the same as __proto__ in that it will be treated as a normal object property and will not get or set the object's prototype.
+
+  Super
+    ES6 allows calls to super in order to access an object's prototype. The super() method is the constructor for an object's prototype. And to access any methods or properties on the prototype you just use dot notation with super, i.e.  super.method();
+    This is much simplier than ES5, in which you would have had to do this.__proto__.method.call(this) or Object.getPrototypeOf(this).method.call(this), so super makes referencing an object's prototype much easier.
+    However super has more power, because these ES5 ways of referencing the parent only work for the parent, they don't work when there are multiple levels of inheritance. But with super a parent can just call a super method to access its parent, and then the child can directly call the grandparent method because it has direct access to the parent method, which calls the grandparent method through super.
+
+    i.e.
+        let person = {
+          getGreeting() { return 'Hello' }
+        }
+        // prototype is person
+        let friend = {
+          __proto__: person,
+          getGreeting() { return super.getGreeting() }
+        }
+        // prototype is friend
+        let relative = {
+          __proto__: friend
+        }
+        relative.getGreeting();       // returns 'Hello'
+
+  Methods
+    There was no precise formal definition in the JavaScript language before of what a method is, but now a [[HomeObject]] has been added to methods to separate them in the JavaScript specification from functions. A method's [[HomeObject]] is the object the method belongs to. This was needed because the super keyword uses the [[HomeObject]] to retrieve a reference to the prototype. The prototype is then searched for a function with the same name as the executing function, then the this-binding is set and the method is called.
+
+
+
+
+***************************** IMPORTING & EXPORTING *****************************
+
+
+// ES6 has built-in exporting of a module
+export function blah() {}
+export default function blah() {}
+export let pi = 3.14
+export class Blah { }
+export default ModuleName
+export { blah as default }    // specifies blah should be the default export for the module
+export * from 'lib/math'
+export { localName as newModuleName }
+
+// ES6 has built-in module importing
+import VarName from 'path'
+import * as math from 'lib/math'
+import { sum, pi } from 'lib/math'
+import { sum as add } from 'lib/math'
+
+
+The 'default' keyword in 'export default' means it's a single variable, function, or class. It means that this is a default exoprt and the function doesn't require a name because the module itself represents the function. You can only have on default export per module. The import keyword imports the default export value. So the 'default' keyword just says that it is the default thing to import from the exported module, other things that are exported from that module much be specifically named in the import statement.
+
+Exports two things, one being the default:
+    export let color = 'red';
+    export default function(num1, num2) { return num1+num2 }
+
+Import them in another file:
+    import sum, { color } from 'example'
+
+In the above example the import statement grabs the default export automatically and so puts it in the sum variable automatically, whereas the color export must be specificied directly by { color } in the import statement.
+
+You can export an imported module back out using this syntax:
+
+    import { sum } from 'example';
+    export { sum }
+
+To both import and export in the same line you can do:
+    export { sum } from 'example';          or:       export { sum as add } from 'example'
+
+
+
+
+***************************** DESTRUCTURING OBJECTS *****************************
+
+
+Destructuring allows binding using pattern matching, with support for matching arrays and objects. Destructuring is fail-soft, producing undefined values when not found. Destructuring allows you to break apart data structures into their constituent properties, assigning them directly to variables.
+
+Instead of:
+
+      var obj = { color: 'blue', name: 'Joanie', age: 40 };
+      console.log(`${obj.name} is ${obj.age}`);
+
+With destructuring you can do:
+
+      var {name, age} = { color: 'blue', name: 'Joanie', age: 40 };
+
+A common reason why you might use destructuring is when you have a function that returns
+an object but you only need certain properties of that object. You can use destructuring
+to only get those properties and directly reference them by name like so:
+
+      function myFunc() {
+        return { color: 'blue', name: 'Bobby', age: '38', weight: 187 };
+      }
+      var {name, weight} = myFunc();
+      console.log(`${name} is ${weight} lbs.`);
+
+If you want the variable names to be named something other than what they are in the
+object then you just need to add ':newName' to each property in the destructuring.
+The same example as above now looks like this:
+
+      function myFunc() {
+        return { color: 'blue', name: 'Bobby', age: '38', weight: 187 };
+      }
+      var {name:firstName, weight:poundage} = myFunc();
+      console.log(`${firstName} is ${poundage} lbs.`);
+
+Can be used in function parameters:
+
+      function blah({name: x}) {
+        console.log(x);             // prints: 'todd'
+      }
+      blah({name: 'todd'});
+
+Nested destructuring is also possible:
+      Syntax:   let { prop: { subProp } } = obj;
+      You can then directly reference subProp which has the value of obj.prop.subProp
+
+      let obj = {
+        blah: {
+          a: 'ahh',
+          b: 'bee'
+        }
+      };
+      let { blah, blah: {b} } = obj;    // blah = obj.blah and b = obj.blah.b
+
+
+
+
+***************************** DESTRUCTURING ARRAYS *****************************
+
+
+You can also destructure arrays to only give specific indices you want from the array.
+
+      var [,second,,fourth] = ['one', 'two', 'three', 'four', 'five'];
+      console.log(second);       // prints: 'two'
+      console.log(fourth);       // prints: 'four'
+      var [blah, bloop] = ['a', 'b', 'c', 'd'];
+      console.log(blah, bloop);   // prints: 'a b'
+
+
+You can destructure in a forEach loop. If looping over an array of objects you can put
+a destructured value that references one of the repeated properties in the elements as
+the element in the forEach loop and therefore only get that property from each object in
+the array rather than getting the whole object.
+
+      people.forEach( ({someProp}) => console.log(someProp));
+
+
+
+
+***************************** DESTRUCTURING IMPORT MODULES *****************************
+
+
+Can destructure import modules
+
+      import { Router, Route, DefaultRoute } from 'react-router';
+
+Instead of:
+      import Router from 'react-router';
+      var Route = Router.Route;
+      var DefaultRoute = Router.DefaultRoute;
+
+This makes the variable names the same as the properties on the module.
+
+
+
+
+***************************** STRING INTERPOLATION *****************************
+
+
+You can do string templating with back tick and ${}: `${}`
+So instead of doing:                  'Hello my name is ' + name + '!';
+You can use string interpolation:     `Hello my name is ${name}!`;
+
+String interpolation respects whitespace across multiple lines, so you can make multi-line
+strings with the backtick character.
+
+You can also put expressions inside of ${}, like so:
+
+      var x = 1, y = 2;
+      var equation = `${x} + ${y} = ${x+y}`;    // 1 + 2 = 3
+
+There is some crazy funky stuff going on with string interpolation using a function with it!!
+
+If you put a function name directly in front of an interpolated string. Just check out this
+nuts example:
+
+      function tag(strings, ...values) {
+        if (values[0] < 20)
+          values[1] = 'awake';
+        return `${strings[0]}${values[0]}${strings[1]}${values[1]}`;
+      }
+      var message = tag`It's ${new Date().getHours()} I'm ${''}`;
+
+      Here if the hour is less than 20, like say 14, then message will equal:
+            "It's 14 I'm awake"
+      If the current hour is greater than 20, like 22, then message will equal:
+            "It's 22 I'm"
+
+
+So these template tags perform a transformation on the template string and returns the final string value.
+
+
+New string methods:
+
+    .includes()
+    .startsWith()
+    .endsWith()
+    .repeat()
+
+
+
+
+***************************** PARAMETER DEFAULT VALUES *****************************
+
+
+You can give default values of function parameters.
+
+      function myFunc(arg1, arg2 = 'default value') {
+        // code...
+      }
+
+Can assign a default function as well, and using fat arrow syntax you can do this all in
+one line, assuming there is only one statement to the function definition that is used as
+the default parameter value.
+
+      function blah(arg1 = () => console.log('hello world')) {
+        arg1();
+      }
+      blah();     // call it without the argument in order for the default value to be used
+
+
+
+
+***************************** FOR...OF *****************************
+
+
+Syntax:       for (let value of array) { }
+
+New to ES6, iterates over values in an array. Useful with ES6 generators. It only iterates over data structures that are iterable, which does not include objects. An object can be included in the array, but it cannot iterate over objects themselves, so you cannot put an object after the 'of'.
+
+Basically for...of is syntactic sugar over forEach()
+
+It's like the inverse of the for...in loop, but only for arrays, so whereas using for...in on an array is a poor choice because it only directly gets the indices instead of the values, meaning you have to do array[index] to get the actual values, the for...of solves this by directly giving you the values.
+
+The for...of loop is specifically made for use with iterable collections, which includes arrays, maps, sets, strings. So for...of should be used when using generators. It is much slower than forEach though, so during normal non-generator iteration I would suggest continuing to use forEach().
+
+Iterable collections can be used in for...of loops with .entries(), .values(), and .keys().
+
+Example:
+    for (let el of arr.entries()) { }
+
+The .entries() method returns key-value pairs, .values() just returns values, and .keys() just returns the keys.
+
+
+
+
+***************************** ARRAY COMPREHENSION *****************************
+
+
+Array comprehension is ES6 is where you can use a for-of loop inside of square brackets and
+reference another array to create and assign a new array to a variable.
+
+Inside array comprehensions for...of and if-statements are allowed:
+
+  [for (x of iterable) x]
+  [for (x or iterable) if (condition) x]
+  [for (x of iterable) for (y of iterable) x + y]
+
+For example, to assign only the elements greater than 5 from an array of the numbers 1 through
+10 you would do:
+
+        var nums = [1,2,3,4,5,6,7,8,9,10];
+        var aboveFive = [for(num of nums) if(num > 5) num];
+        console.log(aboveFive);       // [6,7,8,9,10]
+
+You can even throw multiple for-of loops into a single array compreshension to act on two
+different arrays and make a new array from the two arrays. The second for-of will be a
+nested loop within the outer for-of loop.
+
+        var nums = [1,2];
+        var letters = ['a', 'b', 'c'];
+        var arr = [for(num of nums) for(letter of letters) num + letter];
+        console.log(arr);       // ['1a', '1b', '1c', '2a', '2b', '2c']
+
+In the above example if you then surround 'for(letter of letters) num + letter' with square
+brackets the arr variable will then be equal two a 2D array.
+
+
+
+Also for Arrays:
+
+  Exactly what I wanted, a built-in fill method.
+  I can now do this to initalize an array with a given length to all the same value:
+      let arr = new Array(6).fill(0,0);
+
+  Syntax:       array.fill(value, startingIndex)
+
+
+
+
+***************************** REST AND SPREAD *****************************
+
+
+Rest parameter
+
+Syntax:       ...varName
+
+The Rest parameter is indicated by three dots preceding a named parameter. It aggregates a list of values into a single variable. Rest replaces the need for the arguments keyword in functions. No other named parameters can follow the rest parameter, that is, the rest parameter must be the last parameter because it aggregates all remaining arguments in the argument list, otherwise a syntax error is thrown.
+
+Putting the remaining arguments in a function's variable-length parameter list into a single parameter:
+      function blah(x, ...y) {}
+      blah(1,5,3,6);                // in the function, y = [5,3,6]
+
+let [a,b, ...c] = [1,2,3,4,5,6];      // c = [3,4,5,6]
+
+
+
+Spread Operator
+
+Syntax:       ...[1,2,3,4]
+
+Spread spreads out an array into multiple variables. It is the inverse of the rest parameter. Whereas the rest parameter takes variable amount of argument and condenses it into one array varaible, the spread operator takes an array and spreads it out into multiple variables. This can be used, for example, to give an array as an argument to a function that doesn't take an array, but takes several parameters.
+
+      function blah(x,y,z) { }
+      blah(...myArr);
+
+For example. Math.max or Math.min take a variable number of arguments, but they don't take an array by using the spread operator you can pass an array to them.
+
+
+
+
+***************************** FUNCTION GETTER/SETTERS, NAME, BLOCK LEVEL *****************************
+
+
+You can set getters and setters on a function property in an object by putting 'get' or 'set' before the function name, like so:
+
+var blah = {
+  get someFunc() {
+    console.log('this is a getter');
+  },
+  set someFunc(setParam) {
+    console.log(`This sets it to ${setParam}`);
+  }
+};
+
+These two functions evaluate down to having a an object inside the blah object called someFunc, which has two methods: get and set. But they are both called with blah.someFunc(). They are overrided functions, so the difference is that the setter must take one argument, and indeed it gives you an error if in the definition you don't give the setter a parameter. Doing this also places two interal properties on the object blah, which are both set to true: configurable and enumerable.
+
+
+The name Property
+
+Also all functions now have an internal 'name' property which gives the name of the function so you can indentify a given function. So doing blah.someFunc.name would give 'someFunc'.
+
+
+Block Level Functions
+
+ES5 woul not allow the declaration of a function in a block, for example inside an if-statement. But in ES6 this is allowed and the function is hoisted to the top of the block and only exists within the scope of the block.
+
+
+
+
+***************************** ITERATORS *****************************
+
+
+Iterators make it easier to work with collections of data. When coupled with new array methods and new types of collections like sets and maps, iterators become important for efficient processing of data.
+
+Iterators and generators are related.
+
+Iterators are objects with a certain interface, which consist of a method called next() that returns a result object. The result object has two properties, 'value' which is the next value, and 'done' which is a boolean that's true when there are no more values to return. The iterator keeps an internal point to a location within a collection of values and, with each call to next(), returns the appropriate value.
+
+If you call next() after the last value has been returned, the method returns the property 'done' as true and 'value' contains the return value for the iterator, which is not part of the data set and might be undefined.
+
+An ES5 implementation of an iterator would be:
+
+  function createIterator(items) {    // NOTE THAT THIS IS AN ES5 IMPLEMENTION OF ITERATORS
+    var i = 0;
+    return {
+      next: function() {
+        var done = (i >= items.length);
+        var value = !done ? items[i++] : undefined;
+        return {
+          done: done,
+          value: value
+        };
+      }
+    };
+  }
+  var iterator = createIterator([1,2,3]);
+  iterator.next();  // { value: 1, done: false }
+  iterator.next();  // { value: 2, done: false }
+  iterator.next();  // { value: 3, done: false }
+  iterator.next();  // { vaue: undefined, done: true }
+
+Iterables:
+Iterable collections can be used in for...of loops with .entries(), .values(), and .keys().
+
+Example:
+    for (let el of arr.entries()) { }
+
+The .entries() method returns key-value pairs, .values() just returns values, and .keys() just returns the keys.
+
+
+
+
+***************************** GENERATORS *****************************
+
+
+A generator is a special kind of function that returns an object that adheres to the iterator pattern. Inside a generator you put yield statements, which pause execution of the function right there and return any value that immediately follows the yield keyword.
+
+The reason to use a generator is if you want to pause execution of a function at certain points to get intermediate values being computed, and then later continue executing the function until eventually the function is done processing.
+
+The generator is run by calling the next() method on it, which pauses execution at the yield statement, the generator can then be run again executing until the next yield statement by calling the next() method on the generator again. The next() method returns the iterator returned by yield which is the value, done pair of properties as an object literal, or just the done property in an object literal if no value is given to yield.
+
+Syntax:         function *someFunc() { }
+                let someVar = someFunc();
+                someVar.next();     or      for (let i of someVar) { console.log(i) }
+
+A generator is specified by putting an asterik after the 'function' keyword. They are then however called like any normal function. Call the generator and set its return value to a variable. You can then call next() on this variable to iterate through the yields in the function, or just use a for...of loop which iterates through and gives the values from each yield.
+
+The 'yield' keyword is used inside of generators to specify the values that the iterator should return when next() is called. The function will stop running at the yield keyword and return the iterator object with the value, if any, specified. This means that the number of yield calls in a generator is the number of times the function must be called to go through the entire function.
+
+Example of a simple generator:
+
+    function *aGenerator() {
+      yield 1;
+      yield 2;
+      yield 3;
+    }
+    let agen = aGenerator();      // agen is an object that adheres to iterator pattern
+    agen.next();                  // returns: { value: 1, done: false }
+    for (let i of agen) {
+      i;                          // returns 2 and then returns 3
+    }                             // because 1 was already returned by next()
+
+Notice that for...of directly returns the value, whereas calling .next() returns the whole iterator object with both value, if there is any, and done properties.
+
+Generators can also be used in object literals (as well as Classes) just like any other method. Here is an example of using a generator in an object literal, but its the same thing in Classes:
+
+  var obj = {
+    *createIterator (items) {
+      yield 'blah';
+    }
+  }
+  let iterator = obj.createIterator([1,2,3]);
+
+Note in the above example, when using the ES6 object property shorthand there is no keyword so you just put the asterik for a generator before the property function name.
+
+
+
+
+***************************** SYMBOLS *****************************
+
+
+Symbols are a new kind of primitive value, joining strings, numbers, boolean, undefined, and null. They do not have a literal form though. Their notation is specified by them being prefixed with the double at symbol: @@, like @@blah.
+
+Symbols purpose is to allow object properties to be created that can be categorized separately from normal properties, hence why they needed to not be normal strings. This means that symbols are not just strings with '@@' at the beginning, so don't use quotes around a symbol name. Symbols are non-enumerable but still discoverable.
+
+Create a symbol using the Symbol() function. (should give symbol a description, see below)
+
+  i.e.      let blah = Symbol();
+            let obj = {};
+            obj[blah] = 'bloopity';
+            obj.blah;                     // returns undefined
+            obj[blah];                    // returns 'bloopity'
+
+As shown above, symbols can only be accessed as computed properties through square bracket notation, they return undefined if dot notation is used.
+
+The Symbol() function can take an optional description argument, which is a string to describe the symbol. The symbol cannot be access through the description, but the description can be used for debugging puporses using the built-in .toString() method. A symbol's description is stored internally in a property called [[Description]]. A symbol's description can only be accessed using the built-in .toString() method which prints out Symbol(description) as shown below. You should always give a symbol a description to make debugging easier.
+
+    let blah = Symbol('this is something');
+    'this is something' in blah;                // returns false
+    blah.toString();                            // returns Symbol(this is something)
+
+Using typeof on a symbol returns 'symbol'.
+
+Symbol.for(description)
+  If you want to share use of a symbol across files or whatever in an application, instead of creating a symbol with Symbol() you would instead use Sybmol.for(). ES6 holds a global registry of symbols and using Symbol.for() will put that symbol in the registry so you can use the same symbol elsewhere. Note that you must give the symbol a description which is how the symbol is identified in the global registry. And really the only reason you would need to reuse a symbol is if you want to use that symbol description multiple times, that's the whole idea.
+
+
+
+
+***************************** PROMISES *****************************
+
+
+Promises are a better alternative to callbacks, because they compose.
+
+--ES6 Promises--
+
+To create a promise in a function in ES6 you must return a promise like so:
+
+      return new Promise((resolve, reject) => { //code... })
+
+The promise constructor takes a single function as its argument, this function takes two arguments - resolve and reject, both of which are also functions. To successfully resolve a promise you then call the resolve function with the value you want to return on success, like so:
+
+      resolve(value);
+
+On error, call the reject function to send back an error with an error response, like so:
+
+      reject(new Error(someMsg));
+
+i.e.
+
+      function someFunc(arg1) {
+        return new Promise((resolve, reject) => {
+          // do some stuff...
+          // if succeeded...
+            resolve(valueToReturn);
+          // if errored...
+            reject(errorMessage);
+        });
+      }
+
+Promise.all([])
+
+  To get rid of the pyramid of callbacks using promises you need to put nested promises inside the .all() method of the Promise class, which will wait until all of the promises have resolved. Promise.all([]) returns a new promise once all of its promises have resolved, you call .then() on what Promise.all returns and now you've done all the promises without any pyramid structure in the code! Promise.all returns an array of what the individual promises within it returned. If any promise passed to Promise.all() is rejected, the returned promise is immediately rejected without waiting for the other promises to complete.
+
+  i.e.
+
+      Promise.all([
+        someFunc(value1),
+        someFunc(value2),
+        someFunc(value3)
+      ]).then((response) => {
+        console.log(response);      // response is [value1, value2, value3]
+      }).catch((error) => {
+        // handle the error
+      });
+
+Promise.race([])
+
+  Promise.race() is like Promise.all() except that instead of waiting for all the promises to finish before returning its own promise, it just waits until the first promise that was passed into it finishes and the Promise.race() promise is returned. So it is a race condition for a series of promises.
+
+If an error is thrown manually inside a promise executor (what the function of a promise is called) then the promise's rejection handler is automatically called with the value that is passed to the Error. The error message is passed in the .message property.
+
+      let promise = new Promise((reslove, reject) => {
+        throw new Error('it failed');
+      });
+      promise.catch((error) => {
+        console.log(error.message);       // prints 'it failed'
+      });
+
+Promises can be chained together with multiple .then()'s chained together with one .catch() block at the end which will get called if any of the promises in the chain get rejected. And the promises are run asynchronously in the order in which they are chained. The value of the resolve is passed to the next promise in the chain if you return it from the function.
+
+      let promise = new Promise((resolve, reject) => {
+        resolve(42);
+      });
+      promise.then((value) => {
+        console.log(value);           // prints 42
+        return value + 1;
+      }).then((value) => {
+        console.log(value);           // prints 43
+      });
+
+You can also return a promise in a promise chain and it'll wait until the promise is resolved:
+
+      let promise1 = new Promise((resolve, reject) => {
+        resolve(10);
+      });
+      let promise2 = new Promise((resolve, reject) => {
+        resolve(57);
+      });
+
+      promise1.then((value) => {
+        console.log(value);           // prints 10
+        return promise2;
+      }).then((value) {
+        console.log(value);           // prints 57
+      });
+
+A unique aspect of promises is that a fulfillment or rejection handler will still executed even if it is added after the promise is already settled!
+
+Jus like other build-in types, you can make a class that inherits from the Promise class.
+
+If you want a promise to represent a single known value, instead of some dynamic data you don't need to use the Promise() constructor, but instead can use two methods on the Promise class .resolve() and .reject().
+
+i.e.
+    let promise = Promise.resolve(57);
+    let proimse = Promise.reject(57);
+
+
+
+
+
+***************************** x *****************************

@@ -1,0 +1,26 @@
+Socket.io Notes
+
+
+
+Socket.io is a library for implementing web sockets. Web sockets allow real time communication by leaving an open channel to communicate data between the client and server.
+
+
+
+Server:
+
+io.emit() sends data to all clients.
+socket.emit() sends data just to the client that made the current connection.
+socket.send() sends data just to the client that made the current connection and using a default message name of 'message' without allowing for custom message names.
+socket.broadcast.emit() sends data to all clients except the one involved in the current connection.
+socket.broadcast.send()  ????
+
+socket.on() receives a message from a client with the given message name.
+
+
+Client:
+
+Have to include script:    <script src='/socket.io/socket.io.js'></script>
+Start connection with:      var socket = io();
+
+socket.emit() sends data to the server.
+socket.on() receives a message from the server with the given message name.

@@ -1,0 +1,276 @@
+NOTES FOR THE FLASK - A PYTHON WEB FRAMEWORK
+
+
+Flask is a lightweight framework for doing server-side development with Python.
+In these notes I use Python 2.7.10
+
+Docs for the current version of Flask at the time of this writing v0.10 is at:
+        http://flask.pocoo.org/docs/0.10/api/
+
+
+
+************************ OVERVIEW ************************
+
+
+To get your environment setup to use Flask we need Python, virtualenv, pip, and Flask.
+
+virtualenv is a command line tool for creating an isolated development environment for Python. It sets up a clean copy of Python inside of a directory for you to use, and it installs Python's package manager, pip. virtualenv is a good tool to use to set up development environtments for Python. It is used so that you can install Python libraries in this isolated environment for your app without affecting your system-wide collection of Python libraries. It solves the “Project X depends on version 1.x but, Project Y needs 4.x” dilemma, and keeps your global site-packages directory clean and manageable. The reason for virtual environments in Python is because unlike with node.js where npm has a global option you can set with -g, pip has no such thing, so pip install always installs packages globally. So in Python to install modules locally you have to run a virtual environment.
+
+Here is a link to docs about Python's virtual environments:
+        http://docs.python-guide.org/en/latest/dev/virtualenvs/
+
+pip is a package manager for Python, like npm for Node.js and gems for Rails. pip may or may not come installed already with your copy of Python. But the virtualenv tool installs it locally inside the isolated Python environment it sets up for you for development.
+
+
+--- Get virtualenv ---
+
+  First install virtualenv. Check if you have it already installed by typing in the command:
+          virtualenv --version
+
+  If nothing comes up then use the easy_install command line program (which should have come with Python) to install virtualenv:
+          sudo easy_install virtualenv
+
+  Great, now you've got virtualenv. You can also use pip to install virtualenv if you already have pip installed by doing:    sudo pip install virtualenv
+
+  (On Linux you would use sudo apt-get install python-virtualenv)
+
+
+--- Use virtualenv ---
+
+  Now use virtualenv to set up that isolated development environment, the argument for virtualenv is whatever you want your project folder to be called, in this example the name of the directory will be flaskapp, omitting the name will create the virtual files in the current directory:
+          virtualenv flaskapp
+
+  virtualenv will create bin/, include/, and lib/ folders in your app directory as well as a .Python file. These folders and files are just what it needs to set up the isolated Python environment. You can also choose which version of Python you want to use by using the -p flag and giving it an argument of the path to the executable for the Python interpreter you would like to use if you have multiple version of Python installed, for example:
+          virtualenv -p /usr/bin/python2.7 flaskapp
+
+  Now cd into the directory and activate it by running the bin/activate file:
+          . bin/activate            or            source bin/activate
+
+  Once you've activated it the name of the virtual environment will appear on the command line to the left of the prompt, so as long as that is there you know the virtual environment is active. While the virtual environment is active any package you install using pip will be installed in the flaskapp's local environment, isolated from the global Python installation.
+
+  NOTE: the virtual environment is only activated for the current terminal window. So the next time you come into the project folder you will have to activate it again or else when you try to run the server it will give an error. This also applies to using tmux, for any tmux session/tab you that you want to run the server in you have to activate the virtual environment with the above command. If you want to deactivate virtualenv, say when you are done working with your app for the time being, just type:
+          deactivate
+  or just close the terminal window.
+
+
+--- Get Flask ---
+
+  Now that you have created your isolated environment and activated it using virtualenv, you can now install Flask:
+          pip install Flask
+
+
+Now you are set up to start building a Flask application.
+
+
+--- Quick Flask App Creation---
+
+  Quick overview of how to get a Flask application set up once you've already done it before and have the proper things installed:
+
+          virtualenv nameOfProject
+          cd nameOfProject
+          . bin/activate
+          pip install Flask
+
+
+
+
+************************ USING virtualenvwrapper ************************
+
+
+Another tool to use to set up virtual environments that works in conjunction with virtualenv is virtualenvwrapper.
+
+virtualenvwrapper does a few things. It organizes all your virtual environments in one place, so instead of having your the bin/, include/, lib/, and .Python folders and file directly in your project they are housed all together outside of your individual projects. It also comes with its own set of command line tools to handle functions on the virtual environments. There is a single command to switch between virtual environments, and tab completion for commands that take a virtual environment as an argument. Also some other stuff.
+
+See the virtualenvwrapper docs at:
+    http://virtualenvwrapper.readthedocs.org/en/latest/
+Also here is a good overview of both virtualenv and virtualenvwrapper:
+    http://docs.python-guide.org/en/latest/dev/virtualenvs/
+
+
+To install it, first make sure you have pip and virtualenv installed already, then do:
+        pip install virtualenvwraap
+
+Once installed you need to go to your shell startup script (.bash_profile for Mac users), and put in these two lines of code
+
+        export WORKON_HOME=~/Envs
+        source /usr/local/bin/virtualenvwrapper.sh
+
+The first line sets up the directory in which all the virtual environments will be housed, instead of being in each individual project. So here we are creating a Envs/ directory in the home directory to house the virtual environments (workon is the command to work on a virtual environment using virtualenvwrapper, that is it activate the environment). The second line runs a shell script for the with a bunch of shell functions that act as the command line tools for virtualenvwrapper. Now the next time you open up the terminal you'll be able to use virtualenvwrapper.
+
+To create a virtual environment you use mkvirtualenv:
+        mkvirtualenv venvname
+To activate it so you can use it, or to switch to another virtual environment use workon:
+        workon venvname
+To see a list of virtual environments (if any exist) use workon with no arguments:
+        workon
+To deactivate it is the same as using virtualenv by itself:
+        deactivate
+To delete a virtual environment:
+        rmvirtualenv venv
+To list all environments (pretty much the same as workon with no arguments):
+        lsvirtualenv
+To navigate the directory of the currently active virtual environment, so you can browse its site-packages:
+        cdsitepackages
+To directly show the contents of the site-packages directory:
+        lssitepackages
+There are a bunch more virtualenvwrapper commands 
+
+
+After you've created at least one virtual environment you can go into your ~/Envs directory, or whatever you called it, and see that your virtual environment are there, each with their own directory. When you go into one of those directories you can see the files and folders that virtualenv would normally put in your project directory are there.
+
+
+Whereas with virtualenv, passing an argument creates a project directory for you, with virtualenv using mkvirtualenv passing an argument just creates the virtual environment but doesn't create a project directory because virtualenv puts things locally so it doesn't create virtual environment names, it just operates in a local directory and so giving it an argument doesn't name the environment but just creates the directory for you will the environment is housed. But since virtualenvwrapper lets you manage multiple environments they must be named, and so mkvirtualenv doesn't create a directory for you because it doesn't put the environment files in a project directory, instead it just creates the named environment for you.
+
+So to use virtualenvwrapper to create a new environment you do the following:
+        mkdir nameOfProject
+        mkvirtualenv nameOfVirtualEnv
+        workon nameOfProject
+        pip install Flask
+And you create your project directory before or after your virtual environment, it doesn't matter, because a virtual environment isn't actually connected to a project, it's just a Python environment in which you can install Python packages in a specified environment rather than globally on your system. But it is probably a good idea to name your environment the same as your directory so that you know which virtual environment is used for which projects.
+
+To later work on your project again, just go into your project directory and connect to the virtual environment you are using with:
+        workon nameOfEnv
+
+
+
+
+************************ BASICS OF FLASK ***********************
+
+
+In your project directory you can make a folder called app to separate your app from the files that the virtualenv command setup.
+
+Inside the app folder you can set up your app directory structure like this:
+
+        app/
+          static/
+            css/
+            img/
+            js/
+          templates/
+          routes.py
+
+Those are pretty self-explanatory. The routes.py file will be the file that runs the server, and for a basic website it is the only Python you need!
+
+Here is an example of the routes.py file:
+
+        from flask import Flask, render_template
+        app = Flask(__name__)
+
+        @app.route('/')
+        def home():
+          return render_template('home.html')
+
+        @app.route('/about')
+        def about():
+          return render_template('about.html')
+
+        if __name__ == '__main__':
+          app.run(debug=True)
+
+The first line imports the Flask class and the render_template function from the flask module.
+
+The next line creates a new instance of the Flask class and assigns it to the app variable.
+
+The next section we setup our backend routes. It's pretty simple. Use the
+    @app.route('url')
+syntax to tell Flask you are about to define a route with that url for the app. The next line for each route is then a function whose return value will be sent back to the browser. If you just return a string of text then that will be printed to the browser. However you can use the render_template function from the flask module to return an HTML file. By default Flask renders templates from a folder called templates so that is why we made a templates folder above.
+
+The final part is where the application runs the web server. app.run() runs the web server and by setting debug equal to True we are telling it to run in development mode which will display any error messages that may occur (they are displayed on the webpage itself) and it lets the local server reload automatically after changes are saved.
+
+
+
+
+************************ SAVE PACKAGES ************************
+
+
+pip is Python's package manager. Coming from Node.js, pip is like npm. But npm also has a package.json file, you can --save to save the packages you install to the package.json file, and npm install will install any packages that are listed in package.json. Python's pip has the same things but you use them a little bit differently.
+
+All pip install does is install the packages, it doesn't save it to any file. To get the equivalent of --save and package.json together you use pip freeze. pip freeze "freezes" the current state of the environment packages, basically it prints out a list of the packages along with their versions. What you want to do is put the output of pip freeze to a text file which will then hold a list of the packages and their versions, like part of what package.json does in node. By convention the standard is to output it to a file called requirements.txt. So do the following command to freeze the current state of the packages in your application:
+        pip freeze > requirements.txt
+
+Now if you need to later install the packages again, like say if you copied the project off of github you do this (the equivalent of npm install in node):
+        pip install -r requirements.txt
+
+
+
+
+************************ BASIC TEMPLATING ************************
+
+
+Flask uses the Jinja2 templating engine by default.
+In Jinja2 you can create blocks in which to insert other templates using the sytnax:
+        {% block blockName %}
+        {$ endblock %}
+
+And then in the templates that you want to extend the template that holds a block you use the syntax:
+        {% extends 'templateName.html'}
+        {% block blockName %}
+            ... html goes here
+        {% endblock %}
+
+A quick example will illustrate this better than trying to explain it. Say we have layout.html and a home.html files in our templates folder. Layout.html will be just for setting up the basic HTML boilerplate so we don't have to rewrite that with every template file. We could also add a navbar that would show up in all pages without including it in all the templates.
+
+layout.html
+    <!DOCTYPE html>
+    <html>
+    <head>
+    </head>
+    <body>
+      <header>
+        <nav>
+          ... your nav bar html to appear on all pages
+        </nav>
+      </header>
+      <div>
+        {% block content %}
+        {% endblock %}
+      </div>
+    </body>
+    </html>
+
+home.html
+    {% extends 'layout.html' %}
+    {% block content %}
+      ... html for this webpage goes here
+    {% endblock %}
+
+So home.html is the actual HTML file that will be routed to, and it extends the layout.html file to include all that code as well, the HTML code in home.html gets put inside the matching block name from layout.html, which here is called content.
+
+Flask, using Jinja2 and the render_template() function, turns home.html into this:
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+    </head>
+    <body>
+      <header>
+        <nav>
+          ... your nav bar html to appear on all pages
+        </nav>
+      </header>
+      <div>
+        ... html for this webpage goes here
+      </div>
+    </body>
+    </html>
+
+
+Additionally Jinja2 uses the {{ }} syntax to run Python code. Flask has a built in url_for() function that returns the path to a file in the application. For example, to access a CSS file called style.css in our static/css folder, we would use this code:
+
+    <link rel='stylesheet' href='{{ url_for("static", filename="css/main.css") }}'>
+
+So url_for() can take two parameters, the app-level directory name to search in, and an argument where you set the relative path within that directory of the file you are linking to the filename parameter.
+
+The url_for() function can also be used to link to routes in anchor tags. In this case url_for() would just take one string argument that matches the name of the function you made in routes.py for that url route. So above in the notes we made functions called home() and about(). So to link to those routes in a template you would do this:
+    <a href='{{ url_for("home") }}'>Home</a>
+    <a href='{{ url_for("about") }}'>About</a>
+Note that this is not matching a file name, but the name of the function for that route. If you changed the name of the route function then you would get an error when the page that has the anchor tag to that route loads.
+
+
+
+************************ x ************************
+************************ x ************************
+************************ x ************************
+************************ x ************************
+************************ x ************************
+************************ x ************************

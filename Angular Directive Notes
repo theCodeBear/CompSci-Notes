@@ -1,0 +1,135 @@
+Angular Directives
+
+
+
+restrict: 'AECM'
+  'A'   -   attribute
+  'E'   -   element
+  'C'   -   class
+  'M'   -   Comment
+
+  Directives in classes or comments are really only for older versions of IE,
+  so stick to just attributes or elements. Should use directive as an attribute
+  when you want to add functionality to some element or add some html to it.
+  Should use directive as a custom element when you want to insert html into
+  the view.
+
+template:
+  You set a string with plain text or html straight onto this property. This
+  will be inserted where the directive is called. Use this for only the simplest
+  of templates, like a single line of html that you need to insert.
+
+templateUrl:
+  This takes an html file and inserts it into the page where the directive is
+  called. This is what you use instead of the template property when you have
+  anything but the simplest of templates to insert. The template on this property
+  must have a single root element, meaning that you need to wrap everything in
+  this template partial under a single element, like a div. This template gets
+  placed in the page as a child of the directive element. There was a replace
+  property on directives that would replace the directive element with the
+  template specified in templateUrl so that the directive would not actually
+  be in the page, but the replace property has been deprecated so don't use it.
+
+scope:
+  The scope property can take three different values: true, false, or an object.
+  The three types of directive scopes are shared, inherited, and isolated.I herited and isolated scopes create new scope objects. And by shared I just mean it uses the same scope as the parent controller. They are described below.
+
+  By default a directive's scope is set to false, which means it has a shared scope (it is does not have an inherited scope). This means that it shares the exact same scope with the controller attached to its parent html file. In this case you don't need to set the scope property at all.
+
+  If you set scope to true this means the directive has an inherited scope of its
+  parent controller. This means it inherits anything in the controller scope but
+  anything you create on the directive's controller cannot be accessed by the
+  parent controller.
+
+  If you set the scope property equal to an object this means the directive gets an isolated scope. If you give it an empty object, scope: {}, it is not connected in any way to the parent controller scope. If you do need some specific data that lives on the parent controller scope then you can pass those into the isolated directive scope by listing them as properties of the scope property and giving them a value of '='. In the html where you call the directive you would then put that directive scope property as an attribute on the html directive element and set it equal to the controller scope property you want to pass in. You can also use '=someName' and then use a different name in the directive call than what you are calling the scope variable in the directive, see the example below. Specifically '=someName' tells the $compile function to bind that property of the directive scope to 'someName', or in the example below to bind address to addy, which is equated to address1 from the controller scope.
+
+  i.e. You have a $scope.user1 and $scope.address1 you want to pass into the directive:
+    html:
+      <your-directive user='user1' addy='address1'></your-directive>
+    directive:
+      return {
+        restrict: 'E',
+        scope: {
+          user: 'user1',
+          address: '=addy'
+        },
+        .... use user or address in template or controller on directive...
+      }
+
+  There are three ways to pass in something to an isolated scope in a directive. As shown above you can pass in data from the controller scope with the '='. You can also pass in simple value parameters, by which I mean you can directly pass in values, using the '@'. You put the key in the scope as an attribute on the html element that calls the directive and set it equal to the value you want to pass in. In the directive on the scope property you then set the value of that key as '@'. You are limited to only passing in strings, so in the example below 'true' isn't a boolean, it is a string.
+
+  Also note that if you give a property on the isolated directive scope a camelCase key then in the html it needs to be kabob-cased because that is how html attributes are written. And just like with the '=name' you can do '@name' to specify a different name for the html attribute than the key you are specifying in the directive, as shown below.
+
+  You might do this because you can only take string value, but you want to use it as a boolean value and use the same name as the attribute in the directive, shown below with the $scope.something variable.
+  i.e.
+    html:
+      <your-directive string-value='hello' something='true'></your-directive>
+    directive:
+      return {
+        scope: {
+          stringValue: '@',
+          blah: '@something'
+        },
+        controller: function($scope) {
+          $scope.something = ($scope.blah === 'true')
+        }
+      }
+
+  The third way to pass in parameters to a directive is passing in a function. To do this you use the '&' as the value of the parameter on the isolated scope in the directive. You can also specify the name you want to use to grab that function from the html just the same as the other two ways, like '&someName'.
+
+  The '&' not only binds the method to your property on the scope of the directive, but any arguments you give to that method are also automatically bound as well, and you don't even put parameters on the function inside the directive. You can actually override the parameters that are passed into the function that is passed into the directive. When you call the function (without any parameters since it automatically binds them) you can override the function parameters by specifying an object as the parameter in which the keys are any parameters you want to override and the value is the value you want to override whatever value was passed in.
+
+  You can't use isolated or inherited scope more than once on a single element. So if you have two different directives as attributes on an html element, or a directive as an element and an attribute directive on that, only one can have either isolated or inherited scope. For this reason it is best practice to use shared scope for directives that are attributes in order to avoid this potential error.
+
+  A reason you would use an isolated scope is if you need to call a directive multiple times in a single html file. If you put two inherited scope directive attributes on the same element they will inherit the same scope, which could cause problems of overwriting, so don't do this.
+
+controller:
+  You can define a controller in a directive with the controller property. It takes
+  an anonymous function with the services to be injected. You would want to use
+  this when there are properties you want to put on scope or other funcationlity
+  that needs to be done in the controller that should be contained entirely within
+  the directive rather than coming from the parent controller. Think about it like
+  passing parameters into functions rather than using global variables in a function.
+
+controllerAs:
+  A directive property that allows you to use controller-as syntax for controllers in directives. It takes a string that is the name of the context of the viewModel, the controller's scope context. For example:
+      controller: () => { //code... },
+      controllerAs: 'vmChat'
+  You can then assign properties directly to the 'this' keyword in the controller definition and use those properties in the template with vmChat.someProp and that's it!
+
+link:
+  The link property on directives is where you define a function to run on the directive.
+  What's the difference between link and controller? The basic difference is that
+  controller can expose an API, and link functions can interact with controllers
+  using require. Best Practice: use controller when you want to expose an API to
+  other directives. Otherwise use link.
+
+bindToController:
+  The bindToController property of directives is to be used when you are using controller-as syntax in directives. The bindToController property was introduced in Angular 1.3.
+
+  What bindToController allows you to do is not have to inject $scope into your directive controller (when using controllerAs syntax) to get the properties bound to the scope property that are coming in from outside the directive. So you can access properties bound to the isolated scope that are passed into the directive by using the 'this' keyword in the directive's controller instead of injecting and using $scope.
+
+  The bindToController property takes a boolean value. When true, in a directive with isolated scope that uses controllerAs syntax, the component's properties are bound to the controller rather than to the scope. That means that when the controller is instantiated the initial values of the isolated scope bindings are available on 'this' and future changes are also automatically available.
+  Example:
+      scope: {
+        someObj: '=',
+        someVar: '@',
+        someOtherVar: '&'
+      },
+      bindToController: true,
+      controller: () => { //code... },
+      controllerAs: 'vm'
+
+  Start in Angular 1.4 you can use bindToController not only just for isolated scopes and you give it not just a boolean value, but you can use it in directives when there is any new scope created and you can specifically specify the properties to be bound to the controller by specifying an object literal as the value for bindToController instead of putting those properties on the scope.
+
+  That means the bindToController can be used in Angular 1.4 for both isolated and shared scopes. And instead of setting bindToController to true you can put the values straight on it, like so:
+      scope: {},              // could be set to true for shared scope
+      bindToController: {
+        someObj: '=',
+        someVar: '@',
+        someOtherVar: '&'
+      },
+      controller: () => { //code...},
+      controllerAs: 'vm'
+
+

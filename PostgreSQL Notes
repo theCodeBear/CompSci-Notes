@@ -1,0 +1,45 @@
+PostgreSQL Notes
+
+
+
+
+************************ OVERVIEW ************************
+
+PostgreSQL is an open source SQL database management system.
+
+Need to download postgres from postgresapp.com.
+
+You can also get pgAdmin3 for manageing the database in a GUI.
+
+Sites:
+    Official Site:    http://www.postgresql.org/
+    Download:         http://www.postgresql.org/download/
+    Postgres.app:     http://postgresapp.com/
+    pgAdmin:          http://pgadmin.org/
+
+From the download site you can click on the postgres.app link which takes you to the postgres.app site, or of course just go straight there.
+Postgres.app is an easy way to use postgres on Macs.
+
+On Mac, installs postgres.app and pgAdmin from their respective sites.
+pgAdmin is a GUI for database management in Postgres.
+
+
+
+
+
+
+************************ INTRO ************************
+
+psql
+  The command to 
+
+
+************************ x ************************
+************************ x ************************
+************************ x ************************
+************************ x ************************
+************************ x ************************
+************************ x ************************
+************************ x ************************
+************************ x ************************
+************************ x ************************

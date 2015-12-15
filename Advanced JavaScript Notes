@@ -1,0 +1,416 @@
+Advanced JavaScript Notes
+
+
+
+************************ CALL ************************
+
+Syntax:         funcName.call(context, arg1, arg2, etc);
+
+Allows you to call a function with a given 'this' context so that you can manually supply the context. This way you can write one function that can be used in different contexts.
+
+The .call() method calls the function, but then also returns that function. So if the function has some inner methods using the 'this' context, you can call those methods once you've used the .call() method on the function.
+
+
+
+************************ APPLY ************************
+
+Syntax:         funcName.apply(context, arrayArg);
+
+The apply() method is very similar to the call() method, except that apply() takes an array as its argument, instead of a normal list of arguments.
+
+You can use apply() to reduce loops in the code by using it whenever you would normally use a function for processing an array of things. You can use it on built in function like Math.max(), like so:   Math.max.apply(undefined,[4,6,2]);
+
+
+
+************************ BIND ************************
+
+Syntax:         var blah = myFunc.bind(context, arg1, arg2, etc);
+
+Similar to the .call() method. This method binds a context to a function, but doesn't invoke the function right then, just does the binding and return the function with the new context bound. Whereas .call() and .apply() also invoke the function.
+
+Bind returns a function with the given context bound, like so:
+
+i.e.
+        var blah = myFunc.bind(this);
+        myFunc(4);
+
+There are two ways to use bind. The first is in a callback by wrapping the callback in parentheses and calling .bind(context) on that. The second is by creating a function and then calling bind on it and setting the returned function equal to a variable like in the example above.
+
+In ES6 the arrow functions maintain the outer context when calling a function and therefore replace the need to use .bind().
+
+
+A use of bind:
+  var dragonName = 'Valorus';
+  var dragonSlayer = function() {
+    this.kill = function() {
+      return this.dragonName + ' is killed';    // accesses global context
+    };
+    return this;                                // returns global context
+  };
+  dragonSlayer.prototype.sayName = function() {
+    console.log(this.dragonName);
+  };
+  var drag = new dragonSlayer();                // creates object drag with
+                                                // prototype dragonSlayer
+  drag.sayName();         // undefined, because the 'this' context referenced
+                          // in sayName refers to the object drag, because that
+                          // is the thing that is calling sayName, so that is
+                          // its context.
+  dragonSlayer.prototype.sayName = (function() {
+    console.log(this.dragonName);
+  }).bind(this);
+  drag.sayName();         // 'Valorus', because now we've used bind() to bind
+                          // the sayName method to the global 'this' context,
+                          // which is where the variable dragonName is held.
+
+To show some stuff about prototypes as well in this example:
+
+  var d = dragonSlayer();   // if we don't use the new keyword then we aren't
+                            // instantiating a new instance of dragonSlayer and
+                            // instead are just returning the return value from
+                            // the function into the variable d. Since
+                            // dragonSlayer() returns the global 'this' context,
+                            // d now evalautes to the global context.
+  console.log(d);     // the Window object in the browser
+  d.sayName();        // not a function because sayName only exists for objects
+                      // that have dragonSlayer as a prototype, but the variable
+                      // d is just the returned value of dragonSlayer(), not an
+                      // instance of it.
+  d.kill();           // 'Valorus is killed', this works because the kill()
+                      // method was put on the 'this' context in the dragonSlayer
+                      // function. So the variable d has access to it.
+
+
+
+************************ ARRAY METHODS ************************
+
+***** MAP *****
+
+Syntax:         var newArr = arr.map(function(el) { return el+2; });
+
+The map() method is a method on the array prototype that transforms one array into another, one element at a time, using a callback function to do the transformation on each element.
+
+
+
+***** REDUCE *****
+
+Syntax:         var newArr = arr.reduce(function(returned, current) {}, base);
+
+While map and filter are specific list transformation methods, reduce is the general list transformation method. The reduce() method reduces an array to something, that something can be a primitive value, another array, or an object. It is the array processing multi-tool of JavaScript. Reduce returns whatever is returned on its final iteration.
+
+
+Simple example of summing:
+
+    var total = numbersArr.reduce(function(sum, num) {
+      return sum + num;
+    }, 0);
+
+
+More serious example. Here we are importing a file that has a few lines of tab delimited text containing customers with what they bought, the price, and the quantity, and we want to turn that text into an object:
+
+    import fs from 'fs';
+
+    var output = fs.readFileSync('data.txt', 'utf8')
+      .trim()
+      .split('\n')
+      .map(line => line.split('\t'))
+      .reduce((customers, line) => {
+        customers[line[0]] = customers[line[0]] || [];
+        customers[line[0]].push({
+          name: line[1],
+          price: line[2],
+          quantity: line[3]
+        });
+        return customers;
+      }, {});
+
+
+
+***** FILTER *****
+
+Syntax:         var filteredArr = arr.filter(function(el, index, array) {
+                  return (condition)
+                }, context);
+
+The filter method is a method on the array prototype which takes a function that defines a filter to be used on that array and returns the filtered array. Only the elements that return true back from the filter callback are the ones that are put in the filtered array that the filter() method returns.
+
+The reason you would explicitly set the context in the filter method is if you are referencing the 'this' keyword either when calling the callback or inside the callback function, for example if the callback function is a method inside an object.
+
+
+
+************************ NEW ************************
+
+The 'new' keyword does four things.
+It creates a new object.
+It sets the new object's internal, inaccessible, prototype property to be the constructor function's external, accessible, prototype object.
+It executes the constructor function, using the newly created object.
+It returns the newly created object, unless the constructor returns a non-primitive value, in which case that non-primitive value will be returned.
+
+Basically it runs the constructor function of the thing it is new-ing, which get returned.
+
+When you new something it creates and isolates an object with a new independent scope.
+
+
+
+************************ THIS ************************
+
+The key thing about this is that it refers to the context in which a function is called. Using ES6 arrow functions, however, is like using func.bind(this, args), it changes the context to being determined by where the function is defined, not where it is called.
+
+The 'this' keyword is the reference to the current context. Often 'this' will refer to the global context (window in the browser, process in node). Some examples:
+
+  When calling a function, 'this' refers to the global context.
+  Inside an object, 'this' refers to the object.
+  The .call() and .apply() methods allow you to specify what 'this' is.
+
+The 'this' keyword applies to the context in which a function is used. That is 'this' refers to the owner of the function being executed. So when called in the global scope, or inside a function in the global scope, 'this' refers to the global object, window in the browser and process and node.
+
+The context of a setTimeout function is always the global object because setTimeout exists on the global object, so to make 'this' reference something other than the global object inside of setTimeout you need to bind the function in setTimeout to another context.
+
+The 'this' context inside a function within an object is the object.
+
+Use .bind(), .call(). or .apply() methods on functions to change the context in a function. Also the new ES6 arrow function determines a function's context by where the function is defined and not where it is used.
+
+An tricky example of this and context:
+    let obj = {
+      foo() {
+        console.log(this);
+        function bar() {
+          console.log(this);
+        }
+        bar();
+      }
+    };
+    obj.foo();
+What do the two log statements print out? The first one prints out the object obj because 'this' in JavaScript refers to the context from which a function is called, that is to say the thing that directly calls it (or the direct environment in which a function is run) is the 'this' keyword. Since obj is what is calling foo, obj is its context and thus 'this' prints out the obj object.
+But the second log statement prints out the global object as 'this'. That's because obj.foo() is being run in the global context, and so when bar() is called it is called in the global context, therefore the 'this' inside bar() is the global context. So in the browser bar() prints out the Window object.
+
+
+
+************************ CLOSURES ************************
+
+In JavaScript functions are also closures. This means that functions have access to variables that are outside the function body (in the outer scope). This is why in JavaScript you can use global variables in functions without passing them in, unlike in other languages that don't have closures. A closure "remembers" the scope in which it was created.
+
+The reason closures are cool and useful is that they maintain knowledge of the variables in the outer scope even after the program execution is no longer in that scope. This is useful for promises/callbacks inside a function or returning a function from a function and then executing it later.
+
+i.e.
+        function multiply(x) {
+          return function(y) {
+            return x * y;
+          }
+        }
+        var factor = multiply(2);
+        var answer = factor(6);     // answer = 12
+
+
+Functions keep in memory the scope in which they were executed. So if you return a function from a function that returned function still has access to the scope of the outer function from which it was defined even after the outer function has been executed. This is why you can later call the returned inner function and have access to variables that were in the context of the already executed outer function. A closure is simply when a function has access to its outer scope, which is always the case in JavaScript, so when you make use of this you are using a function as a closure. Closures look up the scope chain for prior association of variables in memory.
+
+
+
+************************ PROMISES ************************
+
+Promises are a better alternative to callbacks, because they compose.
+
+--ES6 Promises--
+
+To create a promise in a function in ES6 you must return a promise like so:
+
+      return new Promise((resolve, reject) => { //code... })
+
+The promise constructor takes a single function as its argument, this function takes two arguments - resolve and reject, both of which are also functions. To successfully resolve a promise you then call the resolve function with the value you want to return on success, like so:
+
+      resolve(value);
+
+On error, call the reject function to send back an error with an error response, like so:
+
+      reject(new Error(someMsg));
+
+i.e.
+
+      function someFunc(arg1) {
+        return new Promise((resolve, reject) => {
+          // do some stuff...
+          // if succeeded...
+            resolve(valueToReturn);
+          // if errored...
+            reject(errorMessage);
+        });
+      }
+
+To get rid of the pyramid of callbacks using promises you need to put nested promises inside the .all() method of the Promise class, which will wait until all of the promises have resolved. Promise.all([]) returns a new promise once all of its promises have resolved, you call .then() on what Promise.all returns and now you've done all the promises without any pyramid structure in the code! Promise.all returns an array of what the individual promises within it returned.
+
+i.e.
+
+      Promise.all([
+        someFunc(value),
+        someFunc(value),
+        someFunc(value)
+      ]).then((response) => {
+        // do something with the response
+      }).catch((error) => {
+        // handle the error
+      });
+
+
+
+************************ PROTOTYPE ************************
+
+
+
+
+When an object is instatiated from an object or function (it's prototype) the properties on the prototype are not copied into the instantiated object, but rather the child can call the properties of its parent. If the parent changes those properties then they will also be changed when accessed from the child, obviously. JavaScript will loop up the scope chain for properties, starting with the current object, then going to the parent and so on up if there are multiple levels of inheritance until it finds the property, or if it doesn't find the property then it will spit out a function is undefined error if you are calling a function or if it is a variable it will merely evaluate to undefined.
+
+
+
+************************ STRICT MODE ************************
+
+Strict mode is a way to introduce better error checking into JavaScript code. Can declare strict mode on a whole file or an individual function.
+
+See this website for what strict mode actually does:
+https://msdn.microsoft.com/en-US/library/br230269(v=vs.94).aspx
+
+
+
+************************ CURRYING ************************
+
+Currying is when a function doesn't take all its arguments up front, instead it takes one argument and returns a function which you are supposed to call with the second argument, and so on. The function at the end of the chain returns the value you want.
+
+You would call a curried function with multiple sets of argument lists like so:
+
+          funcName(firstArg)(secondArg)(thirdArg)
+
+The idea behind currying is that a function can pass through an application and gradually receive the arguments it requires to complete itself.
+
+Lodash actually has a curry() function, which takes a function as its argument, which turns a non-curried function into a curried function. All libraries with a functional nature will have a curry function.
+
+
+
+************************ PARTIAL APPLICATION FUNCTIONS ************************
+
+Partial Applications are similar to curry's but a bit different.
+
+Application is the process of applying a function to its arguments in order to produce a value.
+Partial Application is the process of applying a function to some of its arguments. The partially applied application gets returned for later use, at which time that partial application can be applied to more of the arguments, until all the arguments have been used, at which time the function will return a value.
+Currying is when a function only takes one argument at a time, and it continues to return a function until all arguments have been applied and it can return a value.
+
+Partial Applications might take a function as its first argument, not sure.
+
+
+
+************************ IIFE ************************
+
+Immediately-Invoked Function Expressions are functions that are call immediately following their definition by slapping a () on the end of the function definition.
+
+They can be used to avoid variable hoisting from withint blocks, and they protect against polluting the global environment, and also allow public access to methods while retaining privacy for variables defined within the function.
+
+
+
+************************ EVENT BUBBLING IN THE DOM ************************
+
+Event bubbling refers to the propagation of events in the HTML DOM API when an event occurs in an element that is inside another element when both elements have registered a handler for that event. Bubbling means the event is first captured and handles by the innermost element and then propagated to outer elements.
+
+By default bubbling is the way events are propagated in the DOM. However you can also choose for events to propagate through capturing instead of bubbling. Capturing is just the opposite of bubbling, so the events are handles by the outermost element that has a registered handler first and then the event propagates to inner elements.
+
+In vanilla JavaScript the addEventListener() method of an element is how you capture and handle events. This method takes two parameters and an optional third parameter. The first two parameters are the name of the event in string form and the callback function that is the handler for the event. The optional third parameter is a boolean value that represents whether or not you want to propagate events through capturing (true), or bubbling (false). By default it does bubbling.
+
+Example:
+          document.getElementById('someEl').addEventListener('click', () => {
+            // code to handle the event...
+          }, true);       // set to true, event propagates through capturing
+
+
+
+************************ SERVICE WORKERS ************************
+
+
+
+
+
+
+************************ DOM EVENTS ************************
+
+
+
+
+
+======================== NON-ADVANCED JS, JUST EXTRA NOTES ========================
+
+Below are not really advanced JS stuff, but maybe just some summarizing notes on basic JavaScript stuff.
+
+************************ LOOPS ************************
+
+for
+while
+do...while
+
+for...in
+    Loop through keys of an object or indices in an array
+          Syntax:   for (var key in object)
+                    for (var indices in array)
+    Can use object.hasOwnProperty(key) to check if key is directly on the prototype and not just an inherited property
+
+forEach
+    loop through elements of an array
+          Syntax:       arr.forEach(function(element) {  });
+
+for...of    (ES6)
+    New to ES6, iterates over values in an array. Useful with ES6 generators. It only iterates over data structures that are iterable, which does not include objects. An object can be included in the array, but it cannot iterate over objects themselves, so you cannot put an object after the 'of'.
+    Basically for...of is syntactic sugar over forEach()
+          Syntax:       for (var value of array)
+    It's like the inverse of the for...in loop, but only for arrays, so whereas using for...in on an array is a poor choice because it only directly gets the indices instead of the values, meaning you have to do array[index] to get the actual values, the for...of solves this by directly giving you the values.
+
+
+When to use which loop:
+  Use for-loop when you have a range of numbers to iterate through.
+  Use while when you have to continue looping while a non-numeric condition is true.
+  Use do...while when you have non-numeric condition and need to run once before checking.
+  Use for...in when you need to iterate over an object.
+  Use for...of when you need to iterate over an array or other iterable, use it when using ES6 generators.
+  The forEach loop's functionality has been replaced by for...of.
+
+
+Performance considerations:
+  forEach() is a lot slower than a standard for-loop, while for...of is a lot slower than even forEach().
+  From my tests, for...in seems to be about 4-7 times slower than a standard for-loop, while forEach is twice as slow as for...in, and for...of is 3 times slower than forEach! So for...of is about 30x slower than a standard for-loop and about 6x slower than forEach!
+
+
+
+************************ COMMA OPERATOR ************************
+
+The comma in JavaScript is an operator. It is like the && and || except that it runs every operand.
+
+Given functions blah and bloop and bleep, the following function will execute all three:
+
+      function()
+        blah(), bloop(), bleep();
+
+
+
+************************ IN KEYWORD ************************
+
+Using the 'in' keyword you can check if a property exists in an object. The 'in' keyword returns a boolean.
+
+    var obj = { 'blah': 'the val' };
+    'blah' in obj;                        // returns true
+    'name' in obj;                        // returns false
+
+
+
+************************ NUMBERS AND STRINGS ************************
+
+Adding a string of a number with a number typecasts it to a string to it just concatenates the strings:
+        '10' + 20     // '1020'
+        10 + '20'     // '1020'
+
+Putting a plus sign or negative sign in front of a string that is a number typecasts it to a number, as long as you are using it as a unary operator. Increment and decrement also typecast a string, but you can't use increment/decrement operators on a literal value:
+        - '10'                // -10
+        + '10'                // 10
+        + '10' + 20           // 30
+        - '10' + 20           // 10
+        + 10 + '20'           // '1020'
+        5++                   // error
+        '5'++                 // error
+        let a = '5'; ++a      // 6
+
+
+
+************************ x ************************

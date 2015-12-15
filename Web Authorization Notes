@@ -1,0 +1,222 @@
+Web Authorization Notes
+
+
+Token-based Auth vs. Cookie-based Auth
+
+
+
+
+
+
+JWT (JSON Web Token)
+
+Info on JWT (pronounced "JOT")
+  http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html
+
+A JWT payload can consist of a bunch of different properties, you don't need
+to use all of them:
+
+  iss     <--   Issuer (whoever created the token, i.e. the hostname of the website)
+  sub     <--   Subject (the user id)
+  exp     <--   Expiration (datetime of expiration of this JWT)
+  aud     <--   Audience
+  nbg     <--   Not Before
+  iat     <--   Issued At
+  jti     <--   JWD Id
+
+There are some more of these I believe.
+
+Every JWT has a header, a payload, and a signature. In the encoded JWT these sections
+are separated by a period between each and each section is Base-64 encoded.
+
+The header just specifies the type of algorithm of the JWT. The type will always be
+'JWT' and the algorithm will be a string specifying what encryption algorithm is
+being used.
+  i.e.
+      var header  = { typ: 'JWT', alg: 'SHA-256'};
+
+The payload is the data you pass with the JWT, this consists of the properties
+shown above.
+
+The signature is a combination of the first two sections of the JWT and the JWT
+secret which are then base-64 encoded together.
+
+
+
+
+To implement local login with JWT Token Auth in Angular, Express, and Mongoose:
+
+--Signup--
+
+Client:
+Bower install satellizer. Link to it in the index.html.
+Satellizer gives angular the $auth service. So include 'satellizer' in your angular.module() dependencies list.
+In the REST call to the back end to signup the user, instead of using the $http service, you just use the auth service's:
+    $auth.signup(credentials);
+$auth.signup() by default calls the 'auth/signup' route. Or you can change the default route that $auth.signup() calls by changing the value of:
+    $authProvider.signupUrl = '/auth/signup';     // <-- change value if you want
+Note that you can only accesss provider services in the angular .config() method, so to change any $authProvider properties it must be done in .config().
+
+Server:
+On the server you need to npm install jwt-simple and require it to be able to work with JWT's on the server.
+In the root directory for the server project, or if server is in same project as front end then just the root directory of the whole project, add a .env file and on a line of the file type:
+    export TOKEN_SECRET="some token secret"
+where "some token secret" is some string. Then add .env to your .gitignore file so that your token secret isn't saved when you push to github. This secret will act to encode your token, and as you can see below we use process.env.TOKEN_SECRET to grab that secret from the .env file using node.js's process.env to grab environment variables. (be sure you execute the .env file in the same terminal window you are running the server from).
+Now on the server in the route that takes the credentials from the Client's $auth.signup() call, create the user and then add a method to the Mongo class something like this:
+    userSchema.methods.token = function() {
+      var payload = {
+        sub: this._id,
+        iat: moment().unix(),
+        exp: moment().add(14, 'days').unix()
+      };
+      return jwt.encode(payload, process.env.TOKEN_SECRET);
+    };
+where jwt is the variable that holds the jwt-simple npm package we installed.
+You can choose which of the many JWT properties you choose to put in the payload. You need to set the user id to the sub key, as I did above, and you should at least set the issue-at-time (iat) and the expiration (exp). Based on your needs you can choose to give the token a shorter or longer expiration date, or no expiration date.
+
+In the function for the '/auth/signup' route, after the user has been created in the database and you get the saved user, call this .token method on the user before passing the user back to the client:
+    var token = user.token();
+and pass both the user and the token back to the client like so:
+    res.send({user: user, token: token});
+
+Client:
+When the Client receives the token Satellizer will automatically save it to localStorage with the key 'satellizer_token', this is the default key, you can change this by setting a new value to:
+    $authProvider.tokenName = 'token';
+    $authProvider.tokenPrefix = 'satellizer';
+Remember that providers can only be accessed in the angular .congif() method so if you are going to change the token localStorage key name you need to put these two lines in the .config() method.
+The key will take the format of having an underscore between the tokenPrefix and the tokenName, which is why by default it is 'satellizer_token'.
+You'll want to manually save the user into localStorage like so, passing in whatever you want the key to be called and the user object as the value, and don't forget you need to serialize the user object because localStorage only holds strings:
+    $window.localStorage.setItem(key, JSON.stringify(value));
+Great, now signup with JWT is done.
+
+
+--Login--
+
+Login is gonna be basically the same thing but with using satellizer's $auth.login() method instead, which by default calls to 'auth/login' on the server.
+So do everything the same, except call
+    $auth.login(credentials);
+instead of $auth.signup(), make your server route 'auth/login', instead of creating the user on the Mongo model just validate the login information, and then just the same as with signup, before returning data to the client call user.token() and pass both the user and token objects back to the client. Again satellizer automatically saves the token to the 'satellizer_token' key in localStorage, and you need to save the user to localStorage.
+Additionally, on website load, you'll want to save the user data from the localStorage into an Angular service or factory to have access to the data. So in the angular.module().run() method you need an if-statement that checks $auth.isAuthenticated(), which is satellizer's method to check for the satellizer JWT token. If it is there then the user should also be in localStorage, so grab the user data to use in the app.
+
+
+--Logout--
+
+To logout using satellizer all you do is call $auth.logout(), which deletes the token from localStorage, and then you need to manually delete the user from localStorage, so if the key in localStorage holding the user is 'user', do this:
+    $window.localStorage.removeItem('user');
+Now the user is logged out.
+
+
+--Restricting Access based on Authentication--
+
+Now of course you want to restrict which routes on the client and server based on whether the user is authenticated or not. The user shouldn't be able to enter the innards of the app, or hit certain server-side routes, without being an authenticated user.
+On the client, in Angular, this means we need to check if the user is authenticated before routing to any states that require authentication.
+Similarily, on the server, in Node/Express, this means writing some authentication checking middleware to be run before any route that required authentication. Some routes you will want to leave as publicly accessible, for example the login and signup routes obviously cannot be hidden behind authentication rules or else it would be impossible to login.
+
+Client:
+In the angular.module().run() method, firstly check if $auth.isAuthenticated returns true on device ready and device resume, if it returns false then you need to run your logout method and have the user log back in to get a valid token. Also in the .run() method listen for the '$stateChangeStart' event using $rootScope.$on() and check if that route requires authentication and if the user is authenticated, using $auth.isAuthenticated() - which btw checks if the token is valid and checks if it hasn't expired - and either let the state change happen or do event.preventDefault() to stop the state change. The best way to set whether each state requires authentication or not is to set a:
+    data: {
+      authenticate: true
+    }
+object directly on any states that require authentication, and then while checking the '$stateChangeStart' event see if toParams.data.authenticate is there.
+Here is an example of doing that:
+
+    $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
+      // if not authenticated to go to state
+      if (toState.data && toState.data.authenticate && !$auth.isAuthenticated())
+        event.preventDefault();
+      // prevent going to login state if logged in
+      else if (toState.name === 'login' && $auth.isAuthenticated())
+        event.preventDefault();
+    });
+
+Server:
+Write an authenticate middleware method and call it before any route that requires authentication. Satellizer will automatically send the JWT token on any calls made to the server unless you explicitly tell it to not do this by putting the
+    skipAuthorization: true
+property as a config object in the $http call.
+Anyway, Satellizer sends the token to the backend and our authentication middleware will decode the token and see if it is legit and hasn't expired yet, and then either reject it and send an error back to the browser, or accept it and call next() to go to the desired route on the server.
+Here is an example of such middleware:
+
+    var jwt = require('jwt-simple');
+    module.exports = function(req, res, next) {
+      var token = req.headers.authorization.split(' ')[1];
+      try {
+        jwt.decode(token, process.env.TOKEN_SECRET);
+      } catch(err) {
+        return res.status(500).send('You are not logged in');
+      }
+      next();
+    };
+
+Above, the req.headers.authorization is a string which has 'Bearer <token>', where <token> is the actual encoded token. So we use split to just get the token part, and then use a try-catch block to attempt to decode the token, if it is a legit token then the try block will work and next() will be called to go to exit this middleware and go to the route logic. If it is not a token the catch block will run which will return to the client with an error and a message.
+Now you just put this middelware on any route that required authentication, before the main function of the route. And on the client add a catch() function to the end of your $http call and create an alert or whatever showing the message that was sent back. And JWT auth is done!
+
+
+
+
+FACEBOOK SIGNUP WITH JSON WEB TOKENS USING SATELLIZER
+
+Need to register app on facebook developer site:
+  Need to put a contact email in the Settings section in the Basic tab.Need to make the app public in the Status & Review section. Need to go into the advanced tab of Settings and put a redirect URL in the Valid Oauth redirect URIs field. This url is where facebook will send the data from the call to login to facebook. So it should be a url for the back end of your website. During dev it can just be a localhost url. For example it can be
+      http://localhost:3000/auth/facebook
+  Then on your backend you need to have a /auth/facebook route which will retrieve the facebook authorization code, which will allow you to get the access token for that user. Facebook will send the authorization code back as a query string with the key 'code', like so:
+      /auth/facebook?code=AUTH_CODE
+  where AUTH_CODE is the code from facebook. In Express you get the token from facebook with req.query.code since the query key is 'code'.
+
+Setting up the Front end:
+  Install Satellizer to handle JWT Auth using bower
+      bower install --save satellizer
+  Add a script tag to your HTML file linking to the satellizer/satellizer.js file. Include 'satellizer' in your angular module dependency list. This give you access to Satellizer's $auth and $authProvider services.
+  You must inject the $authProvider service into your Angular app's config() function and then give your app the Client Id for your facebook app you just set up on the facebook developers site. This is the string of digits labeled App ID in your app's Dashboard tab on the facebook developers site. The code in the angular.config() function will look like:
+
+      $authProvider.facebook({
+        clientId: 'yourAppId'
+      });
+
+  You must inject the $auth service into the controller that handles the Facebook signup/login. Add a facebook login button to the html template and on the ng-click function in the controller use the $auth.authenticate() method, passing in a string of the name of the provider ('facebook') that is being used for authentication. This function returns a promise from your server. Your html button will look like:
+
+      <button ng-click='authenticate("facebook")'>Login with Facebook</button>
+
+  or use the facebook login button image (need to get the image online) like this:
+
+      <div class='text-center'>
+        <img src='img/fbLogin.png' ng-click='vmLogin.authenticate("facebook")' alt='Facebook Login'>
+      </div>
+
+  And the controller function will look like:
+
+      $scope.authenticate = (provider) => {
+        $auth.authenticate(provider).then((response) => {
+          // handle successful authentication
+        }).catch((response) {
+          // handle error
+        });
+      };
+
+  The way this works is that it will call facebook's API and get the user to sign in with facebook. This will cause a pop up window from facebook to appear so the user can sign in. When the user clicks the button to sign in, facebook will send an authorization code for the user to the redirect url that you specified on the facebook developers site for your app (example above is http://localhost:3000/auth/facebook). So this code from facebook will be sent to the '/auth/facebook' route on your server. Then when you return from this route to the Front End the then-block in the $auth.authenticate() function will run.
+  Now let's figure out what to do on the server when we get the response from facebook, before sending the logged in user back to the front end.
+
+Hide your App Secret on the server:
+  On the back end the first thing you need to do is create a hidden .env file which will create a global variable to hold your Facebook App's App Secret. This is just the private key for you app so that no one else can use your facebook app, the App Secret is also shown at the top of the Dashboard tab on the facebook developers site, to the right of the App ID. So copy the App Secret from there and create a .env file on your server and add this line to it:
+      export FACEBOOK_SECRET=theAppSecret
+  where theAppSecret is where you paste your App Secret that you just copied from the facebook site. Save that file. Now you need to make sure you add .env to your .gitignore file so that when you push to github it won't include that file, or else your private App Secret will be public on the internet and anyone can see it and use it which is very bad and is a security breach. So in the .gitignore file just add this line:
+      .env
+  The last thing to do here is that you have to run the .env file in the same terminal window that you run the server. One way is that before you start your server, in that same terminal window, run either:
+      source .env
+      . .env
+  Either of those will execute the .env file which will export the FACEBOOK_SECRET to the global context in node which is the process object so that you will be able to access the app secret in any file on the server with process.env.FACEBOOK_SECRET. The process.env object is just the object that holds environment variables in node. The better way to run the .env file is to include it in your script that starts the server, so in your package.json file add source .env to your command that starts the server. For example, I use nodemon and my server file is dist/app.js on the server, so my new script to run in the "scripts" section of package.json is:
+      "source .env && nodemon dist/app.js"
+  That way the .env file is run before the server is started, so that the environment variables in that file are available to the node server.
+
+Create a token secret:
+  JSON Web Tokens require a token secret. This obviously must be kept private, so you need to add this to the .env file as well. The secret can be any string of characters, just make sure it is long and unique enough that it can't be cracked. So go to the .env file and add this
+      export TOKEN_SECRET='Once upon the time a glib23onbloggein crossed a bridge'
+  Now you have to execute and .env file again and restart the server if you had already started it after the last step. This token secret will be used to encode the JSON Web Token that will be used to authenticate the user in the app (different from the token we got from Facebook in order to get the user's profile).
+
+Setting up the server:
+  On the back end you need to take that JWT and save it to the database, creating the user in the database.
+  So set up an '/auth/facebook' route and grab the authorization code from facebook held in req.query.code, as explained earlier.
+  Create a 
+
+
+
+

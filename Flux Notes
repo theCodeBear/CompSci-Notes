@@ -1,0 +1,87 @@
+Flux Notes
+
+
+
+
+***************************** OVERVIEW *****************************
+
+Flux is an architecture that Facebook uses internally when working with React. It is their recommended react app architecture. It's not a framework or a library (though there is a library of tools to use provided by Facebook when making apps in the Flux architecture), it is more of a concept for app architecture using React and unidirectional data flow. For example, it is an alternative to MVC.
+
+The library for using Flux is the Dispatcher. A typical Flux architecture will leverage the Dispatcher library, along with Node.js's EventEmitter module in order to set up an event system that helps manage an application's state.
+
+Flux has four components to it:
+
+    Actions
+        - helper methods that facilitate passing data to the Dispatcher
+    Dispatcher
+        - receives actions and broadcasts paylods to registered callbacks
+    Stores
+        - containers for application state and logic that have callbacks registered to the dispatcher
+    Controller Views
+        - React components that grab the state from Stores and pass it down via props to child components
+
+So basically an event occurs in the UI which calls an action. That action can interact with an API or not, and then passes data to the Dispatcher. The Dispatcher receives actions and passes data to callbacks in the Stores. Stores hold application data as well as logic and have these registered callback that the Dispatcher calls. Controller Views grab the state from the Stores and pass it down to child components through their props. And that is the flow of a Flux app.
+
+
+
+***************************** DISPATCHER *****************************
+
+The Dispatcher is the manager of the entire process, the cetral hub of the application. It receives actions and dispatches the actions and data to registered callbacks.
+
+The dispacther broadcasts the payload to all of its registered callbacks, and includes functionality that allows you to invoke the callbacks in a specific order, or wait for updates before proceeding using the Dispatcher's waitFor method. There is only one dispatcher in an app.
+
+A dispatcher looks like this:
+
+  var Dispatcher = require('flux').Dispatcher;
+  var AppDispatcher = new Dispatcher();
+  AppDispatcher.handleViewAction = function(action) {
+    this.dispatch({
+      sourc: 'VIEW_ACTION',
+      action: action
+    });
+  }
+  module.exports = AppDispatcher;
+
+
+In order to use the Dispatcher's waitFor method to make some registered callbacks wait for others to be updated you need to store the return value of the Dispatcher's registration method on the Store as dispatcherIndex:
+    SomeStore.dispatcherIndex = AppDispatcher.register(function(paylod) { });
+Then in the store, when handling a dispatched action, you can use the waitFor method to ensure that SomeStore has been updated:
+    case: 'SOME_CASE':
+      AppDispatcher.waitFor([
+        SomeStore.dispatcherIndex
+      ], function() {
+        AnotherStore.someMethod(SomeStore.aMethod());
+      });
+      break;
+
+
+
+***************************** STORES *****************************
+
+Stores manage application state for a particular domain within an application. Basically, per app section, stores manage the data, data retrieval methods, and dispatcher callbacks. You should extend your stores with node.js's EventEmitter. This allows stores to listen/broadcast events, and the View/Components to update based upon those events.
+
+
+
+***************************** ACTIONS *****************************
+
+There are Action Creators and Actions. Action Creators are collections of methods that are called within views, or anywhere else, to send actions to the Dispatcher. Actions are the actual payloads that are delivered via the Dispatcher.
+
+Action type constants are used to define what action should take place, and are sent along with the action data. Inside of registered callbacks, these actions can now be handled according to their action type, and methods can be called with action data as the arguments.
+
+Here is a constants definitions for an action type constant:
+    var keyMirror = require('react/lib/keyMirror');
+    module.export = keyMirror({
+      ACTION_NAME: null
+    });
+
+
+
+
+***************************** CONTROLLER VIEWS *****************************
+
+Controller Views are just React components that listen to change events and retrieve application state from Stores, then pass that data down to their child components via props. So a Controller View is a React component that listens for change events and acts on them and passes data down to child React components.
+
+
+
+***************************** x *****************************
+

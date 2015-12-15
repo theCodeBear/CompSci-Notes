@@ -2,6 +2,37 @@ Angular Notes
 
 
 
+===============
+more notes from workshops
+
+$rootScope is the module scope so can save data that can be used anywhere, and angular always goes up to the parent scopes to find a variable so if there isn't anything in a controller scope it will go to $rootScope to find it.
+
+Where you define your routes in angular you can add on a run function to run some code when the angular app starts up. For example you can check to see if the User is logged in.:
+
+.run([function() {
+  User.status().then(function(response) {
+    $rootScope.email = response.data.email;
+  })
+}]);
+
+make a /status route in hapi that has authorization on. email is in request.auth.credentials. So if a user is already logged in they will be allowed to access the /status route and find their email in request.auth.credentials and pass that back to the browser. User is a factory than has a status function that calls a get request on /status on the backend.
+
+angular routes:
+abstract: true
+
+state: blah, url: '/blah', abstract: true
+state: blah.some
+state: blah.what
+state: blah.yo, url: ''  <-- this will be used for '/blah'
+
+
+=========
+
+
+
+
+
+
 AngularJS is a MVC (Model-View-Controller) framework for the Front-End.
 
 It is made for making Single Page Applications - applicaitons that switch content instead of loading up new pages to change content. You can create a multiple page website where each page has different views though.
@@ -25,7 +56,7 @@ Scope:
   These are objects that refer to the model. They act as a glue between the controller and the view. The $scope variable is used, and whatever you put in the $scope variable back in the logic (controller/model ?) can automatically be used in the view through Angular.
 
 Controller:
-  JavaScript functions that are bound to a particular scope.
+  JavaScript functions that are bound to a particular scope. They are class-like objects that drive model and view changes.
 
 Services:
   There are several built-in services (i.e. $http to make XNLHttpRequests). These are singleton objects which are instantiated only once in an app.
@@ -165,9 +196,822 @@ A controller is just a function and can be defined like so if you don't associat
 
 
 
+************************ DIRECTIVES ************************
 
-************************ x ************************
-************************ x ************************
-************************ x ************************
-************************ x ************************
+a
+  Angular adds some features to the standard anchor tag. If using the anchor tag inside an Angular appication the default action is prevented if the href attribute is empty. So if you put href='' then it won't try to change the location of reload the page, that way you can use ng-click if you want a link to call some function in the controller instead of routing the browser.
+
+form
+  Angular adds some functionality to the standard form element. In Angular, forms can be nested. Browsers don't allow nested form tags, so to nest forms you must use the ngForm directive. Nested forms come in handy when dynamically generating forms using ngRepeat (read more on the Angular docs).
+
+  If the name attribute in the form tag is specified then the form is put as a property on $scope under this name. This way you can get access to all the form element values in $scope as well as check for form properties like valid, invalid, pristine, dirty, touched, untouched. The css form classes are ng-valid, ng-invalid, ng-pristine, ng-dirty, ng-submitted. You can add animation based off these classes because ngAnimate can detect each of these classes.
+
+  Because in an Angular application you don't want to submit a form to the server, but instead send the form to the controller and use an AJAX call to avoid page reloads, Angular automatically prevents the default form action unless the action attribute is added to the form element.
+  You can use either ng-submit or ng-click to call a method when a form is submitted. You put the ng-submit directive on the form element itself, while ng-click goes on the first button or input field of type='submit'. Use only one of these two directives. ngClick events will occur before the model is updated (only matters if you are using ngModelOptions to delay updating of the model), ngSubmit occurs after the model is updated so you have access to the updated model. If using ngSubmit you need a button or input element with type='submit'. Animations in ngForm are triggered when any of the associated CSS classes are added or removed. These classes are .ng-pristine, .ng-dirty, .ng-valid, .ng-invalid. Animations in ngForm are similar to how they work in ngClass and animations can be hooked into using CSS or JS animations.
+  Unless nesting forms for some reason, just use a normal form tag and then put ng-submit='myFunc()' in the opening form tag. Give the form a name so it can be accessed from $scope. Then put a button with type='submit' to call myFunc() when the clicked. On input elements you seem to need to put ng-model, but you access the element values in the controller through $scope.formName.inputName.$modelValue, not $scope.formName.ngModelName. Of course you can also access them with $scope.ngModelName.
+
+  You can add all values of a form as properties to a single element for that form on $scope by giving ng-model and dot notation. For example, one input gets ng-model='user.name', another input gets ng-model='user.age'. Now a $scope.user object has been created with properies $scope.user.name and $scope.user.age.
+
+  Example form:
+    <form ng-submit='formSubmit()' name='formInfo'>
+      <input type='text' ng-model='user.name' name='theName' required>
+      <input type='text' ng-model='user.age' name='theAge' required>
+      <button type='submit'>Submit</button>
+    </form>
+
+  And the controller:
+    $scope.formSubmit = function() {
+      console.log($scope.formInfo);   // shows a big form object
+      console.log($scope.formInfo.theName);   // shows the object for the name element
+      console.log($scope.formInfo.theName.$modelValue);   // gets the value of that form element by grabbing the value from the ng-model associated with it
+      console.log($scope.user);   // gets the user object with the two input values
+    };
+
+  You can access the various form states using $scope.formName.$pristine, $dirty, $valid, $invalid, $submitted.
+
+ng-app
+  ngApp designates the root element of the Angular application. You can only use ngApp once per HTML document. To run multiple Angular applications in an HTML document you must manually bootstrap them using angular.bootstrap. Note that Angular applications cannot be nested within one another.
+
+ng-bind
+  ngBind tells Angular to replace the text content of the specified HTML element with the value of the given expression, and update the text content when the value of the expression changes. It works like ng-model but for all elements that have actual text content, whereas ng-model links to the values of input, select, and textarea elements. ngBind does the same thing as the {{ }} syntax, so generally you will just use that syntax rather than ngBind. You would use ngBind in order to get rid of the flicker that occurs before Angular loads, when the bare HTML template is shown for a split second. Since ngBind is an element attribute it makes the bindings invisible when the page is loading. Alternatively you can just use ngCloak.
+
+ng-bind-html
+  ngBind can only evaluate strings, not HTML. ngBindHtml can evaluate and display HTML code so that, for example, you can take HTML input from a user and show it on screen in another element with the ng-bind-html attribute linked to the that $scope property. But to use ngBindHtml you have to include 'ngSanitize' as a dependency in your Angular module and include the CDN for it. By default ngBindHtml uses the $sanitize service which is provided through the 'ngSanitize' module, which just sanitizes the HTML content to make sure it is safe.
+
+ng-bind-template
+  ngBindTemplate specifies that the element text content should be replaced with the interpolation of the template in the ngBindTemplate attribute. Unlike ngBind, this directive can contain multiple {{ }} expressions. Basically this is used when you want to put more than one {{ }} in the DOM element through the bind expression. Of course instead you can just put multiple {{ }}'s directly in the DOM element.
+
+ng-blur
+  Used to specify custom behavior on blur event. A blur event occurs when an element in the DOM has lost focus. Give ngBlur an expression to evaluate upon blur.
+
+ng-change
+  Evaulates the given expression when the user changes the input. ngChange only evaluates when a change in the input value causes a new value to be committed to the model.
+    i.e.  ng-change='something()'
+
+ng-checked
+  Browsers aren't required to save the values of boolean attributes like checked for checkboxes. ngChecked allows this by tracking or setting the value of the checkbox (true/false) in the expression given to ngChecked. If the expression given to ng-checked is true then the checkbox will be checked, and vice versa. You can use this to check other checkboxes based on the value of some other checkbox by assigning other checkbox's ngChecked value to what the one checkbox's ngModel $scope property is.
+
+ng-class
+  ngClass allows you to dynamically set CSS classes on an element by databinding an expression that represents all classes to be added. It can work in three different ways.
+  1. if the expression evaluates to a string, the string should be class names.
+  2. If the expression evaluates to an object, they keys of any properties that
+      have a value of true are added as classes.
+  3. If the expression evaluates to an array, each element in the array should
+      be a string or object, according to type 1 and type 2 listed above.
+  When the expression changes the previously added classes are deleted and the new classes are added.
+  ngClass can be used as an attribute or as a CSS class. If it is a CSS class I think it is used like: class='ng-class: class1 class2 etc'
+  Animations can be dynamically added to elements using ngClass.
+
+ng-class-even and ng-class-odd
+  ngClassEven and ngClassOdd work just like ngClass except they only work inside an ngRepeat and only take effect on odd/even repeats of ngRepeat. This way you can make odd and even rows in a list, for example, look different so as to stand out.
+
+ng-click
+  ngClick allows you to specify custom behavior when an element is clicked. Give it an expression to run when clicked.
+
+ng-cloak
+  ngCloak is used to prevent the flicker of the HTML template before Angular has loaded. The directive can be applied to body, but it is better to apply it to smaller portions of the page that use angular to permit progressive rendering of the browser view. To use this the Angular script should be loaded in the head of the HTML document.
+
+ng-controller
+  ngController attaches a controller class to the view. This is how Angular supports MVC
+
+ng-copy
+  Specifies a custom behavior when the string in an element is copied by the user. Only works on <window>, <input>, <select>, <textarea>, and <a> tags.
+
+ng-csp
+  Enables CSP (Content Security Policy) support. This is necessary when developing things like Chrome Extensions or Universal Windows Apps. CSP forbids apps to use eval or Function(string) generated functions and other stuff. Read the official docs for this if I ever care about it.
+
+ng-cut
+  Just like ngCopy but for cutting. Specifies a custom behavior when the string in an element is cut by the user. Just like ngCopy, it only works on <window>, <input>, <select>, <textarea>, and <a> tags.
+
+ng-dblclick
+  Allows you to specify behavior on a double click event on any DOM element.
+
+ng-disabled
+  Takes an expression that evaluates to true or false and disables the element based on that value. It triggers the disabled attribute on the element. Only elements that have the disabled attribute can use ngDisabled, so inputs and buttons.
+
+ng-focus
+  Takes an expression that specifies custom behavior on the focus event for a DOM element, just like ngBlur but for focus event. Only works on <window>, <input>, <select>. <textarea>, and <a> tags.
+
+ng-form
+  Allows nestable forms. Can be used as a custom element to replace the form tag when nesting of forms is needed. Can also be used as an attribute with a value given to it, or as a CSS class. When used as an attribute you put it in a tag other than form, so you can say create a form in a div tag by putting the ngForm attribute on it and giving the name of the form to ngForm instead of giving to the name attribute. I would say to use it as an attribute.
+
+ng-hide
+  Takes an expression to evaluate to a boolean, if true this DOM element is hidden, if false the DOM element is shown. If the element gets hidden what happens behind the scenes is that Angular adds the .ng-hide class to that element which is what hides it.
+
+ng-href
+  Allows you to put {{ }} in an href link to dynamically decide upon the URL to link to.
+
+ng-if
+  ngIf removes or recreates a portion of the DOM tree based on an expression. If false then the element is removed from the DOM, if true a clone of the element is reinserted in the DOM. I guess this is another way to do ngShow/ngHide. But the difference is that ngIf completely removes and recreates the element in the DOM, rather just changing its CSS display property. You can use the ngAnimate module to animate the enter and leave effects when ngIf takes away or recreates a DOM element.
+
+ng-include
+  Fetches, compiles, and includes an external HTML fragment. Can be used as a custom element, an attribute, or a class.
+  1. Custom Element:
+      <ng-include src=''></ng-include>
+  2. Attribute:
+      <anyElement ng-cinclude=''></anyElement>
+  3. CSS class:
+      <anyElement class='ng-include: ;'></anyElement>
+  Can link animations to the 'enter' and 'leave' events using ngAnimate module.
+  Say, put it as an attribute in a <div>, and load up an HTML template.
+
+ng-init
+  Allows you to evaluate an expression in the current scope. The only use for ngInit is for aliasing special properties of ngRepeat. You shouldn't use it to initialize values on a scope, that should be done in the controller.
+
+ng-jq
+  Has something to do with loading libraries?????
+
+ng-keydown
+  Evaluates expression to perform custom behavior on keydown event.
+
+ng-keypress
+  Evaluates expression to perform custom behavior on keypress event.
+
+ng-keyup
+  Evaluates expression to perform custom behavior on keyup event.
+
+ng-list
+  Automatically converts an input from a delimited string to an array. The default delimiter (if you just put ng-list and don't give it a delimiter value) is ', '. But you can specify delimiters by giving ng-list a delimter. The behavior of ngList is affected by ngTrim. If ngTrim is set to false then whitespace around both the separator and each list item is respected. If ngTrim is true then whitespace around the each list item is stripped before it is added to the model.
+
+ng-model
+  ngModel binds an input, select, textarea (or custom form control) to a property of the scope. Like ngBind except only for inputs. If the scope property that ngModel binds to doesn't exist already then it will be created on the scope.
+
+ng-model-options
+  Allows you to change how model updates are done. Can make it so updates only occur on given time intervals or you can specify a custom list of events that will trigger a model update. If using ngModelOptions to update the model in some way other than instantaneously you should invoke $rollbackViewValue on the relevant input fields to make sure the model is synchronized with the current data. The easiest way to reference $rollbackViewValue is to put inputs inside a form that has a name attribute. Any pending changes will take place immediately when an enclosing form is submitted via the submit event (ng-click events will occur before the model has been updated). $rollbackViewValue() is a function on the form element to be accessed on the $scope object like $scope.formName.inputName.$rollbackViewValue().
+
+  ngModelOptions is an attribute on any DOM element. It takes an expression in the form of an object. Valid keys for the object are:
+
+    updateOn, debounce, allowInvalid, getterSetter, timezone
+
+  - updateOn specifies a string for the event ('blur', 'focus', etc) the update should be bound to. You can set several events using a space delimited list. There is a special event called 'default' which matches the default events belonging to the control.
+  - debounce takes an integer value that contins the debounce model update value in milliseconds, a value of 0 triggers an immediate update. If an object is supplied instead you can specify a custom debounce value for each event, each event being a key, the value being the time in milliseconds.
+  - allowInvalid takes a boolean value which indicated that the model can be set with values that did not validate correctly.
+  - getterSetter takes a boolean value which determines whether or not to treat functions bound to ngModel as getters/setters.
+  - timezone defines the timezone to be used to read/write the Date instance in the model for <input type='date'> and <input type='time'>. In general use this as '+0430' and so on. If not specified it uses the timezone of the browser.
+
+ng-mousedown
+  Give it an expression to specify custom behavior on mousedown event. Works as an attribute on any DOM element.
+
+ng-mouseenter
+  Specifies custom behavior on mouseenter event. Works as an attribute on any DOM element.
+
+ng-mouseleave
+  Specifies custom behavior on mouseleave event. Works as an attribute on any DOM element.
+
+ng-mousemove
+  Specifies custom behavior on mousemove event. Works as an attribute on any DOM element. Any time the mouse moves over the element that ngMousemove is on, the code given to ngMousemove will run.
+
+ng-mouseover
+  Specifies custom behavior on mouseover event. Works as an attribute on any DOM element.
+
+ng-mouseup
+  Give it an expression to specify custom behavior on mouseup event. Works as an attribute on any DOM element.
+
+ng-non-bindable
+  Tells Angular not to compile or bind the contents of the current DOM element. This is useful if your website has snippets of code that contain Angular directives but you don't want those angular directives to do anything. You can use ngNonBindable as a directive or class, it takes not value, you just put in ng-non-bindable and thats it.
+
+ng-open
+  The open attribute is used only on the details tag, which has the little triangle that points either to the right or down and either shows or hides the details of something element. But browsers aren't required to preserve the boolean values of the open attribute, so ngOpen allows you to preserve the value and therefore you can trigger the ngOpen on the details tag from another action in the webpage, or make it cause some other action on the page to occur as well.
+
+ng-options
+  Used to dynamically generate a list of <option> elements for the <select> using the array or object obtained by evaulating the expression given to ngOptions. You could use ngRepeat to achieve the same thing, but ngOptions reduces memory compared to ngRepeat, it also increases speed by not creating a new scope for each repeated instance, and some other stuff. ngOptions should be used when the <select> model needs to be bound to a non-string value, this is because an option element can only be bound to string values.
+
+ng-paste
+  Like ngCopy and ngCut, but this is for pasting. Allows specifying some behavior on a paste event on a particular element.
+
+ng-pluralize
+  Displays messages based on a certain number of instances. Seems interesting. Read docs to figure out what this does.
+
+ng-readonly
+  Just like ngOpen and some of the other stuff. Allows you to set a value to the ngReadonly attribute, which you can't do with the standard readonly attribute. This means you can change the ngReadonly property based on some action in the document, or change other things based on whether or not the element is readonly. Can be put as an attribute on any input element.
+
+ng-repeat
+
+ng-selected
+  Same deal like ngReadonly, ngOpen, and others. ngSelected allows you to preserve which option is selected by putting ng-selected on individual option tags. It takes an expression that will be evaluated to a boolean and select that option or not based upon this.
+
+ng-show
+  The opposite of ngHide. Takes an expression that, when evaulated, will display the element and its children elements if it is true, or hide them if it is false. When false it puts the .ng-hide class onto the element to hide it.
+
+ng-src
+  Works just like ngHref except for the src attribute - it allows you to use Angular's {{ }} syntax inside a src URL and will evaluate the expression within the {{ }} before loading the source so that the source doesn't break because of that syntax. Only used for img tags.
+
+ng-srcset
+  Apparently there is a srcset attribute in HTML. ngSrcset works just like ngSrc but for the srcset tag. Only used for img tags. So the srcset attribute allows you to specify different size images to be used with different screen widths. So you can have smaller versions of the same pic for mobile devices and larger ones for monitor displays. To do this you need different sized versions of the same picture. But you would set the image path to be used and the minimum width (I think that's how it works) and separate each screen size by comma. Look up how to use srcset for sure.
+  srcset ex:  <img src='small.jpg' srcset='medium.jpg 1000w, large.jpg 2000w'>
+
+ng-style
+  ngStyle allows you to specify CSS style on an HTML element conditionally. So you can set ng-style equal to some expression, and on some other event in the document you set some CSS to that expression, thereby causing ngStyle to pick up those CSS stylings. For it to work you need to give ngStyle a value that looks just like CSS, like:     {"background-color": "#F88"}
+
+ng-submit
+  Enables binding angular expressions to onsubmit events. Can be used to evaluate an Angular expression when a user submits a form. Must be put in the opening form tag of a form. And the form must have an input or button tag that has type='submit' for the expression in ngSubmit to be invoked.
+
+ng-switch
+  Used to conditionally swap DOM structure on a template based on a scope expression. Elements with ngSwitch but without ngSwitchWhen or ngSwitchDefault will be preserved at the location as specified in the template. This is an Angular directive version of a switch statement. ngSwitch works similarly to ngInclude except instead of downloading the template code it chooses one of the nested elements and makes it visible based on which element matches the value obtained from the evaluated expression. Note that the attribute value to match against are interpreted as literal strings, they can't be expressions. The value given to ngswitch is like the value given to a switch statement (so you would put say a value from some other ng-model or whatever), ngSwitchWhen is like a case statement and takes a value to match, ngSwitchDefault is like the default case statement and so doesn't take a value assigned to it. You can either place the expression on ng-switch or on an 'on' attribute in the same element, I think there is no difference, so either: <div ng-switch='expression'> or <div ng-switch on='expression'>
+
+ng-transclude
+  Marks the insertion point for the transcluded DOMof the nearest parent directive that uses transclusion. Can be used as a custom element, attribute on any element, or class. Not really sure how it works or what transclusion even is. Look up in the docs sometime.
+
+ng-value
+  Binds the given expression to the value of <option> or <input type='radio'> so that when the element is selected, the ngModel of that element is set to the bound value. Useful for when dynamically generating lists of radio buttons using ngRepeat. Can also generate option elements for a select tag, but in that case only strings can be used for the ngvalue attribute, but non-strings values are available via ngOptions. I think it basically allows you to get the value of a option or radio button when radio buttons or options are generated by ngRepeat.
+
+script
+  Angular allows dynamic loading of scripts I think by assigning a type and id to a script tag. Look up in the docs.
+
+
+
+
+************************ ANGULAR FUNCTIONS ************************
+
+
+angular.bootstrap()
+  To manually start an angular app instead of doing it through ngApp. It takes the element that will be the root of the angular application and the list of dependencies.
+    Syntax:     angular.bootstrap(element, [modules])
+
+angular.copy()
+  To do a deep copy of an object or array. The source is copied into the destination. If no destination is given, a copy of the source is created and returned. If destination is given then the source is copied into the destination. So the method can be used with one or two arguments. If the source isn't an array or object then just the source is returned.
+    Syntax:     angular.copy(source, destination)
+
+angular.element()
+  Wraps a raw DOM element or HTML string as a jQuery element. If jQuery is available, angular.element is an alias for the jQuery function, if jQuery is not available angular.element delegates to Angular's built-in subset of jQuery, called jQuery lite, or jqLite.
+    Syntax:     angular.element(element);
+
+angular.equals()
+  Determines if two objects or values are equivalent. Supports values, regexs, arrays, and objects.
+    Syntax:     angular.equals(o1, o2)
+
+angular.forEach()
+  Angular's version of forEach(). The iterator function can take up to three arguments: (value, key, obj) where key is either the key or index for arrays, and obj is the actual object or array itself.
+    Syntax:     angular.forEach(obj, iterator())
+
+angular.fromJson()
+  Deserializes a JSON string.
+    Syntax:     angular.fromJson(json)
+
+angular.toJson()
+  Serializes a JSON string. The second argument, pretty, if true the JSON output will contains newlines and whitespace.
+    Syntax:     angular.toJson(obj, pretty)
+
+angular.identity()
+  A function that returns its first argument. This function is useful when writing code in the functional style.
+    Syntax:     angular.identity(value)
+
+angular.injector()
+  Creates an injector object that can be used for retrieving services as well as for dependency injection.
+    Syntax:     angular.injector(modules)
+
+angular.isArray()
+  Determines if a reference is an array.
+    Syntax:     angular.isArray(value)
+
+angular.isDate()
+  Determines if value is a Date
+    Syntax:     angular.isDate(value)
+
+angular.isDefined()
+  Determines if reference on the $scope object is defined. Only use to check if $scope properties are defined. It caused an error when a gave it a normal variable that wasn't defined.
+    Syntax:     angular.isDefined(value)
+
+angular.isElement()
+  Determines if a reference is a DOM element (or wrapped jQuery element)
+    Syntax:     angular.isElement(value)
+
+angular.isFunction()
+  Determines if a $scope reference is a function. Doesn't work for functions that are assigned to variables, so doesn't work for any function that is a property on $scope. Only works for functions with the function() { } syntax.
+    Syntax:     angular.isFunction(value)
+
+angular.isNumber()
+  Determines if a reference is a Number. Includes special numbers, NaN, +Infinity, and -Infinity.
+    Syntax:     angular.isNumber(value)
+
+angular.isObject()
+  Determines if a reference is an Object. Unlike typeof, null values are not considered to be objects. Note that arrays are objects.
+    Syntax:     angular.isObject(value)
+
+angular.isString()
+  Determines if a reference is a String
+    Syntax:     angular.isString(value)
+
+angular.isUndefined()
+  Determiens if a reference is undefined. Don't check normal variables, only check properties of $scope, because if a normal variable is undefined it'll just cause an error to check it.
+    Syntax:     angular.isUndefined(value)
+
+angular.lowercase()
+  Converts the specified string to lowercase.
+    Syntax:     angular.lowercase(string)
+
+angular.uppercase()
+  Converts the specified string to uppercase.
+    Syntax:     angular.uppercase(string)
+
+angular.merge()
+  Supposed to merge one or more src objects into a destination object and return it.
+    Syntax:     angular.merge(dest, src)
+
+angular.module()
+  A global place for creating, registering, and retrieving Angular modules.
+    Syntax:     angular.module(name, [requires])
+
+angular.noop()
+  A function that performs no operations. This function can be useful when writing code in the functional style.
+    Syntax:     angular.noop()
+
+angular.reloadWithDebugInfo()
+  Use this function to reload the current application with debug information turned on.
+
+
+
+
+Difference between angular.extend and angular.merge (OR difference between shallow copy and deep copy):
+  Both angular.extend and angular.merge merge a one object into another and return the resulting value, or you can make it so the object recieving the merge is changed in place. (Note that angular.copy is just a straight up copay and not a merge, but it is a deep copy). Shallow copy (angular.extend) and deep copy (angular.merge) do the exact same things on the first level of an object. That is unnested properties/values are copied over and merged, the src object values take precedence over the dst properties is the keys are the same. Things
+  start to differ for nested properties. If the two objects have a property with the same key that is an object, shallow copy (angular.extend) will just copy the property to the merged object and not put any part of the src property in there. Deep copy (angular.merge) will go into that property and any nested properties from the dst object will get merged in too. An example makes this clear:
+
+  var dst = {
+    name: 'todd',
+    age: 32,
+    parents: {
+      mom: 'jilly',
+      dad: 'billy'
+    }
+  }
+  var src = {
+    name: 'kent',
+    parents: {
+      mom: 'gina'
+    }
+  }
+  angular.extend(src, dst)
+  returns:
+    {
+      name: 'kent',
+      age: 32,
+      parents: {
+        mom: 'gina'
+      }
+    }
+  Note that the src.parents completely overrites the dst.parents property.
+  angular.merge(src, dst)
+  returns:
+    {
+      name: 'kent',
+      age: 32,
+      parents: {
+        mom:'gina',
+        dad: 'billy'
+      }
+    }
+  Since merge does a deep copy it is able to copy over dst.parents.dad by copying past just the root level properties and actually going into the parents property and differentiating what is inside.
+
+
+************************ BUILT-IN SERVICES ************************
+
+
+$anchorScroll
+  When called (it's a function) it scrolls to the element related to the specified hash in the url (like how you can link to #blah to go to a section of your webpage). If there is no hash it scrolls to the current value of $location.hash(), where you put the id of the element you want to scroll to as the argument to $location.hash(). The $anchorScroll service also watching the $location.hash() and automatically scrolls to match any anchor whenever it changes.
+
+  You can also use its yOffset property to specify a vertical scroll offset, yOffset can be a number of pixels, a functin that returns a number of pixels, or a jqLite element.
+
+$animate
+  Provides rudimentary DOM manipulation to insert, remove, and move elements, as well as adding and removing classes. It's the core service used by the ngAnimate $animator service which provides high-level animation hooks for CSS and JavaScript. $animate is available in the core Angular, but ngAnimate is a separate module that must be included to enable full out animation support. All the methods of $animate return a promise, they take an optional options argument as the last argument that a collection of styles.
+
+  $animate's methods are:
+    enter(element, parent, after, options)
+            insert an element into DOM, appended to the parent element (if the after element is not present), or after the after element.
+    leave(element, options)
+            removes an element from DOM
+    move(element, parent, after, options)
+            moves position of an element in DOM, appended to the parent element (if the after element is not present, or after the after element)
+    addClass(element, className, options)
+            adds class to an element
+    removeClass(element, className, options)
+            removes class from an element
+    setClass(element, add, remove, options)
+            can add and remove classes from an element
+
+$cacheFactory
+  A factory that constructs Cache objects and gives access to them. You give the cache an id and an optional options argument that specifies cache behavior. Each cache is an object, so you need to give it key-value pairs. $cacheFactory.info() gets information about all caches that have been created. $cacheFactory.get(cacheId) gets access to a cache object.
+  Looks like you get also can use the cache variable's put() method to add values to the cache like so:   .get(key,value)
+      Syntax:     $cacheFactor(cacheId, options)
+
+$compile
+  Compiles an HTML string or DOM into a template and produces a template function, which can then be used to link scope and template together. There's a lot of notes in the doc, read it if I ever care to learn.
+
+$controller
+  Responsible for instantiating controllers. It's just a simple call to $injector, but extracted into a service. I guess you can just make a controller using this service. The locals argument is the injection locals for the controller.
+      Syntax:     $controller(constructor, locals)
+
+$document
+  A jQuery or jqLite wrapper for the browsers window.document object. For example to get access to the title of the document, instead of having to use angular.element like this:  angular.element(window.document)[0].title you would just do $document[0].title. Apparently window.document gives an array, I guess you can have multiple documents, so the 0th index is the document.
+      Syntax:     $document[0]        // gives access to whole document
+
+$exceptionHandler
+  Any uncaught exception in angular expressions is delegated to this service. The default implementation simply delegates to $log.error which logs it into the browser console.
+
+$filter
+  Filters are used for formatting data displayed to the user. Syntax for filters in templates is {{ expression | filterName: parameterValue }} where you can put multile filters on an expression. Using the $filter service you can do filtering from the controller. It takes an argument that is the name of the filter function to use, then you add another argument list onto the end of that and give the value you want to filter.
+      Syntax:     $filter('filterName')(thingToFilter)
+      Example:    $filter('uppercase')($scope.name)
+
+$http
+  Allows communication with the remote HTTP server via the browser's XMLHttpRequest object or via JSONP. A full lis of methods on the $http service are:            .get, .head, .post, .put, .delete, .jsonp, .patch
+    Syntax for .get:
+        $http.get('url').success(function(data,status,headers,config) {
+      
+        }).error(function(data,status,headers,config) {
+
+        });
+    Syntax for .post:
+        $http.post('url', {dataObjToPost}).success(function(data,status,headers,config) {
+
+        }).error(function(data,status,headers,config) {
+
+        });
+
+$interpolate
+  Compiles a string with markup into an interpolation function. This service is used by the HTML $compile service for data binding.
+
+$interval
+  Angular's version of window.setInterval. The last three arguments are all optional.
+      Syntax:     $interval(function, delayMilliSec, count, invokeApply, Pass)
+
+$location
+  The $location service parses the URL in the browser address bar (based on window.location) and makes the URl available to the application. Changes to the URL are reflected into $location service and vice versa.
+  Methods on $location are:
+    .absUrl()         -   a getter for the full url
+    .url([url])       -   a getter/setter for the path, search, and hash
+                          ex. http://example.com/#/some/path?foo=bar
+                              $location.url()   -->  '/some/path?foo=bar'
+    .protocol()       -   getter for the protocol of the url (ie 'http')
+    .host()           -   getter for the host of the url (ie 'example.com')
+    .port()           -   getter for the port of the url (ie 80)
+    .path([path])     -   getter/setter for path of the url (ie '/some/path')
+    .search(search,[paramValue])  - getter/setter for query string of url. The
+                                    search argument is the key you are searching to get the value of, if you give a value as second argument it sets that key in the query string to that value.
+    .hash([hash])     -   getter/setter for the hash fragment of the url
+                          ex. example.com/#/?foo=bar#hashValue
+                              $location.hash()   -->  'hashValue'
+    .replace()        -   if called, all changes $location durrent current
+                          $digest will be replacing current history record instead of adding new one.
+    .state([state])   -   getter/setter for history state object.
+
+$log
+  Simple service for logging. By default writes message to browser's console.
+  Methods:
+    .log()    -   writes a log message
+    .info()   -   writes an information message
+    .warn()   -   writes a warning message
+    .error()  -   writes an error message
+    .debug()   -   writes a debug message
+
+$parse
+  Converts an Angular expression into a function. Look into docs to learn more.
+      Syntax:     $parse(expression)
+
+$q
+  A promises service to run functions asynchronously. Inspired by the q module of promises. See docs for details of how to use it.
+
+$rootElement
+  The root element of an angular application. This is either the element where ngApp was declared or the element passed into angular.bootstrap.
+
+$templateCache
+  The first time a template is used, it is loaded in the template cache for quick retrieval. You can load templates directly into the cache in a script tag, or by consuming the $templateCache service directly. Read docs for more info on this, just another way to include a template.
+
+$templateRequest
+  Downloads the provided template using $http and, upon success, stores the contents inside $templateCache.
+      Syntax:   $templateRequest(template)
+
+$timeout
+  Angular's wrapper fo window.setTimeout. See docs for details.
+      Syntax:   $timeout([function], [delayMilliSecs], [invokeApply], [Pass])
+
+$window
+  A reference to the browser's window object.
+
+
+
+
+************************ FILTERS ************************
+
+
+currency
+  Formats a number as a currency. When no currency symbole is provided, default symbol for current locale is used.
+  Filter in HTML:
+      {{ currency_expression | currency : symbol : fractionSize }}
+  Filter in JavaScript:
+      $filter('currency')(amount, symbol, fractionSize)
+
+date
+  Formats date to a string based on the requested format.
+  Filter in HTML:
+      {{ date_expression | date : format : timezone }}
+  Filter in JavaScript:
+      $filter('date')(date, format, timezone)
+
+filter
+  Selects a subset of items from array and returns it as a new array.
+  Filter in HTML:
+      {{ filter_expression | filter : expression : comparator }}
+  Filter in JavaScript:
+      $filter('filter')(array, expression, comparator)
+
+json
+  Allows you to convert a JavaScript object into a JSON string. If you don't specify spacing the default spacing is 2.
+  Filter in HTML:
+      {{ json_expression | json : spacing }}
+  Filter in JavaScript:
+      $filter('json')(object, spacing)
+
+limitTo
+  Creates a new array or string containing only a specified number of elements. The elements are taken from either the beginning or end of the array, string, or number, as specified by the value and sign (positive or negative) of limit. If a number is used as input it is converted to a string. Begin is the index at which to begin limitation, defaults to 0.
+  Filter in HTML:
+      {{ limitTo_expression | limitTo : limit : begin }}
+  Filter in JavaScript:
+      $filter('limitTo')(input, limit, begin)
+
+lowercase
+  Converts string to lowercase.
+  Filter in HTML:
+      {{ lowercase_expression | lowercase }}
+  Filter in JavaScript:
+      $filter('lowercase')()
+
+number
+  Formats a number as text. Number of decimal places to round the number to. If input is not a number an empty string is returned.
+  Filter in HTML:
+      {{ number_expression | number : fractionSize }}
+  Filter in JavaScript:
+      $filter('number')(number, fractionSize)
+
+orderBy
+  Orders a specified array by the expression predicate. Ordered alphabetically for strings and numerically for numbers.
+  Filter in HTML:
+      {{ orderBy_expression | orderBy : expression : reverse }}
+  Filter in JavaScript:
+      $filter('orderBy')(array, expression, reverse)
+
+uppercase
+  Converts string to uppercase.
+  Filter in HTML:
+      {{ uppercase_expression | uppercase }}
+  Filter in JavaScript:
+      $filter('uppercase')()
+
+
+
+
+************************ NOTES FROM FALL 2015 ************************
+
+
+Caching AJAX called in Angular
+
+  To cache a call from the $http service just give it an option of cache: true, like so:
+        $http.get('/someurl', {cache: true}).then(blahblahblah...)
+  Now the first time you make a call to that URL the results get stored in a cache named '$http', which is created by the $cacheFactory service as the default cache for the $http service. The data is cached to that particular request on the '$http' cache so that when it is called later it will grab cached data for whatever request you are calling.
+
+  The $cacheFactory service can be used to retrieve the cached data, remove items from it, clear the cache, etc. First you reference the $cacheFactory's value for that cache:
+        let httpCache = $cacheFactory.get('$http');
+  Then you can view and change the data using the url and method:
+        let cachedData = httpCache.get('/someurl');
+  Remove an item from the cache:
+        httpCache.remove('someurl');
+  Clear the whole cache:
+        httpCache.removeAll();
+
+  Instead of using the default cache you can name the cache when you make the $http requests by putting {cache: someName} instead of {cache: true}. You can make a Least Recently Used (LRU) Cache by setting a name and a capacity for the cache.
+        let lruCache = $cacheFactory('lruCache', {capacity: 10});
+  This will create a cache called 'lruCache' that you can use in the $http requests using the lruCache variable {cache: lruCache}, and the capacity says that the cache will hold up to 10 unique request results, after that the least recently used cache result will be removed to make room for the next one. Use it like so:
+        $http.get('/someurl', { cache: lruCache }).then(blahblah);
+
+  You can also make the $http service use a different default cache than the built in '$http' cache like so:
+        $http.defaults.cache = $cacheFactory('myNewDefault', { capacity: 100 });
+
+  The $cacheFactory service does not allow you to set a time limit on how long the cached data will stay before being deleted, you have to manually hack together a solution for clearing the results, for instance clearing the cache on app restart or something. Another solution is to use the third party angular module angular-cache which allows you to set time limits on cached results.
+
+
+Controller-as Syntax and why it is better
+
+  The recommended way to access the data model in controller and views is the controller-as syntax rather than using the $scope service.
+  This is better because it removes confusion when there are nested scopes. You can have a couple different controllers working on a view and if those controllers have the same variable name attached to each of their $scope objects, when that variable is to be shown in the view the one that is in the inner-most scope will be used, but perhaps that is not what you want. The way to avoid any bugs or confusion caused by this is to use controller-as syntax.
+
+  One alternative is to use the $parent service in the view. So you could access the outer scope by doing {{$parent.someVar}}, but if you have several nested scopes in a view you would end up doing something like {{$parent.$parent.$parent.someVar}}, this is ugly. More generally this is just a bad practice because it is coupling the expression code to the underlying DOM structure, if the DOM structure changes then the expression may break.
+
+  One way to solve this is to never put variables straight on the $scope, to always put values inside an object literal. However this means you have to create object literals for any value on the $scope model, and that is just annoying. So the best way to solve this is to use controller-as syntax.
+
+  Controller-as syntax basically just introduces a namespace for each scope (each controller) so that you can reference the appropriate namespace in the controllers and views without having to create object literals to surround values or use $parent, and you even no longer use $scope to reference model data in your current scope - you still use $scope to reference inherited scopes as described in the next section, and to use other things like angular events with $scope.$on().
+
+  Using controller-as syntax involves doing three things.
+  
+  First, when you make a controller instead of injecting the $scope service you set a variable equal to the this keyword, the scope of a controller is referred to as a ViewModel, so common practice is to call our scope variable vmSomething. For example, in a controller named 'ChatCtrl', instead of using the $scope service as our model we would initialize the scope like this:
+        let vmChat = this;
+  Now instead of doing $scope.someVar or $scope.objLiteral.someVar we put and access values on our scope with:        vmChat.someVar
+
+  Secondly, to access our model data in the HTML views we have to state our namespace (the name of our scope context) instead of just putting the name of the variable that we would normally attach to the $scope service. So to display vmChat.someVar in the view we will simply do:
+        {{ vmChat.someVar }}
+
+  Finally, we have to tell our UI-Router that we are using controller-as syntax for each controller. So in our router states on the line where we list the controller name, instead of just doing, for example:
+        controller: 'ChatCtrl'
+  we will have to use controller-as syntax and list the name of our controller context:
+        controller: 'ChatCtrl as vmChat'
+
+  That's it. Now you are ready to use controller-as syntax! The only other thing to note is if you are defining the controller to be used directly in an HTML template using the ng-controller directive, then that is where you need to put 'ControllerName as contextName' like so:
+        <div ng-controller='ChatCtrl as vmChat'>
+
+  Also you don't have to specify the vmObject in the controller itself, you can just use the 'this' keyword in the controller, as long as you specify the namespaced vmObject in the UI-Router (or on ng-controller) and then use it in the view.
+
+
+Controller-as Syntax Using Inherited Scopes
+
+  Using controller-as syntax, you can reference parent scopes when you are in a nested controller by using the $scope service and referencing the named parent scope on the $scope service. So if you are in a nested controller and the parent scope is called vmBlah in the parent controller, and you want to get the variabled bloopity on vmBlah, then in the child controller you can reference it with:
+        $scope.vmBlah.bloopity
+
+
+A Quirk with ControllerAs Syntax and $scope.$watch
+
+  For some reason using $scope.$watch() doesn't work as expected when using ControllerAs syntax. Normally $watch takes a string matching the variable name on the $scope as its first argument. But it can also take a function. To make it work when using controllerAs syntax you have to pass a function as the first argument and have that function return the variable, but you also have to use angular.bind() to bind that function to the current 'this' context or else the variable you return won't have the same context and it wouldn't work. Though in ES6 maybe you don't need to use bind and can just use the fat arrow syntax????
+  Here's an example:
+      app.controller('SomeCtrl', function($scope) {
+        this.blah = 'Blaaahhh';
+        $scope.$watch(angular.bind(this, function() {
+          return this.blah
+        }), function(newVal, oldVal) {
+          // code...
+        });
+      });
+
+
+Difference between Factory and Service
+
+  A Service gives you the instance of a function, while a Factory gives you the value that is returned from the function. (Note that in programming a factory refers to a function that returns an object). They are both singletons, all providers in Angular (values, constants, services, factories) are singletons. A singleton is something that can only have one instance at a time.
+
+
+The Digest Cycle
+
+  The $digest cycle is an event loop that updates the application model and the DOM. There are three times in which data may change in an application and the $digest cycle will run anytime one of these happens: user interaction through events, AJAX responses, and timeouts.
+
+  The reason why angular has its own directives for user interaction (like ng-click) and its own $http service and whatnot is so that it can track when it needs to trigger a $digest cycle. This is also why you have to call $scope.$apply to trigger the $digest cycle when you have code outside the angular ecosystem that changes the application's state.
+
+  When a $digest cycle is triggered, Angular processes all registered watchers on the current scope and its children and checks for model mutations and calls dedicated watch listeners until the model is stabilized and no more listeners are fired. Once the $digest loop finishes the execution, the browser re-renders the DOM and reflects the changes.
+
+  Watch expressions are registered on the scope together with their callback listeners so Angular can process them during $digest cycles in order to update the view accordingly. That means the more watchers are registered, the more Angular has to process.
+
+  Having too many watchers can lead to performance issues, this is why Angular 1.3 introduced one-time binding.
+
+
+One-time Data Binding
+
+  One-time Binding is when you don't want a value interpolated in the DOM to have two-way binding. Use one-time binding whenever you know a value will not change. Using this can help performance of Angular, and therefore your app, because two-way binding slows down performance when there are a lot of properties being watched by the digest cycle.
+
+   Values that are one-time bound will be interpolated when the page loads but will not be registered with the digest cycle and so their value will stay static and not be able to change at runtime.
+
+  To use one-time binding you just put a double colon in front of a value in an interpolation directive (the double curly braces used in the view):
+        {{ ::vm.someVar }}
+
+  This works for all kind of typical Angular expressions you’re used to use throughout your app. Which means you can use them in ng-repeat expressions or even for directives that expose attributes that set up a two-way binding from the inside out. From the outside you’re able to just feed them with a one-time expression:
+          <custom-directive two-way-attr='::oneWayExpression'></custom-directive>
+
+
+One-way Data Binding
+
+  Angular also has one-way data binding, in addition to two-way binding and one-time binding. But it is nothing special it is just when you use the interpolation directive, {{}}, or the ng-bind directive to display data from the model into the view. Here it is one-way because the HTML cannot then change those values on the model. Thew view will change when the model is updated but the HTML attributes are not inputs so the user cannot directly change the values from the view. Of course indirectly they could change by say pressing a button to change the model, which would then change the view, but that is still one-way. Two-way data binding is when you use ng-model on inputs to affect changes both from view to model and model to view.
+
+
+Angular-hint
+
+  Angular-hint is a module that came out with Angular 1.3 that gives hinting for controllers, directives, dom, events, interpolation, and modules. It is just a tool to help with debugging in Angular. It is very easy to use, just
+        npm install --save angular-hint
+  Then include a script tag with the path to the hint.js in your index.html after the link to angularjs itself. Then in the same DOM element where the ng-app directive is you put ng-hint. You don't add it to your app's module dependency list. You can even only include or exclude certain parts of ng-hint with the ng-hint-include and ng-hint-exclude directives where you give it a space delimited list of string names that are the suffixes for the different ng-hint modules.
+  Examples:
+    include all ng-hint modules:
+                        <body ng-app='app' ng-hint>
+    include only certain ng-hint modules:
+                        <body ng-app='app' ng-hint-include='dom directives'>
+    exclude certain ng-hint modules:
+                        <body ng-app='app' ng-hint-exclude='events modules dom'>
+
+
+Custom Filters Stateless and Stateful
+
+  Since Angular 1.3, filters have become stateless. This means that a value that has a filter in an interpolation expression, {{}}, is only re-evaluated when the value passed to the filter changes because Angular caches the value until it changes so it is not constantly run through the filter and evaluated every digest cycle. This comes into play when you have a custom filter that has a dependency, like say a factory. If data in that factory, that the filter uses, changes, the expression in the DOM that uses the filter won't change. Because filters are stateless, therefore they don't depend on outside state, which is what a dependency is. So the filter will only change if the value passed to the filter is changed.
+
+  However, if you need a filter to be stateful, that is if it needs to be re-evaulated when some outside state (a dependency) changes instead of just when the value passed to it changes, Angular allows you to do this with the $stateful property. You just set the $stateful property on the filter function to true and Angular will treat the filter as stateful to be evaluated on every digest cycle.
+
+  i.e.
+          .filter('someFilter', (someService) => {
+            function someFilter(input) {
+              input += someService.getData();
+              return input;
+            }
+            someFilter.$stateful = true;
+            return someFilter;
+          });
+
+  Note that stateful filters cannot be optimized for performance by Angular - they slow it down. So always try to use normal stateless custom filters and pass everything the filter needs into it as parameters.
+
+
+Providers
+
+  You only have access to providers in the anglar config() function. So do all provider work in config().
+
+
+Disabling Debug Info
+
+  Angular adds in a bunch of debugging info when certain directives are used. This slows down the application and while useful in development you don't need that extra debug info in production. Angular 1.3 came up with a way to disable this info for when you put an app into production. You use the $compileProvider's debugInfoEnabled property, passing in a value of false to disable it. This must be used in the config() function since that is the only place where you can access angular providers.
+          .config(($compileProvider) => {
+            $compileProvider.debugInfoEnabled(false);
+          });
+  That's it!
+  If there is a bug in your production code that you want to find in production, the global angular object has a reloadWithDebugInfo() method and you can simply go to the running production app and run that method from the browser's console and this will reload the application with debug info. Just type this into the browser console:
+          angular.reloadWithDebugInfo()
+
+
+$applyAsync
+
+  The $rootScope.$applyAsync property has to do with executing a $scope.$apply through an asynchronous operation. $applyAsync lets you basically collect expressions by putting them into a queue, evaluating them immediately but don't get resolved until the next tick of the JavaScript event loop.
+
+  You can use $applyAsync with $http calls in order to batch multiple AJAX responses together if there are several returning at the same time, like when a controller loads for instance. This speeds up performance when there are multiple $http responses returning around the same time. To do this you use the $httpProvider in the angular config() function and tell it to use the $applyAsync for $http calls like so:
+            $httpProvider.useApplyAsync(true);
+  That's it.
+  The way it works is that if the application recevies multiple $http responses at around the same time each call's promise is pushed into a queue, then an asynchronous $apply is scheduled in case there is none scheduled already by telling the browser to execute setTimeout() with a delay of zero seconds which causes a delay of about 10ms, once the timeout is up the queue is flushed and the actual $apply is triggered. If more than one $http response comes in during this timeout time then they are all run during one $digest cycle instead of using up extra processing time by calling multiple $digest cycles.
+
+
+Submitting Forms
+
+  In Angular you want to submit forms by using a <button type='submit'></button> as the submit button and then in the form tag you use ng-submit and a function you define to submit the form and thats it: <form ng-submit='submitForm(data)'>
+
+
+Form Validation
+
+  Angular has five properties on forms that help with form validation. They are all boolean values: $valid, $invalid, $pristine, $dirty, $touched.
+
+    $valid
+      Class: ng-valid - tells if an item is currrently valid based on the rules you placed.
+    $invalid
+      Class: ng-invalid - tells whether an item is currently invalid based on the rules you placed.
+    $pristine
+      Class: ng-pristine - true if the form/input has not been used.
+    $dirty
+      Class: ng-dirty - true if the form/input has been used.
+    $touched
+      Class: ng-touched - true if the input has been blurred (had focus but now does not).
+
+  Angular provides classes, listed above, for each form property so you can use them on the form and its inputs to style each state accordingly. Also notice that $valid/$invalid and $pristine/$dirty are just counterparts of one another. $pristine, $dirty, and $touched values are just based on user interaction with the inputs, while $valid and $invalid are best on if the current input in each input field passes the validation rules you've set up on them or not.
+
+  To access properties on the form or inputs in JavaScript you do:
+        formName.angularProperty
+        formName.inputName.angularProperty
+    i.e.
+        myForm.$invalid
+        myForm.username.$valid
+
+  So you have to make sure you always give forms a name and inputs a name, as you always should to comply with proper HTML standards. Also note that when you use required on any of the form's inputs you want to put the HTML attribute 'novalidate' on the form tag to prevent HTML validation since we will be doing our own validation with Angular.
+
+  Here are the validation rules you can use in Angular:
+      <input
+        ng-model='string'
+        name='string'
+        required
+        ng-required='boolean'
+        ng-minlength='number'
+        ng-maxlength='number'
+        ng-pattern='string/regex'
+        ng-change='string'
+      </input>
+
+  Disabling the Submit Button
+    You can disabled the submit button easily by putting the ng-disabled directive on the button like so:
+        ng-disabled='formName.$invalid'
+    It will disable the submit button until the form is valid. So if any of the inputs don't pass our validation rules the submit button will be disabled.
+
+  Showing Error Messages
+    We can created error messages, in say a <p> tag, and use ng-show and the angular form properties to show the error message after the user has typed in an input field and if it is invalid. Note that we want to use ng-show and not ng-if because ng-if will remove the element our error message is in entirely from the form which will mean, depending on where you place the error messages, ng-if would cause the form to jump around on the page when error messages appeared and disappeared. You can put multiple error messages on an input and set ng-show equal to different expressions.
+      i.e.
+          <input type='text' name='name'>
+          <p ng-show='formName.name.$invalid && formName.name.$dirty'>
+            Invalid Name
+          </p>
+
+    If you only want to show error message once the user has clicked off an input field, instead of error message showing and appearing while the user is typing, which may or may not be annoying, you can use the $touched property instead of $dirty/$pristine.
+
+    If you only want to show error messages once the form is submitted, so as to not be distracting to the user, then just a few quick changes are needed. First you need to take away the ng-disabled on the submit button since you always want it to be enabled. Secondly in the submit function you want to add a submitted variable to the $scope and set it to true so the view knows the form has been submitted. Finally you want to add the submitted variable to the ng-class and ng-show expressions so the errors only show after the form has been submitted.
+
+    There is another way to show error messages in Angular using ngMessages!
+
+  Styling Classes
+    Since Angular provides classes for each form property, ng-valid, ng-invalid, ng-pristine, ng-dirty, ng-touched, we can style those classes in CSS to change the look of the inputs based on them. There are also more specific classes related to each validation rule, like: ng-invalid-required, ng-invalid-minlength, ng-invalid-max-length.
+
+    You can also apply your own classes to inputs using ng-class and the angular form properties.
+    ngClass has the following syntax:
+          ng-class='{ "className": expressionToBeEvaluated }'
+      i.e.
+          ng-class='{ "error": formName.name.$invalid && formName.name.$dirty }'
+
+    Bootstrap has the .has-error class that you can use if you are using Bootstrap.
+
+
+ngMessages
+
+  
+
+
+
 ************************ x ************************
