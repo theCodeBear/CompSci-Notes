@@ -189,7 +189,7 @@ To make more complex motions, with momentum and acceleration, you can do other s
 Use the Phaser.Text object to write text to the screen. If you don't specify a font type it will use the browser's default font. In the examples below we don't specify the font type.
 
 Syntax:
-    var text = game.add.text(x-coord, y-coord, defaultText, {fontSize: 'XXpx', fille: 'hexColor' });
+    var text = game.add.text(x-coord, y-coord, defaultText, {fontSize: 'XXpx', fill: 'hexColor' });
 
 i.e.
     var scoreText = game.add.text(16,16, 'score: 0', {fontSize: '32px', fill: '#000' });

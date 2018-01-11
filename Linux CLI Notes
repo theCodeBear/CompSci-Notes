@@ -1,0 +1,920 @@
+Linux Command Line Notes in Fall 2016
+
+
+Much of these notes are from the online book The Linux Cookbook: http://www.dsl.org/cookbook/cookbook_toc.html
+
+
+********** WHERE STUFF IS LOCATED **********
+
+On mac, the system dictionary is held in the file /usr/share/dict/words. All of these words are lowercase and in alphabetical order. You can use this to create a spell checker with the following command:
+    tr -cs A-Za-z '\012' | tr A-Z a-z | sort -u | comm -23 - /usr/share/dict/words
+
+The two primary tool directories on a Linux system are /bin and /usr/bin. On mac you can make your own executable tools and put them in the ~/bin directory, and add that directory to the system PATH so those tools are executable globally on the command line.
+
+
+********** Interesting Files **********
+
+/etc/services contains a list of all registered port numbers
+
+
+
+********** General Command Line Notes **********
+
+Special Characters:
+    To pass special or reserved characters as an argument to a tool you have to enclose it in single quotes, prepended with a dollar sign.
+      $'string of special characters'
+      $'\f\266'     as in:  echo $'\f\266' to print out the octal character 266
+
+Run multiple commands:
+    To run multiple commands on the same line just separate them with a semi-colon.
+
+
+********** Listing User Activity **********
+
+hostname
+    Outputs the name of the system
+whoami
+    shows the current user
+who
+    lists who is on the system (all the open terminals) it shows the name of the user, the terminal location i.e. which virtual console on the system the user's terminal is on (tty1), and the when they logged in
+w
+    lists who is logged in and what process they are running (what they are doing)
+last
+    lists the most recent times a user logged in to the system. Use the command 'last username' to see the times when that user has logged in.
+    i.e. last tkrone
+
+
+
+********** Networking **********
+
+arp
+    Address Resolution Display and Control (arp) displays IP addresses on your network.
+    
+    arp <hostname>      i.e.    arp myhost
+        Not using any flags but putting in your computer's hostname will give your computer's IP address.
+    arp -a
+        Using the -a flag will display the other IP addresses connected to your network. So this is how you can find an IP address of some machine on your network.
+
+
+
+
+********** Listing System Activity **********
+
+ps
+    List processes running in your current shell session.
+    'ps -u <username>'
+      To list all processes being run by that user on the system (all processes for that user, across all terminals and shell sessions).
+    'ps aux'
+      To list all processes by all users on the system.
+    'ps aux | grep <something>'
+      To list only those processes that have 'something' in their printout, this could be part of the path to that process or its PID (process ID) or whatever.
+    'ps -p <XXX>'
+      Where 'XXX' is a number, to list the process with that PID.
+
+top
+    List all processes on the system, sorted by their demand on system memory. This is how you can see how much memory each process is using.
+
+
+********** Help Facilities **********
+
+apropos
+    'apropos <keyword>'
+      Lists tools you might be looking for based on the keyword you pass as the argument. Used for when you know what a particular tool does but you can't remember its name, you search by keyword with apropos. It only searches keywords by exact match.
+
+whatis
+    'whatis <keyword>'
+      Lists the command and the one-line description of that command from it's man page if the keyword is contained in either the command or the one-line man page description.
+man
+    'man <command>'
+      Displays the manual page for that command.
+    'man -k <keyword>'
+      To search for a tool based on it having that keyword in it's man page. Similar to the apropos command in that you are searching for a tool based on a keyword.
+--help
+    Some commands have this option that outputs usage information for it, including options and arguments it takes.
+info
+    Accesses the GNU Info System. Info pages are generally more extensive than man pages. Giving no argument to the info command opens up the system's top info menu which lists all available menus installed on the system.
+    After opening the info screen, type 's' to bring up the search tool, then type in a phrase you want to search for and press enter to go through each match.
+    'info <command>'
+      Display the info manual for the given command.
+
+
+
+********** Outputting stuff **********
+
+echo
+    This is the print command on the terminal. Any text that follows this command will be output back to the terminal.
+say
+    This is the audio output command on the terminal. Any text that follows this command will output as speech from the speakers.
+
+
+
+********** Keyboard Shortcuts on the Command Line **********
+
+Ctrl+a
+    Move cursor to beginning of line
+Ctrl+e
+    Move cursor to end of the line
+Ctrl+k
+    Cut from the character at the cursor all the way to the end of the line
+Ctrl+u
+    Cut everything preceding the cursor in the line (cut whole line if cursor at end)
+Ctrl+l
+    Move the prompt to the top of the screen
+Ctrl+_
+    Undo last things typed
+Ctrl+y
+    Paste the text that was last cut (cut with ctrl+k or ctrl+u)
+
+Cmd+k
+    Clear the entire terminal screen
+
+On mac, fn+Left and fn+Right also do what Ctrl+a and Ctrl+e do - move to the beginning and end of the line.
+
+alt+f, alt+b
+    Move forward and backward by a word at a time.
+    To configure this in iterm2 I just had to go to the iterm2 Preferences --> Profiles --> Keys, and select Left Option Key to act as 'Esc'.
+
+
+********** Redirecting I/O **********
+
+>, >>
+    Use the > operator to redirect standard output to a file.
+    i.e.    ls > listFiles.txt
+    Using > will overwrite the file if the file already exists. To just append the output of the command to a file use >>.
+    i.e.    ls >> listFiles.txt
+
+<
+    Use the < operator to redirect standard input to a file. This means that the command that redirect operates on will take the contents of the file as its arguments/input.
+    i.e.    apropos < keywords.txt
+
+2>
+    Use the 2> operator to redirect standard error to a file.
+    i.e.    apropos shell bash 2> command.error
+    Like with the redirect output operator, this overwrites the file. You need to use the 2>> operator to just append to the file.
+    i.e.    apropos shell bash 2>> command.error
+
+&>
+    Use the &> operator to redirect both standard output and standard error to a file.
+    i.e.    apropos shells &> command.error
+
+|
+    The | operator (pipe) involves redirecting the standard output of a command to the standard input of another command. The first operands output gets piped to the input for the second operand.
+    i.e.    ls | grep js | less
+    Here the output from ls gets piped as the input for the last argument to grep (grep takes a file or another command's output to search through and a pattern to search for, so the equivalent without the pipe would be "ls > ls.txt; grep js ls.txt | less") and then does the grep search for js in the output for ls and then pipes greps output to less for reading text.
+
+
+********** Managing Jobs **********
+
+Processes running in the shell are called jobs. You can have more than one job running in a shell at once, but only one jobs can be active in the terminal at one time, reading standard input and writing standard output. This job is the foreground job, while any other jobs currently running are running in the background.
+
+New jobs always run in the foreground unless otherwise specified.
+
+The shell assigns each job a unique job number. You use the job number as an argument to specify that job to commands, do this by giving the job number preceded by a '%' character.
+
+jobs
+    Shows the jobs you have running in the current shell (only for the current shell, not for any other shells that are open in the terminal). The + character by the job number indicates the job that was most recently started (or restarted) in the background or foreground. The - character by the job indicates that it's the job previous to the most recent job.
+    The jobs command show jobs running in the current shell, while the ps command shows all processes running on the entire system, not just in the current shell.
+
+Stopping/Suspending the foreground job
+    Ctrl+z
+    When a job is running in the foreground you can stop it or suspend it (but not kill it - it is still listed as a (stopped) job when you run the 'jobs' command) using Ctrl+z if you want to do something else in the shell. The job stops until either you bring it back to the foreground or make it run in the background.
+
+Killing the foreground job
+    Ctrl+c
+    Kills the job in the foreground job (not just stop/suspend it).
+
+Kill a background job
+    kill %<job number>
+    To kill a job running in the background use the kill command. If the job id is 3 then you would do:   kill %3
+
+Run a new job in the background
+    command... &
+    i.e.    apropos shell > shell-commands.txt &
+    Use the & character at the end of a line on the command line to specify that you want that job to run in the background instead of the foreground.
+    The terminal will output the job number and the process id of that jobs. When the job finished the terminal will output the job number, the command, and the text 'Done'. It only outputs this if you do something in the terminal, it won't show it in the terminal right away, so the job could be done and nothing will show, but then if you press Enter in the terminal, for example, then it will print out that the job is done.
+
+Move a job from the foreground (or suspended) to background
+    bg, bg %<job number>
+    First suspend the job, then type bg to run the most recent job, or bg and the job number to run a specific job.
+
+Move a job to the foreground
+    fg, fg%<job number>
+    If a job is running in the background or suspended, to run it in the foreground type fg to run the most recent job, or fg and the job number to run a specific job.
+
+
+********** Command History **********
+
+History of commands made in the shell are written to .bash_history. The 'history' command outputs them to the terminal with their associated event number. The event number is how you specify a specific command from the history.
+
+You can run an event from the history by typing its event number preceded by a '!'.
+
+!235      <-- runs the command in history with event number 235
+
+
+********** Recording a Shell Session **********
+
+You can record a shell session, also called a typescript or capture log. It writes a verbatim copy of the shell session to a file, including all commands typed and their output. By default the typescript is saved to a file called 'typescript' in the current directory. At the top it records when the recording was started and at the bottom it records when it was ended.
+
+script, script <filename>
+    You can start recording a shell session simply by running the 'script' command. By default the script is saved to a file called 'typescript' in the current directory, but by passing a filename as the argument you can specify the name.
+
+exit
+    Stops the recorded shell session and writes it to the file.
+
+
+********** Customizing the Shell **********
+
+Changing the Shell Prompt
+    PS1='new prompt'
+    Bash uses the PS1 variable to hold the value for the shell prompt. Simply change the value in the variable to a new string to change the shell prompt.
+    The default bash prompt is just the current working directory followed by the $ character.
+    To use the default bash prompt do:   PS1='\w $ '
+    There are special characters you can use in the shell prompt, here are some of them:
+        \a    makes the internal speaker beep (the kind of 'bump' sound)
+        \d    the current date (MMM YYYY)
+        \h    hostname of the system
+        \n    a newline character
+        \t    the current system time in 24-hour format
+        \@    the current system time in 12-hour am/pm format
+        \w    the current working directory (full path)
+        \W    the current working directory (just the directory name)
+        \u    your username
+        \!    the history number of this command
+
+Making an alias
+    alias aliasName='the command'
+    i.e.    alias rn-ios='react-native run-ios'
+    An alias is a name that represents another command or commands.
+
+Adding to the system's PATH
+    To see more info about the PATH variable: http://www.linfo.org/path_env_var.html
+    Basically the PATH variable tells the shell which directories to search for globally executable files.
+    You can see what is put in the PATH variable by default on a mac by looking at the /etc/paths file. Any other directories put on the path should be done so in ~/.bashrc or ~/.bash_profile using the syntax:
+        export PATH='$PATH:/some/dir:/another/dir'
+    You put the $PATH variable in there too so that it doesn't just overwrite everything already in the path.
+
+    You can see the path variable on the command line by typing $PATH
+    The PATH variable is a string of directories each separated by a colon ':'.
+
+    To add a directory to the PATH variable just go to the ~/.bashrc file and where it is exporting the PATH just add a colon and a new directory path to the end of that line.
+
+Customizing Future Shells
+    The system runs a series of startup files in which you can change the configuration.
+    When you log in, bash first checks the /etc/profile file and executes it. This file runs the path_helper and ~/.bashrc.
+    Next the system executes the ~/.bash_profile.
+    For all new shells after you've logged in (all but the 'login shell' that is) Bash reads and executes the commands in the ~/.bashrc file.
+    The ~/.bash_profile file should contain the customizations you want to only run when you first log into the system, and not again every time a new shell is opened.
+    To avoid having to put commands in both files when you want to run the same ones for all shells, append this to the end of the ~/.bash_profile file:
+        if [ -f ~/.bashrc ]; then . ~/.bashrc; fi
+    This makes the ~/.bashrc file run when you log in.
+
+    Disclaimer: Not sure if macs run this way or if .bashrc and .bash_profile work slightly different in mac as compared to straight up Linux.
+
+
+********** The X Window System **********
+
+A note on macs:
+  On macs, X11 or XQuartz, is mac's own version of the X server, which is a component of the X Window System. Since mac are Unix-based, X11 is what allows applications made for Unix/Linux environments to run on a mac. You can open a open up an X-enabled terminal by opening up the X11 application.
+
+Skipped the X Window System part of the Linux Cookbook because I'm on mac so I don't really care about it.
+
+
+********** Working with the File System **********
+
+mkdir -p <path/to/dir>
+    Using the 'p' option allows you to make parent directories and sub-directories all at once, so you can create a path of several directories instead of having to make the parent directories first with separate commands.
+
+ls -F
+    Lists the contents of the directory so that the directories, executables, and non-executable files are distinguished from each other. Directories will have a '/' at the end, executables will have a '*' at the end, and non-executable files just look as normal.
+
+ls -R
+    Lists a directory recursively, outputting not just everything in that directory but everything in every sub-directory all the way down.
+
+ls -t
+    Lists a directory so that the newest items are listed first.
+
+tree
+    Outputs a tree graph of the current directory and all its subdirectories. On mac this is not installed by default, so have to install it with 'brew install tree'.
+    'tree -d'
+      Outputs a tree graph of only directories, no files.
+    'tree -f'
+      Outputs a tree graph where all directories and files have the relative path from the root directory of the tree, rather than just showing their names.
+
+cp -p
+    Use the 'p' option when copying a file to preserve all attributes of the original file, including its timestamp, owner, group, and permissions.
+
+cp -R
+    Recursively copy a directory including all its files and subdirectories. By default this doesn't copy symbolic links and it does not retain all original permissions.
+
+cp -a
+    The 'archive' option, this copies all symbolic links and retains all permissions, which -R doesn't do by default.
+
+rm -i
+    The 'interactive' option on the remove command so that you have to confirm the deletion of each item. It's a safe way to remove stuff from the file system.
+
+ln, ln -s
+    Links are special files that point to other files, so you can run a command through a link that points to it. There are hard links and symbolic links.
+    A hard link is another name for an existing file, there is no difference between the hard link and the original file. So if you were to remove one of the files that are hard linked then the other one would be removed as well.
+    A symbolic link (aka symlink or soft link) works like the file it links to but it is just a link, so if you delete a symbolic link the original file will not be deleted.
+    Create a hard link:
+        ln <originalFile> <linkName>
+    Create a symbolic link:
+        ln -s <originalFile> <linkName>
+
+File name Expansions
+    The shell provides a way to specify file names with patterns, called expansions.
+        *         matches zero or more characters (called the wildcard)
+        ?         matches exactly one character, can be any character
+        [list]    matches one character in the list inside the square brackets
+        ~         expands to the home directory
+        [-]       the hyphen inside brackets represents a range of characters
+        [!]       the exclamation mark at beginning of brackets matches all
+                  characters except what are in the brackets
+    i.e.
+        ls /usr/bin/*tex*
+        cp *.txt doc
+        ls -lt *.txt *.text
+        mv ~/song[0-9].cdda ~/music
+        rm -- -*out*
+        cat a??*
+
+lynx
+    Lynx is a popular command line browser.
+    But lynx can also be used to browse the files on the system.
+        lynx <path>
+    Using lynx to browse the file system will display a listing of available files and directories in the given directory, you can use cursor keys to browse and press Enter on a subdirectory to traverse to that directory. Lynx can display plain text files, compressed text files, and HTML files.
+
+
+
+
+********** File Permissions **********
+
+In Linux there are "groups" of users created to share files. Each member of a group can work with the group's files and make new files that belong to that group. The system admin can make new groups and add users to groups.
+
+In Linux every use is part of at least one group: your login group. The user is the only member of that group and its group name is the same as the username. Though on mac this seems to be different, there is no group with the name of the username.
+
+groups
+    Lists the groups the currently logged in user is in.
+groups <username>
+    Lists the groups that the specified user is in.
+members <groupname>
+    Lists all of the members of the specified group. On mac there is no members command.
+
+
+Every file belongs to both a user and a group - usually the user that created it and the to the group the user was working in at the time.
+
+File permissions deal with giving users and groups access to read, write, and execute permissions of a file or directory.
+For directories: read means you can see the files in that directory, write means you can create, move, or remove files in the directory, execute means you can use the directory name in a path.
+Permissions apply to the user who owns the file, all other members of the group that owns the file, and all other users on the system.
+The file permissions for a file are collectively called its access mode.
+The superuser (root) can always access any file on the system.
+
+Use the 'ls -l' command to see the listing of permissions, user ownership, and group ownership for files in a directory.
+
+    -rwxrw-r--  userId  user  group  size  dateUpdated  filename
+
+The above example has the following permissions:
+    file type   user    group   other
+    -           rwx     rw-     r--
+
+chgrp <newGroup> <filename>
+    Changes the group ownership of a file.
+    Use the -R option to recursively change the group ownership of directories and all of their contents.
+
+chmod <permission operation> <filenames>
+    This stands for "change mode" and it is how you change the permissions for a file.
+    i.e.        chmod 754 someFile
+    Each permissions category (user, group, other) can have a number up to 7. You take the sum of the read, write, and execute permissions that category has, where read is 4, write is 2, execute is 1. So in the above example the user owner has read, write, and execute priviledges, the group can only read and execute, while the other (everyone else) can only read that file.
+
+    You can use the number permissions operation like 754 as a way to set the ownership for read, write, and execute for all categories - user, group, and other, as explained above. Or you can use the syntax below to change permissions. The syntax below allows you to only change specific categories of user and only change specific types of permissions, instead of setting all permission on the file which is what you do when using the numbers.
+
+    Specify not-all permission categories:
+        u     the user owner
+        g     the group owner
+        o     all others on the system
+        a     all users (equivalent to ugo, or not specifying this)
+
+    Which action to take:
+        +     add permissions
+        -     remove permissions
+        =     make these the only permissions the user has for this file
+
+    Specify permissions:
+        r     read permission
+        w     write permission
+        x     execute permission
+
+    i.e.    u+w     a+rw    go-w    o-x   go=r
+
+    In the "go=r" example that means that the group and other users only have read permission. To make a file private from everyone but yourself (the owner) user "go=" which says group and other users only have no permissions.
+
+
+
+
+********** Finding Files **********
+
+find <directory>
+    Use 'find' to find specific files in a particular directory tree.
+
+Find by name:
+  Use the 'find' command with the -name, -iname, -regex option, following by the name or regex to find files or directories that, respectively, match the name, the case insensitive name, or a regex of the entire path name relative to the directory tree specified.
+        find <directory> -name <name>
+        find <directory> -iname <name>
+        find <directory> -regex <name>
+
+Find by size:
+  You can search for files either less than, greater than, or exactly a certain size. Use the -size option, followed by the size. Prepend the size with either a '+', '-', or nothing. If you use a '+' that means you are finding files whose size is greater than that specified, '-' is finding files whose size is less than specified. Not using '+' or '-' means you are looking for files that exactly match the given size.
+  To specify the size, you can append either a 'k', 'b', or nothing to it to specify the size along with the number. A 'k' means you are using kilobytes, 'b' means bytes, or using nothing defaults is to using 512-byte blocks.
+        find <directory> -size <size>
+    ie.
+        find / -size +1000k
+        find /apps -size -1500b
+        find /blah -size 12
+  You can also look for only empty files, whose size is 0 bytes, by using the -empty option.
+        find <directory> -empty
+
+Find by last modified date:
+  Use the -mtime or -mmin options to find files by the last time they were updated. The argument to -mtime specifies the number of 24-hour periods from the present, argument to -mmin specifies number of minutes from the present.
+  Use '+', '-', or nothing immediately preceding the amount of time in order to find files that were updated greater than that amount of time ago, less than that amount of time ago, or exactly that amount of time ago, respectively.
+        find <directory> -mtime <time>
+        find <directory> -mmin <time>
+    ie.
+        find / -mtime 1               // updated exactly 24 hours ago
+        find / -mtime +5              // updated more than 5 days ago
+        find / -mmin -30              // updated in last 30 minutes
+
+  You can make a range by putting -mtime or -mmin with the corresponding time twice.
+        find <directory> -mtime <time> -mtime <time>
+
+  Use the -daystart options to measure time from the beginning of the current day instead of 24 hours ago.
+        find <directory> -mtime <time> -daystart
+    ie.
+        find /usr -mtime +365 -daystart
+
+Find files newer than a given file:
+  Use the -newer option followed by the file to check if other files are newer than.
+        find <directory> -newer <file>
+    ie.
+        find ~ -newer ~/some.txt      // find files in ~ newer than ~/some.txt
+
+Find files newer than a given date:
+  This is a trick. First create a file in /tmp whose timestamp is set to the date you want to check, then run the find -newer command against that file.
+  In the example below we create a file with a timestamp of May 4th of current year and then check for any files in ~ that are newer than that date.
+    ie.
+        touch -t 05040000 /tmp/timestamp
+        find ~ -newer /tmp/timestamp
+
+Find files that were last accessed a number of days after they were modified:
+  This is useful for finding files that get little use.
+        find <directory> -used <timeInDays>
+  In the example below it finds files that were accessed 100 or more days after they were last modified.
+    ie.
+        find ~ -used +100
+
+Find files by owner:
+  Use the -user or -group option.
+        find <directory> -user <username>
+        find <directory> -group <groupname>
+
+Find files by file type:
+  Use the -type option followed by one of the following characters as the argument to find only files of that type:
+      b     block special
+      c     character special
+      d     directory
+      f     regular file
+      l     symbolic link
+      p     FIFO
+      s     socket
+  Use the syntax:     find <directory> -type <typeChar>
+
+Running commands on each file you find:
+  You can use 'find' to run commands on every file it finds by using the -exec option with the command to run as the argument to that option. If you use the string '{}' in the command that string is replaced with the file name of the current file found. Mark the end of the command with the string ';'.
+        find <directory> -exec <command>
+    ie.
+      Output lines from each file found that contain the string 'jammybeans'.
+        find / -name '*.html' -exec grep jammybeans '{}' ';'
+  To have find pause and confirm execution fo reach file use -ok instead of -exec.
+        find <directory> -ok <command>
+
+Finding files by size and stuff:
+  ls -lS
+      Output files with largest files at the top.
+  ls -lSr
+      Output files with smallest at the top.
+  du -S <directory> | sort -n
+      (Doesn't work on mac because mac doesn't have -S option) Output a list of subdirectories of the specified directory, sorted in ascending order by size. The 'du' command stands for disk usage.
+  du -S <directory> | sort -nr
+      Same as above but outputs in descending order by size.
+  ls | wc -l
+      Find number of files in a directory.
+
+
+********** Search and Replace **********
+
+To run a search and replace with a regex in multiple files use sed:
+
+    sed -i '' 's/original/replacement/' files
+
+Where original is the text to search for and replacement is the replacement text.
+The -i means it will edit in-line, so it will change the file itself, but this by default creates a backup or the original file with an extension added to the backup file name which is the argument given to the -i option. But by setting  the backup extension to an empty string it won't create a backup file.
+
+
+
+
+********** Screen and TMUX **********
+
+
+Screen and tmux are both terminal session mangagement tools. They are technically called terminal multiplexors, hence the name tmux. Screen is a GNU tool and is usually installed by default on Linux systems. tmux is a third party tool that is newer and generally a bit better than Screen, though on say a server or something you probably wouldn't want to install extra stuff so it would make sense to just use Screen, but on your local computer for development tmux is the better option.
+
+Reasons to use a session management tool like Screen or tmux:
+    Session manangement means that instead of having to open a bunch of different tabs in the terminal window you can have a bunch of different terminal screens open in a single session in a single terminal tab and switch between the screens with whatever the command keys are for that tool.
+
+    You can also split a session screen in two, vertically or horizontally (though apparently with Screen you have to install a patch to be able to do vertical split).
+
+    Also you can just detach from the session, which takes you out of Screen/tmux and back to the normal command line and all the screens in your session are still running and you can go back and reattach to a session at any time. You can have multiple sessions running at once and attach or detach any time you want.
+
+    Sessions continue running even if you quit out of the whole terminal. You just detach from the session and then can close the terminal and your session is still there (as long as you don't shut off the computer) for you to come back to later. And so you can have processes running in your sessions. Without using a session management tool you'd have to put these processes as background jobs on the command line. So a terminal multiplexor is perfect when you SSH into a computer to work remotely.
+
+
+Installing screen and tmux on Linux:
+    sudo apt-get install screen
+    sudo apt-get install tmux               (or on Mac with homebrew:  brew install tmux)
+
+
+Tmux uses a simple config file found at ~/.tmux.conf to set all of its configuration options.
+
+
+Note: The key you use to do all the tmux commands from within tmux is called the prefix key, and the default prefix key is Ctrl+b. But that is annoying to press so a much better option is Ctrl+a, though another option is Ctrl+o because on the command line Ctrl+a takes you to the beginning of the line. To change this go into the tmux config file (~/.tmux.conf) and add these lines to that file:
+        set -g prefix C-a
+        unbind-key C-b
+
+
+Basic tmux commands (outside of tmux):
+    tmux                        opens and attaches to a NEW tmux SESSION with a numbered name
+                                    starting at 0
+    tmux new -s name            opens and attaches to a NEW tmux SESSION with a given NAME
+    tmux ls                     LIST SESSIONS
+    tmux a                      RE-ATTACH to an existing SESSION if there is only one
+    tmux a -t name/index        RE-ATTACH to an existing SESSION with the given name/index
+    tmux kill-session -t name/index         KILL a tmux SESSION by name or index
+    tmux new -s name2 -t name   COPIES a tmux SESSION into a new session with a
+                                    new name, with its own sense of what the
+                                    current window is, but they share the same
+                                    buffer, so any changes made in one affect the other
+    tmux a -dt name             detach the attached session (so if someone else is
+                                    attached this will detach them) and attach youself and open the session
+
+Basic tmux commands (inside tmux session):
+    tmux switch -t name/index   SWITCH to a different SESSION from within tmux
+    Ctrl+a, c                   CREATE NEW tmux WINDOW
+    Ctrl+a, [0-9]               GO TO the tmux WINDOW of the given number
+    Ctrl+d                      CLOSE the current tmux WINDOW or just the current PANE if split
+    Ctrl+a, d                   DETACH from the session
+    Ctrl+a, a, d                DETACH FROM A SCREEN SESSION inside a tmux session
+    Ctrl+a, ,                   RENAME current WINDOW (comma comes after the ctrl+a)
+    Ctrl+a, ?                   shows ALL tmux COMMANDS
+    Ctrl+a, Ctrl+a              enter COPY-MODE, can page-up/down and move cursor around freely
+
+    Ctrl+a, |                   make VERTICAL SPLIT panes (that is a pipe bar, not an L or I)
+    Ctrl+a, "                   make HORIZONTAL SPLIT panes
+    Ctrl+a, arrowKeys           GO TO into a DIFFERENT PANE when window is split
+    Ctrl+a, alt+arrowKeys       RESIZE the current PANE
+
+    Ctrl+a, :                   RUN TMUX terminal COMMANDS from inside a session
+    Ctrl+a, :set -g mouse on    turn ON MOUSE SCROLLING for tmux (GLOBAL command)
+    Ctrl+a, :set -g mouse off   turn OFF MOUSE SCROLLING for tmux window (GLOBAL command)
+    Ctrl+a, :set mouse on       turn ON MOUSE SCROLLING for tmux (only current session)
+    Ctrl+a, :set mouse off      turn OFF MOUSE SCROLLING for tmux window (only current session)
+
+    Ctrl+a, (                   move to PREVIOUS SESSION
+    Ctrl+a, )                   move to NEXT SESSION
+    Ctrl+a, L                   move to LAST SESSION
+    Ctrl+a, $                   RENAME current SESSION
+
+
+
+Basic screen commands (outside of screen):
+    screen                      opens and attaches to a NEW SESSION
+    screen -S name              opens and attaches to a NEW screen SESSION with a given NAME
+    screen -ls                  LIST SESSIONS
+    screen -r                   RE-ATTACH to an existing SESSSION if there is only one
+    screen -r name              RE-ATTACH to an existing SESSION with the given name (you only
+                                    need to give it part of the name)
+    screen -X -S name kill      KILL a screen SESSION
+    screen -d -r name           detach the attached session (so if someone else is
+                                    attached this will detach them) and attach youself and open the session
+
+
+Basic screen commands (inside screen session):
+    Ctrl+a, c                   CREATE NEW screen WINDOW
+    Ctrl+a, :quit               KILL an ATTACHED SESSION
+    Ctrl+a, w                   briefly SHOW WINDOW BAR if not configured to display bar
+    Ctrl+a, [0-9]               GO TO the screen WINDOW of the given number
+    Ctrl+a, n                   GO TO the next screen WINDOW
+    Ctrl+a, p                   GO TO the previous screen WINDOW
+    Ctrl+d                      CLOSE current screen WINDOW (even if there are panes)
+    Ctrl+a, d                   DETACH from the session
+    Ctrl+a, A                   RENAME current WINDOW
+    Ctrl+a, ?                   shows ALL screen COMMANDS
+
+    Ctrl+a, S                   make HORIZONTAL SPLIT panes
+    Ctrl+a, | or V              make VERTICAL SPLIT panes (must download a patch for this)
+
+    Ctrl+a, h                   creates a SCREENSHOT of the screen in a file named hardcopy
+    Ctrl+a, H                   LOGS command HISTORY for that screen SESSION to a file named
+                                    whose name it will show at the bottom of the screen for a couple seconds, the file will be named something like screenlog.0, press Ctrl+a, H again to top logging.
+
+
+
+
+********** Managing Files **********
+
+File management tools include those for splitting, comparing, and compressing files, as well as making backup archives and tracking file revisions. You can also do stuff like changing the contents of a file or changing its timestamp.
+
+Determine file type and format:
+    The 'file' tool spits out some information on the type a given file is.
+            file path/to/file
+    Use the -z option to determine the original format of a compressed file.
+            file -z path/to/file
+
+Changing file modification time:
+    Use 'touch' to change a file's timestamp. The default action when using touch is to change the timestamp of a file to the current time (and of course if that file doesn't exist then it creates it).
+            touch path/to/file
+    To specify a timestamp other than the current time use the -d option. You can specify the date, the time, or both. Though this -d option doesn't exist on mac.
+            touch -d '25 December 15:23'
+
+Splitting a file into smaller ones:
+    The 'split' tool is used to break file up into smaller ones. The basic 'split' tool copies a file, chopping up the copy into separate files of a specifized size. It takes as optional arguments the name of the input file (taking standard input if none is given) and the file name prefix to use when writing the output files (using 'x' if none is given). The output files' names will consist of the file prefix followed by a group of letters: 'aa', 'ab', 'ac', and so on. So the default output files would be 'xaa', 'xab', 'xac', etc. The -l option specifies the number of lines to put in each output file, -b to specify number of bytes to put in each output file, use the 'k' or 'm' option in conjunction with -b to specify output sizes in kilobytes or megabytes, you put a number after the 'b' to specify the number of bytes, kilobytes, or megabytes to put in each output file, and similarly for using the -l option. If neither -b or -l is used, 'split' defaults to 1000 lines per output file.
+            split path/to/file                  split into output files 1000 lines each
+            split -l4 path/to/file              split into output files 4 lines each
+            split -b2m path/to/file             split into output files 2 megabytes each
+            split path/to/file splitties        split into output files with prefix 'splitties'
+
+Comparing Files:
+    cmp
+        The 'cmp' tool comparies to files to see if they differ, if the are the same it outputs nothing. If they differ it outputs the byte position and line number in the files where the first difference occurs.
+            cmp file1 file2
+
+    diff
+        The 'diff' tool is used to compare two files and output a difference report containing text that differs between the two files. The 'diff' tool is meant to be used with other tools such as 'patch' in order to apply the differences to a file.
+            diff file1 file2
+
+    sdiff
+        This tool is badass, it makes it easier to see the difference between two files compared to 'diff' because it outputs the two files side by side in two columns in the terminal. So the point with 'sdiff' is to visually see the differences easily, whereas 'diff' is to get the differences in a format that works with other tools so you can do something with those differences. Lines that differ are separated by a '|', lines that appear only in the first file end with a '<', lines which appear only in the second file are preceded by a '>'
+            sdiff file1 file2
+
+    diff3
+        Output the differences between 3 files
+
+    patch
+        Apply the differences in a diff report to the original file compared in the report. It takes as arguments the name of the file to be patched and the name of the diff report (or 'patchfile'). It then applies the changes in the patchfile to the original file. This is useful for distributing different version of a file across a network - small patchfiles may be sent instead of large source files.
+            patch original.file patchfile.diff
+
+Compressed Files:
+    gzip
+        To compress a file use gzip. It takes the name of the file to be compressed, appends a '.gz' to the file name, and DELETES the original file.
+            gzip fileToCompress
+
+    gunzip
+        To decompress a file using gunzip. It takes the name of the compressed file and decompresses it into its respective files, then DELETES the compressed files.
+            gunzip compressedFile.gz
+
+    zless
+        To view a compressed file without actually uncompressing it. Useful when you want to view a compressed file without actually making changes to it.
+            zless compressedFile.gz
+
+File Archives:
+    An archive is a single file that contains a collection of other files, and often directories. Archives are usually used to transfer or make a backup copy of a collection of file and directories, this way you can work with only one file instead of many. This single file may be compressed, and the files in the archive retain the structure and permission of the original files.
+    The 'tar' tool is used to create, list, and extract files from archives. Archives made with 'tar' are sometimes called tar files or tar achrives because all the archives are rolled into one 'tarball'.
+
+    tar
+        The 'tar' tool is used for archiving groups files and directories. It is often used with compression which is when you see the '.tar.gz' suffix on file. Common options used with it are -f which lets you specify the name of the archive file, and -v ('verbose') which outputs the names of the files as they are processed. The 'tar' name comes from 'tape archive', because it was originally made to write archives directly to a magnetic tape device.
+
+        To CREATE A FILE ARCHIVE use the -c option with 'tar', and specify the name of the archive file with -f. It is common practice to use .tar as a suffix for the tarball. The names of the files or directories to be archived comes after the name of the tarball. The original file remains unchanged. Use the -z option to compress the file as it is being archived, in which case you should specify a .tar.gz extension. You can list multiple files to archive.
+            tar -cvf blah.tar file1 file2 file3 dir1 dir2
+            tar -zcvf blah.tar.gz someFiles                    compresses while archiving
+
+        To LIST THE FILES IN AN ARCHIVE use the -t option. Using the -v option with -t causes tar to output the files in the same format that 'ls -l' does. To list the contents of a compressed tar ball ad in the -z option.
+            tar -tvf archives.tar
+            tar -ztvf archives.tar.gz
+
+        To EXTRACT (or unpack) FILES FROM AN ARCHIVE use the -x ('extract') option. To extract files from a compressed tarball use add in the -z option. Extracting an archive will put the extracted file in the current directory, and keep the tarball there too. If there are files or subdirectories in the current directory when this is done that are the same as any of those in the archive, these will be overwritten by the extracted files with those same names.
+            tar -xvf archives.tar
+            tar -zxvf archives.tar.gz
+
+
+
+
+********** Viewing Text **********
+
+less
+    You can view multiple files in less, use :n to go to the next file, and :p to go to the previous file.
+
+cat
+    Good when wanting to print out a short file to standard output. Use the -v option to output non-printing characters.
+
+head
+    Output the beginning of a text to standard output. By default it prints the first 10 lines. You can specify the number of lines to print out with a '-' and the number. To output a given number of characters instead of lines use the -c option followed immediately by the number of characters to output.
+        head file.txt                       prints out the first 10 lines of file.txt
+        head -25 file.txt                   prints out the first 25 lines of file.txt
+        head -c150 file.txt                 prints out first 150 characters of file.txt
+
+tail
+    Like head, except outputs the ending part of a text. Useful for viewing a log in real time as an application appends onto a file and you can watch it as though it were outputting straight to standard out - doing this requires using the -f option, which follows the end of the file.
+    Like 'head', 'tail' by default outputs the last 10 lines. You can specify a different number of lines or characters in the same way as with 'head'.
+        tail file.txt                       prints out the last 10 lines of file.txt
+        tail -25 file.txt                   prints out the last 25 lines of file.txt
+        tail -c150 file.txt                 prints out last 150 characters of file.txt
+        tail -f somelog.log                 follows the end of somelog.log, printing it to
+                                            standard out and anything that gets appended to it, in realtime
+
+Output the middle part of a file:
+    To output a specific line in a file you can use the 'sed' tool. As the first argument to 'sed' you give it in quotes the line number you want to output followed immediately by '!d'. To output a region of multiple lines put the first and liast line to output comma separated.
+        sed '55!d' myFile                   outputs line 55 of myFile to standard out
+        sed '50,55!d' myFile                outputs lines 50 to 55 of myFile
+
+    Another way to do this is to combine multiple head or tail commands with pipes.
+
+Outputting the text between strings:
+    Use 'sed' to select lines of text between strings and output either just that section of text or all the linex of text except that section. The strings can be words or regular expressions. Use the -n option followed by '/first/,/last/p' to output just the text between the strings, inclusive. To output all the lines except what is between the two strings, just omit the -n option.
+        sed -n '/Chapter 3/,/Chapter 4/p' book-draft    outputs everything in chapter 3
+        sed '/Chapter 3/,/Chapter 4/p' book-draft       outputs everything not in chapter 3
+        sed -n '/<body>/,/<\/body>/p' index.html        output only the body of index.html
+
+Streaming Text:
+    The 'sview' tool is something you can download I guess that outputs streaming text to standard out, one word at a time. Streaming text has been shown to increase reading speed and comprehension over normal reading from a screen.
+        sview filename.txt
+
+View ASCII character chart (in octal, decimal, and hex formats):
+    man ascii
+
+
+
+
+********** Editing Text **********
+
+Quickly write a few lines to a new file:
+    You can redirect standard output of cat to a file and then just start typing on the terminal, when you press Ctrl+d it'll end the file and that text will be put in the new file.
+        cat > newFile.txt
+        // then down here you just start typing
+        // press Ctrl+d to stop
+
+Append to a text file:
+    cat >> someFile.txt
+    // then down here start typing
+    // press Ctrl+d to stop
+
+Inserting text to a beginning of a file:
+    Mac doesn't have this tool by default, but apparently the 'ins' tool is used to insert text to the end of a file the same way 'cat >>' appends.
+        ins someFile.txt
+        // then down here start typing
+        // press Ctrl+d to stop
+
+Including a file within another file:
+    This is pretty cool! To include one file in another file user 'include(filename.txt)' in the file where you want filename.txt to be included. You then need to process the file to turn that insert statement into the actual text from filename.txt. Processing involves using a tool like 'm4'. The 'm4' tool will by default output to standard out.
+        m4 someFile.txt
+
+
+
+
+********** Grammar and Reference **********
+
+In Linux /usr/dict/words holds a list of all the words contained in the Linux dictionary, with one word on each line, sorted alphabetically.
+
+Note, on Mac /usr/dict/words is not there and it doesn't have the 'spell' command either.
+
+spell
+    The 'spell' command is used to check the spelling of words. It reads from standard input and outputs any words not found in the system dictionary. It doesn't give suggestions to correct the word, it just tells you which words don't exist in the /usr/dict/words file. You can also give 'spell' a file and it will list the mispelled words in the file in the order they appear in the file. To output a sorted list of mispelled words in a file pipe it to 'sort', and then pipe to 'uniq':
+                spell filename | sort | uniq
+
+To add words to the system dictionary you don't edit the /usr/dict/words file (you never edit this file!), instead you create a personal dictionary in your home directory at ~/.ispell_default that uses the same format as the system dictionary. The spelling tools in Linux automatically check for a personal dictionary to use those words as well as the system dictionary. The dictionary should be kept in alphabetical order, so you whould use the -i and -u options of the 'ispell' command to add words to your personal dictionary.
+
+ispell
+    (ispell is not on Mac) To use ispell interactively, so that every time a mispelling is found, you're given a chance to replace it then and there, pass a filename to the 'ispell' command. 'ispell' will give any suggested words to replace the mispelled word in a list with numbered keys. To select a suggest word for replacement type the associated number, to type in your own replacement type 'r' then your replacement word. To tell ispell to consider a mispelled word correct for the remainder of the file hit 'a', if you want to save a mispelled word as a correct word into your personal dictionary type 'u' to save the uncapitalized word, or if the specific capitilization of that mispelled word matters, type 'i' to insert the word into your personal dictionary just as it appears in the text. When ispell is complete it will save the changes to the file and create a backup file of the original without the spelling corrections using a .bak extension in case you want to revert back to before using ispell. While using ispell, type 'x' to save the changes made so far and then stop checking the file. To quit checking the file and restore the file to how it was originally type 'q'.
+
+WordNet
+    If your system has WordNet on it, used with the 'wn' or 'wbn' command, this allows you to search a database of words with their definitions. It takes the word you want to look up as the argument. use the -grepn and -grepa options to search WordNet for only nouns and/or adjectives that match the given argument.
+        wn homew
+        wn -grepn homew
+        wn -grepa homew
+        wn -grepn -grepa homew
+
+    To list definitions of a word with WordNet use the -over flag. To list synonyms of a word with WordNet use the -synsv option. To list antonyms of a word use the -antsa option. To list a hypernym of a word with WordNet (a hypernym of a word is a related term whose meaning is more general than the given word, ie. animal and mammal are hypernyms of the word cat) use the -hyphen option.
+        wn word -over
+        wn word -sysnv
+        wn word -antsa
+        wn word -hyphen
+
+look
+    To fit words that match a pattern use the 'look' command. It will print out a list of words that match the pattern that you give as the argument to the 'look' tool.
+        look word
+    i.e.
+        look homew
+    output:
+        homeward
+        homewardly
+        homework
+        homeworker
+        homewort
+
+    Instead of using 'look', you can just directly grep the /usr/dict/words file with case insensitive flag to get a list of words that match a pattern:
+        grep -i homew /usr/dict/words
+
+Grammar
+    Use the 'style' and 'diction' commands to check grammer in Linux (neither of these come with Mac).
+
+The directory /usr/share/misc should have some files that are word lists or reference files.
+
+
+
+
+********** Analyzing Text **********
+
+wc
+    Word Count counts characters, words, and lines of text. Give a filename as the argument. By default it output three lines which represent the number of lines, words, and characters in the file. Use the -l, -w, -c commands to output only the number of lines, words, or characters.
+
+tr
+    Used to translate characters.
+
+Making a Concordance of a Text:
+    A concordance is an index of all the words in a text, along with their contexts. To make an alphabetically listing of all words contained in a text and their number of occurences use the tools 'tr', 'sort', and 'uniq'.
+    Prints out all words used in text with the count of their occurences:
+            tr ' ' ' [RETURN]
+            ' > filename | sort | uniq -c
+    Prints out a count of the number of unique words in a file:
+            tr ' ' ' [RETURN]
+            ' > filename | sort | uniq -c | wc -l
+
+rel
+    Use the 'rel' tool to analyze text files for relevance to a given set of keywords. (This is not installed in Mac).
+
+an
+    Use the 'an' tool to output all anagrams of a given word. (This is not installed on Mac).
+
+
+
+
+********** Formatting Text **********
+
+To format the text of files use tools like 'fmt', 'cat', 'grep', 'sed', 'pr', 'pr', 'expand', 'unexpand'.
+
+fmt
+    Used to format text.
+pr
+    Print files
+lpr
+    Print files.
+expand
+    Expands tabs to spaces.
+unexpand
+    Collapse spaces to tabs.
+
+
+sort
+    To sort text in a file use the 'sort' command and give it a filename, it will output all lines in ascending order. To sort in descneding order use the -r option.
+nl
+    Number lines of text with 'nl' command.
+tac
+    Similar to 'cat' but outputs text in reverse order. (Not installed on Mac).
+rev
+    Outputs text with reversed characters on each line.
+
+
+
+
+********** Searching Text **********
+
+grep
+    The 'grep' command searches a file for text patterns. It ouputs lines of its input that contain the given string or pattern. By default it searches standard input. give a filename as the second argument to search through a file.
+            grep textToSeachFor filename
+    The -i option means it will search case insensitive.
+    Can search multiple files simply by using multiple filenames as arguments. If searching multiple files it will precede each outputted match with the filename it found the match in, or you can supress this with the -h option.
+    Use the -r option to search a directory recursively.
+    Can grep for regular expressions as well by giving a regex in place of a string to search for.
+    Use the -v option to output all lines that DON'T contain a match.
+    Use an option with a specified number to print the context that matches are found in, the number represents the number of lines before and after the matched line to output in addition to the matched line. So to output the matched lines and the preceeded and succeeding 3 lines around a match do:
+            grep -3 searchPattern filename
+    Or to only print preceeding or succeeding lines, or to print different amounts for each, use the -B and -A options immediately preceding a number. So to print two lines before the matched line and 4 lines after do:
+            grep -B2 -A4 searchPattern filename
+
+zgrep
+    Search through compressed files.
+
+Matching lines in a web page:
+    Use lynx with the -dump option and pipe it to grep to search websites:
+            lynx -dump http://website.com | grep searchPattern
+
+To search and replace text using perl:
+    perl -pi -e "s/oldstring/newstring/g" filename
+
+Searching through 'less':
+    To search while in the 'less' command use / and ?. Using the slash will searching forward through the file (press n to move to the next match, N to move to the previous match) while using the question mark will search backwards through the file.
+
+
+
+
+********** x **********
+********** x **********
+********** x **********
+********** x **********
+********** x **********

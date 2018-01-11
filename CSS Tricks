@@ -6,3 +6,10 @@ To make the entire box-area around a link clickable, like in a navigation menu, 
 
 To change the font-size of a Submit button apparently you have to change the background-color of it too, otherwise the
 font size won't change! Bizarre!
+
+
+In order to get the cells of a table to to fit onto the screen or whatever width dimension you want, without having the table go off the screen to the right, just use "table-layout: fixed; word-wrap: break-word" like the following css to the table element:
+    width: 100%;          // or whatever you want to set it at
+    table-layout: fixed;
+    word-wrap: break-word;
+Now your table's cells will all shrink to fit the width you gave the table.

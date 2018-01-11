@@ -37,11 +37,11 @@ at the top of the file so React knows you are using JSX. (THIS IS NO LONGER NEED
 
 ***************************** COMPONENTS BASICS *****************************
 
-React is all about writing individual components that are pieces of the UI. Each component is linked to the main HTML files by 'mounting' a component to an element. You
-do this by say, giving an HTML element an ID and in the react code referencing that element as the mount element. You do this in the React.render() method, which takes two arguments, the component name (or HTML directly in there) in a tag format, and a reference to the DOM element it will be mounted to. Like so:
+React is all about writing individual components that are pieces of the UI. Each component is linked to the main HTML files by 'mounting' a component to an element. You do this by say, giving an HTML element an ID and in the react code referencing that element as the mount element. You do this in the ReactDOM.render() method, which takes two arguments, the component name (or HTML directly in there) in a tag format, and a reference to the DOM element it will be mounted to. Like so:
 
-  React.render(<Componentname />, document.getElementById('mountedId'));
+  ReactDOM.render(<Componentname />, document.getElementById('mountedId'));
 
+You only call this method after all the composite components have been defined, so it should be at the bottom of the script generally.
 
 
 ***************************** SIMPLE COMPONENT *****************************
@@ -88,36 +88,36 @@ To do the above example using the createClass method (using JSX):
 
 Every component has two objects, a state object and a props object. Props are passed into the component and don't change over the life of the component. State defines the inner state of the component and this can change.
 
-Props can be passed to a component and never change once passed to the component, though obviously the value of the prop that is passed into the component can change vary programmatically. You access props of the component with:    this.props.propName
+Props can be passed to a component and never change once passed to the component, though obviously the value of the prop that is passed into the component can change programmatically. You access props of the component with:    this.props.propName
 
-Props can be used in the reder method to render dynamic data.
+Props can be used in the render method to render dynamic data.
 
 
 State is set using the this.setState() method, which triggers UI updates and is the core of React's interactivity. To set an initial state before any interaction occurs use the getInitialState method. You return an object containing the names and values of the state variables.
 
-Props are external and controller by whatever renders the component. State is internal and controlled by the component itself.
+Props are external and controlled by whatever renders the component. State is internal and controlled by the component itself.
 
 When a state changes, through setState(), render is called with the new state and the UI is updated.
 
-If you have a child component and you give it a closing tag so that you can have some inner HTML for that component, then within that child component you can access that inner HTML that was put on it in the parent component through the this.refs.children value.
+If you have a child component and you give it a closing tag so that you can have some inner HTML for that component, then within that child component you can access that inner HTML that was put on it in the parent component through the this.props.children value.
 i.e.
   parent Component returns:
       <Child>My child</Child>
   Child Component returns:
-      <button>{this.refs.children}</button>
+      <button>{this.props.children}</button>
 
-In the above example the text on the button will be the 'My child' which is the innerHTML on the Child component which can be referenced in that child component using this.refs.children.
+In the above example the text on the button will be the 'My child' which is the innerHTML on the Child component which can be referenced in that child component using this.props.children.
 
 You can even use this.refs.children with nested components deeper than just parent/child. Like so:
 i.e.
   parent Component returns:
       <Child> <GrandChild /> is a baby </Child>
   Child Component returns:
-      <button>{this.refs.children}</button>
+      <button>{this.props.children}</button>
   GrandChild Component returns:
       <span> Little Timmy </span>
 
-In the above example the this.refs.children in the Child Component would grab all the innerHTML put in it from it's parent, which includes the GrandChild Component's return value of '<span> Little Timmy </span>' so the button would say 'Little Timmy is a baby'.
+In the above example the this.props.children in the Child Component would grab all the innerHTML put in it from it's parent, which includes the GrandChild Component's return value of '<span> Little Timmy </span>' so the button would say 'Little Timmy is a baby'.
 
 
 

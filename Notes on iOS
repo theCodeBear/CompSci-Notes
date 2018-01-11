@@ -6,7 +6,7 @@ Handling Segues:
 
   For transitions between two views you don't want to just make the connection/segue straight from the button to the next view. You want to just do segue(s) from the entire view (the first little icon on the left at the top of the view in Main.storyboard) to the next view(s) and name each segue and then in the ViewController or class for that view. Then Ctrl+Drag the button(s) making the segues into the code and add a function to run on those button click(s). Add those functions to their appropriate buttons like so in the viewDidLoad() function:
           self.buttonVarName.addTarget(self, action: "clickFunctionName:", forControlEvents: .TouchUpInside)
-  Now inside the "clickFunctionName" function (which is an @IBAction function), give it a parameter of (sender: AnyObject). Inside it ust call the prepareForSegue function that you will also create. This line goes like this:
+  Now inside the "clickFunctionName" function (which is an @IBAction function), give it a parameter of (sender: AnyObject). Inside it just call the prepareForSegue function that you will also create. This line goes like this:
           self.performSegueWithIdentifier("nameOfSegue", sender: sender as! UIButton)
   Now create the prepareForSegue function which allows you to add any code you want to run before the transition to the next view, for example passing data to the next view's controller/class or making it so the back button on the next page doesn't display this view's full view title. The segue function definition goes like this:
           override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject) { }
@@ -19,3 +19,210 @@ Handling Segues:
   Now you can have multiple segues all working and keeping the back button's on the succeeding views clean.
 
   Note: You can instead do more of this connections in just the Main.storyboard, like setting up the connection between a button and it's @IBAction function, but then if you want to view it as an example of how to do this or copy the code for some reason you can't actually see/copy it because all the interactions are done in the Main.storyboard and therefore not expressed in code. That's no good.
+
+
+
+Life Cycle Methods for View Controllers:
+
+  init(coder:)
+      The initializer method for UIViewController instances that are created from a storyboard.
+
+  init(nibName:bundle:)
+      The initializer method for UIViewController instances that are created programmatically.
+
+  loadView()
+      This is overridden to create a view controller's view programmatically.
+
+  viewDidLoad()
+      Run once during the runtime of the application when the view controller first loads. It is overridden to configure views created by loading an interface file.
+
+  viewWillAppear(_:)
+      Gets called everytime the view controller is moved onto the screen. It gets called just before a view controller's view is added to the window. It is overridden to configure views created by loading an interface file.
+
+  viewDidAppear(_:)
+      Sames as viewWillAppear, except it gets called just after a view controller's view is added to the window.
+
+  viewWillDisappear(_:)
+      Gets called everytime the view controller is moved offscreen, just before this happens.
+
+  viewDidDisappear(_:)
+      Gets called everytime the view controller is moved offscreen, just after this happens.
+
+
+Control Events:
+
+  Here are some common control events to use:
+      UIControlEvents.TouchDown
+          A touch down on the control
+      UIControlEvents.TouchUpInside
+          A touch down followed by a touch up while still within the bounds of the control
+      UIControlEvents.ValueChanged
+          A touch that causes the value of the control to change
+      UIControlEvents.EditingChanged
+          A touch that causes an editing change for a UITextField
+
+
+Constraints:
+
+  You can Ctrl+drag from a label to the left, right, top, or bottom and release while you are still inside its superview (the view for that page) which will bring up a popup with some constraint options, one of which is something along the lines of "xxxxxxx Space to Container Margin", selecting this will constrain the text in the label from going off the page. So if you do that to the left and right sides of the label it will keep text on the page. If there is too much text it will cut if off short with an ellipsis.
+
+  Combine this with clicking on the little "I" constraints in the interface builder that you just made for that label, and go into the Attributes Inspector and select "Greater Than or Equal" for the Relation, and select 0 for the constant. This makes the label not pass over the margins of the page. These are inequality constraints.
+
+  Now to get the text of the label to not be truncated with an ellipsis click on the label and go into the Attributes Inspector and change the Lines attribute to 0. This means there is no set number of lines for the text to be held to so it will run on into however many lines it needs to, and it won't be truncated anymore.
+
+
+Closures:
+  A closure is a discrete bundle of functionality that can be passed around in the code. Functions and methods are just special cases of closures.
+
+  The syntax for writing a closure is:
+
+      { (arguments) -> return type in
+        // code
+      }
+
+    i.e.
+      let animationClosure = { () -> Void in
+        / code...
+      }
+
+
+Animations:
+
+  Both UIKit and Core Animation provide the ability to do animations. The level of animation support differs between this two technologies.
+
+  The UIKit performs animations using UIView objects. You can animate changes to properties of views or use transition animations to replace one set of views with another. The UIKit has a list of animatable properties of the UIView class. To animate the change of one of these properties you must change that property from inside an animation block.
+
+  The list of animatable UIView properties is:
+      frame
+          Changes the view's size and position relative to its superview's coordinate system (if the transform property does not contain the identifty transform, modify the 'bounds' or 'center' properties instead)
+      bounds
+          Changes the view's size.
+      center
+          Changes the view's position relative to its superview's coordinate system.
+      transform
+          Scales, rotates, or translates the view relative to its center point. These transformations are always performed in 2D space (to perform 3D transformations you have to use Core Animation)
+      alpha
+          Gradually change the transparency of the view.
+      backgroundColor
+          Change the view's background color
+      contentStretch
+          Change the way the view's contents are stretched to fill the available space.
+
+  With Core Animation you can animate the following types of changes for a view's layer:
+      size and position of the layer
+      center point used when performing transformations
+      transformations to the layer or its sub-layers in 3D space
+      addition or removal of a layer from the view hierarchy
+      the layer's Z-order relative to other sibling layers
+      the layer's shadow
+      the layer's border (including whether the layer's corners are rounded)
+      the portion of the layer that stretches during resizing operations
+      the layer's opacity
+      the clipping behavior for sub-layers that lie outside the layer's bounds
+      the current contents of the layer
+      the rasterization behavior of the layer
+
+  The simplest UIView animation method is:
+
+      class func animate(withDuration: TimeInterval, animations: () -> Void)
+
+  This class method takes two arguments: a duration of type NSTimeInterval (which is an alias for a double) and an animations variable that is a closure.
+
+  Two more animate methods on the UIView includes a completion handler to do something when the animation completes and a few other parameters:
+
+      class func animate(withDuration: TimeInterval, animations: () -> Void, completion: (Bool) -> Void)
+
+      class fun animate(withDuration: TimeInterval, delay: TimeInterval, UIViewAnimationsOptions, animations: () -> Void, completion: (Bool) -> Void)
+
+  To use these methods on the UIView class you just do:
+      UIView.animate(/*args*/)
+
+  When animating contraints, if you modify the constraint within an animation block, no animation will occur. This is because after a constraint is modified the system needs to recalculate the frames for all of the related views in the hierarchy to accommodate the change. It would be very expensive for any constraint change to trigger this automatically when animating. So you must ask the system to recalculate the frames only when the animation is done. To do this, you call the method layoutIfNeeded() on a view. This will force the view to lay out its subviews based on the latest constraints.
+
+  To check to make sure animations are working perfectly as you want them, in the simulator you can turn on Slow Animations by choosing it from the simulator's Debug menu or just pressing ⌘T (Command+T).
+
+  When animating, it may animate properties of other view objects onscreen that you don't want to be animated, like width, because the intrinsic content size changes when the text changes. The fix is to force the view to lay out its subviews before the animation begins by calling view.layoutIfNeeded() at the start of the animation function.
+
+  By default animations use ease-in/ease-out timing functions. Other options are linear, ease-in, and ease-out. You can set this as one of the options in the animate function.
+    i.e.
+      options: [.curveLinear]       // to animate with linear timing function
+      options: [.curveEaseIn]
+      options: [.curveEaseOut]
+      options: [.curveEaseInOut]    // by default
+  The options parameter takes in UIViewAnimationOptions argument (ie. UIViewAnimationOptions.CurveLinear), which you give as an array since there can be many options applied to the animation. UIViewAnimationOptions conforms to the OptionSetType protocol which allows you to group multiple values using an array.
+
+  Some other options that you can provide to the options parameter of the UIView.animate() method are:
+    .AllowUserInteraction
+        By default views cannot be interacted with when animating, specifying this option overrides the default. This can be useful for repeating animations, such as a pulsing view.
+    .Repeat
+        Repeats the animation indefinitely, often paired with the .Autoreverse option.
+    .Autoreverse
+        Runs the animation forward and then backward, returning the view to its initial state.
+  There are a bunch more, check out the Constants section of the UIView Class Reference in the X-Code documents in the help menu to see all the possible options.
+
+  In order to do animations with a physics engine use Spring animations. Use this UIView.animate() method to do spring animation:
+
+      class func animate(withDuration: <TimeInterval>, delay: <TimeInterval>, usingSpringWithDamping: <GFloat>, initialSpringVelocity: <CGFloat>, options: <UIViewAnimationOptions>, animations: <() -> Void>, completion: <((Bool) -> Void)?>)
+
+
+Set a View Controller as the initial view controller for the application:
+
+  Either drag the arrow to the view you want to display on app load, or select the View Controller for the view you want to be the initial view and go to the Attributes Inspector and under the "View Controller" header check the "Is Initial View Controller" box.
+
+Class Initializers:
+
+  Classes can have two kinds of initializers: designated initalizers and convenience initializers.
+
+  A designated initializer is a primary initializer for the class. Every class has at least one designated initailizer. A designated initializer ensures that all properties in the class have a value. Once it ensures that, it calls a designated initializer on its superclass (if it has one).
+
+      init() { ... }
+
+  Convenience initializers are optional, you can think of them as helpers. A conveninece initializer always calls another initializer in the same class. Convenience initializers are indicated by the 'convenience' keyword before the initailizer name. So a convenience initializer is basically just a wrapper initializer that you can make to do calculations and then call other initializers, eventually calling the designated initializer to set the properties of the class.
+
+      convenience init() { ... }
+
+  An initializer has the init() method name. You use self.property = value to set the values of the properties in the class, then call self.init().
+
+  Once you implement a custom initializer you lose the ability to call the default class initializer, init(), which is useful for when all of your class's properties have default values and you don't need to do additional work to create the new instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -388,7 +388,18 @@ Lists all the branches that currently exist on a server.
 
 command:	git checkout -b URLalias/branchName
 The -b means to create a new branch. This command creates a new branch and pulls
-the branch from the server to your local computer.
+the branch from the server to your local computer. The new branch's name will
+be, for example, origin/branchName.
+
+command:    git checkout -b branchName URLalias/branchname
+This will create a new branch that tracks the remote branch. For example,
+'git checkout -b todd1 origin/todd1' will create a local branch named todd1 for
+that remote branch. It's like the previous command above but you provide a local
+branch name instead of using the remote branch name locally. This is how you
+can work on a branch that is remote but you don't currently have locally. If you
+were to try to just checkout the remote branch itself like it would put you on a
+detached HEAD pointing to the latest commit on that remote branch but you
+wouldn't actually be on that branch so you wouldn't be able to commit to it.
 
 
 

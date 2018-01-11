@@ -1,0 +1,790 @@
+Go Notes
+
+
+Go is a language made by Google specifically for server-side development. It was made to handle modern problems for server-side development like speed and concurrency.
+Go is a compiled langauge that uses coroutines, called goroutines, and channels as a way to handle high concurrency instead of using costly threads like in some languages or async operations like in node.js.
+
+Go uses a C-like syntax, so it is lower level than most languages these days, and certainly have some annoying things about the language. It doesn't have classes and inheritance, instead it just has composition, which is nice. It doesn't have overloading of functions which sucks. And it doesn't have generics, which apparently makes operations on arrays like map, and reduce not possible I think. Anyways, the reason it is good because of it's speed and concurrency. The main reason to use it is when a system needs to be highly scalable and needs the low cost of concurrency and Go's processing speed.
+
+
+
+
+********** Environment Setup **********
+
+Setting up Go is much more confusing than other languages. It requires you to have a specific workspace where you put all your code and the directory for that workspace has to be structured a specific way.
+
+The reason you have to put all your Go code in this workspace is because some of the important Go commands that you need only work inside a Go workspace. The reason the workspace has to be setup a very specific way is so that no configuration is needed, so the Go tools can just work how they were made to work since the workspace directory will follow the structure that the Go tools expect it to.
+
+First you need to install Go. Easiest way to install Go on Mac is with homebrew.
+
+Installing Go:
+        brew install go --cross-compile-common
+
+Now you need to set up your $GOPATH variable and add it to the system's path. This allows your Go workspace to always be set and will allow you to call the binaries you compiled. If say you want your workspace to be ~/Go, then you would make that directory and then edit the .bash_profile to set the $GOPATH and add it to the system path.
+
+Setting up Go workspace in ~/Go:
+        mkdir ~/Go
+      (in .bash_profile add these):
+        export GOPATH=~/Go
+        export PATH=$PATH:$GOPATH/bin
+
+The Go workspace needs to be structured by having three main directories inside of it: src, pkg, and bin. The /pkg directory contains Go package objects. The /bin directory holds your compiled binary executables of your Go code. The /src directory holds all of your Go source code. So all of your Go apps live in /src.
+
+So that your Go applications can be imported (not needed for Go apps but would be needed if you make Go packages for other people to use) the "import path" from the workspace /src directory to your app or package directory needs to be a unique path so that it can be imported (if it is a package for use by others, even if it isn't you still do things the same way though) with the "go get" command. It is standard practice in Go to include the location of the source code in the package's import path, like 'github.com/githubUsername/' as the base of your import path, then followed by the directory for your actual app.
+
+So for example, a Go app called myGoApp would be located inside the Go workspace at src/github.com/theCodeBear/myGoApp.
+
+Creating a project directory:
+        cd <workspace>/src/github.com/<githubUsername>
+        mkdir myGoApp
+
+Once you've written Go code inside your application directory you can run it with the 'go run' command. You can also install it globally as a command on your system (which doesn't make much sense for a web app but if you are building some tool in Go then that is when it makes sense) you can use the 'go install' command. Go install will build your project, or any third party Go package you've downloaded, to your workspace/bin directory. Because the workspace/bin is the GOPATH and we added it to the system path your executables there are system-wide.
+
+Running Go code:
+        go run file.go
+
+Build to workspace/bin for system-wide executable:
+        go install github.com/<githubUsername>/<appDirName>
+
+
+
+********** The Go Command **********
+
+When you download Go you are not just downloading the language, but also the Go Command Line Tools. It is a set of tools for use with Go code. To run any Go tools on the command line you start it with "go" and then the tool and any arguments it takes.
+
+As shown in the previous section, two of the Go command line tools are "run" and "install", which are used with "go run <file.go>" and "go install <packagePath>".
+
+Get the help menu for the Go command type in either:
+    go        or        go help
+
+For the help menu on a specific go tool use the -h option:
+    go <tool> -h
+
+Everything in Go works with packages. The go commands 'go build', 'go install', 'go test', and 'go get' all work with packages, not individual files. The 'go run' command is the exception to this rule. It is intended only to be a local version of the go playground. Avoid using it for anything more trivial that a program you would otherwise run in the playground.
+
+For a description on some of the Go commands: https://astaxie.gitbooks.io/build-web-application-with-golang/content/en/01.3.html
+
+
+
+********** Go Basics **********
+
+Go is a small language to learn. There are only 25 keywords in the whole langauge and most of them are familiar and easy from other languages:
+
+    break    default      func    interface    select
+    case     defer        go      map          struct
+    chan     else         goto    package      switch
+    const    fallthrough  if      range        type
+    continue for          import  return       var
+
+
+
+********** Hello World **********
+
+Here is the code for a hello world Go app:
+
+    package main
+    import (
+      "fmt"
+    )
+    func main() {
+      fmt.Printf("Hello Go World!\n")
+    }
+
+The entry point to any Go application is the main() function. Note that I said for any application, but this is different if you are not building an application but instead building a package to be used by others. See the Packages section below for more info on packages.
+
+You would put this code in a <workspace>/src/github.com/<githubUsername>/helloWorld/app.go file.
+
+From there you can then run it with:
+    go run helloWorld.go
+
+Or you can compile it into a globally executable binary in the <workspace>/bin directory and then run it with:
+    go install github.com/<githubUsername>/helloWorld
+    helloWorld
+
+If you are currently in the project directory you can just run "go install" without specifying the path:
+    go install
+
+
+
+********** Packages **********
+
+Every Go program is made up of packages.
+As can be seen from the Hello World program above, Go uses a package system where you specify the package you are making with the 'package' keyword followed by that package's name. Also you import the other packages you will be using in the code. The methods on each import are always capitalized and you access them as methods on the import name using the dot operator.
+
+Packages in Go are the equivalent of gems in ruby or modules in node.
+
+Go has a set of core libraries that come with the language which you can import without having to install any separate packages. For example, the core library package that handles I/O is "fmt".
+
+The first statement in every Go source file must be the line naming the package the file is in:
+      package <name>            ie.   package main
+
+The entry point into the application should live in the root directory for the project (which may be <workspace>/src/github.com/<githubUsername>/nameOfPackage) where 'nameOfPackage' is the name of your app.
+
+The package name, which is the name given at the top of each Go file of a directory in the source code, should always match the name of the directory it is in. Go doesn't have a concept of sub-packages, but the packages that are subdirectories are how you import that code into other parts of your app or package. The exception to this is when making a 'main' package, which is used to create an executable.
+
+Package names should be all lowercase.
+
+
+Difference between Go apps and Go Packages:
+    You could be either making an application in Go (like a web app), or a Go package to be used and shared by the community (a package). Technically all Go source code is made up of packages, but it makes sense to separate in our heads apps and packages, as just defined.
+
+  App:
+    For applications, the entry point into the app will always be in 'package main'. The package 'main' is a special package in that it represents an actual command in Go, it tells the Go compiler that the package should compile as an executable program instead of a shared library.
+
+    So in a web app the project directory path might be <workspace>/src/github.com/<githubUsername/myApp and this directory would contain an app.go file which would be the entry point to the application. The app.go file would have the main() function and would specify that it is part of 'package main'. When compiled this tells Go that this package (this whole app) is an executable and the entry point for it is main(). The main() function is only used when you have a 'main' package, which is only when you are creating an application to be executed, and not a shared package.
+
+    In this myApp application all the files in any subdirectory of the project should list their package name as the name of the directory they are in. So the myApp/routes directory will have all of its files listing 'package routes' as the first line of code in each of those files.
+
+    Since the app has the 'package main' at its root directory the application will be compiles to an executable whose entry point is the main() function.
+
+  Shared Packages:
+    For shared packages, these are Go packages you wish to share and use in other packages, there is no package 'main' and no main() function. This is because it is not an executable that is going to be run, it is simply a library of resources that other apps or packages can import to use its exported functions. The package name at the root directory of the project will just be the name of the project itself (because that is the name of directory those files are in). And all the other directories follow the same normal Go protocol for package names in files matching the directories they are in.
+
+
+
+********** init() **********
+
+Just like the main package must have a main() function that Go runs automatically, there is also a built-in init() function that gets run automatically when defined. Though the init() function is optional. The init() function can exist in the main package (in addition to main()) or in any other package.
+If put in the main function, init() runs just before main().
+
+The order of execution in the main package that has the init() function defined is:
+    imports -> const -> var's -> init() -> main()
+The order of execution in non-main packages that have the init() function defined:
+    imports -> const -> var's -> init()
+
+
+
+********** Go build vs Go install **********
+
+Two of the Go command line tools are 'build' and 'install'. They both compile Go source code to an executable, but there are important differences to note.
+
+go build
+  just compiles the source code and dependencies into an executable in the directory where you ran the command. Therefore it isn't executable globally in the GOPATH. It will recompile the hold source code each time, so if there is a lot of code it might take a little while.
+
+go install
+  this compiles the source code and dependencies into an executable in the GOPATH directory (workspace/bin) so it can be executed globally from the command line. This will only recompile files that have changed, so after the first time a project is built it doesn't make sense to use 'go build', you should just use 'go install' so the project finished compiling much quicker.
+
+
+
+********** Imports (and Exports) **********
+
+The way you use a package in your Go code is to import it.
+By convention, the name used in the code to call an import is the same as the last element of the import path. So importing "math/rand" you would call methods on rand.
+
+You can write multiple import statements or just a single factored import statement:
+      import "fmt"
+      import "math"
+  or
+      import (
+        "fmt"
+        "math"
+      )
+The latter is the better way to do it.
+
+All methods names exported from a package are capitalized - by which I mean merely capitalizing a method, function, struct, variable, or constant means those things will be exported from the package. While all lowercase names are unexported (private). This means when using an import every method you use from that will be capitalized.
+    ie.
+          import (
+            "math"
+            "fmt"
+          )
+          math.Pi                 // not math.pi
+          fmt.Printf              // not fmt.printf
+
+There are three special operators that can be used when importing packages.
+    .
+      The dot operator is means you can omit the package name when calling functions from that package.
+      ie.     import (
+                . "fmt"
+              )
+              Println()             // no "fmt." is needed
+    aliasing
+      You can set an alias for a package name by putting the alias directly before the package name.
+      ie.     import (
+                f "fmt"
+              )
+              f.Println()
+    _
+      The imports the package and executes its init() function, but you don't necessarily have to use the package at all. Using the _ operator in this way means that not using a package won't result in a compiler error.
+      ie.     import (
+                _ "fmt"       // no compiler error for not using fmt in code
+              )
+
+
+
+********** Weird Go Compiler Errors **********
+
+Go will throw an error if you import a package but don't use it.
+Go will throw an error if you declare a varaible but don't use it.
+
+
+
+********** Data Types and Variable Declaration **********
+
+The basic types in Go are:
+    bool
+    string
+    int int8 int16 int32 int64
+    uint uint8 uint16 uint64 uintptr
+    byte                // alias for uint8
+    rune                // alias for int32 (represents a Unicode code point)
+    float32 float64
+    complex32 complex128        // used for complex math numbers like 4 + 2i
+
+Unless you have a specific reason to use sized or unsigned integers you should just use the normal int data type.
+
+When you declare a variable without an explicit initial value it is given the 'zero' value for that type. The zero values are:
+      0       -   numeric types
+      false   -   booleans
+      ""      -   strings
+
+You can print a variable's data type with the %T operand inside a string in the Printf method.
+      fmt.Printf("%T", someVar)
+
+Declaring variables:
+    Use the 'var' keyword to declare variables or use the := syntax.
+    The data type actually goes after the variable name, unlike all other languages.
+          var x int, y bool
+    The 'var' keyword initializes a comma-separated list of variables.
+    If the variables are all of the same type you can just put the data type once at the end of the list of names.
+          var x, y, z int
+    You can also assign values to a list of variables by using a list of values.
+          var x, y, z int = 1, 2, 3
+    However, the Go compiler can infer the data type if you initialize the variables with values at declaration. So in that case you don't need to put the data type.
+          var x, y, z = 1, 2, 3
+          var a, b, c = false, "hello", 34.53
+    You can also use the := syntax to infer the type without even having to use the 'var' keyword. This := syntax can only be used inside functions. Outside of functions every statement begins with a keyword so := cannot be used because it doesn't work when declaring variables with the 'var' keyword.
+          a := "hi there"
+          x, y, z := 1, false, '5'
+
+    Just like with imports, if you want to declare multiple variables or constants at once you can also use the group form:
+          var (
+            a = 1
+            b = "hello"
+            c = false
+            d int             // not initialized so gets zero value of int - 0
+          )
+          const (
+            bad = "terrible"
+            green = "green"
+            answer = 42
+          )
+
+Type inference:
+    As shown immediately above, when declaring a variable without specifying an explicit type, either by using the := syntax of the var = syntax, the variable's type is inferred from the value on the right hand side.
+    If the right hand side contins an untyped numeric contast, the new variable may be an int, float64, or complex128 depending on the precision of the constant.
+
+Contants:
+    Constants are declared like variables but with the const keyword. Constant cannot be declared with the := syntax.
+
+Note that strings are immutable, so you can't change them in place. But if you really want to change a character in a string you can convert it to a byte array, set the element you want to a (single-quotes) '' character and then convert it back to a string:
+      s := "hello"
+      c := []bytes(s)         // converting s into a byte array
+      c[0] = 'H'
+      s = string(c)           // converting back to a string
+
+iota (enumeration)
+    The iota is a value given to a constant in order to create an enumeration. The first time a set of const's is given a iota value it equal to the place it is in the const declaration, starting with 0. Every constant declared in the same const declaration after that is given an incremented value.
+        const (
+          A = iota          // 1
+          B                 // 2
+          C                 // 3
+        )
+        const (
+          A string = "mommy"    // "mommy"
+          B = iota              // 1              <-- note this is 1, not 0
+          C                     // 2
+        )
+    Once a const in a const declaration has been given iota, any constants later in that const declaration that are explicitly given a value get that value and then any immediately following consts get that same value. If you assign iota again then it goes back to assigning numbers that are still incrementing from the original and keeping with how many constants have already been declared. An example will show this clearly:
+        const (
+          A = iota              // 0
+          B                     // 1
+          C bool = true         // true
+          D                     // true
+          E                     // true
+          F = "hey"             // "hey"
+          G                     // "hey"
+          H = iota              // 7
+          I                     // 8
+          J                     // 9
+        )
+
+
+
+********** Using Quotes **********
+
+In Go, single quotes, double quotes, and back ticks do different things.
+
+''
+    Single quotes are used for runes, which is an alias for a int32 type but specifically it represents unicode. So doing 'A' will evaluate to 65, 'a' will evaluate to 97.
+    If you try to use single quotes on more than one character the Go compiler will throw an error.
+
+""
+    Double quotes are used for strings.
+
+``
+    Back ticks represent only raw values - only literal text. This means it cannot contain escape sequences. The also allows multi-line strings because the endline isn't escaped, it's all raw baby!
+
+i.e.
+    fmt.Println("f\n", `f\n`, '\n')
+
+The example above prints:     f
+                               f\n 10
+Because the double quotes reads the endline escape character (and there is an extra space on the second line because the commas in the print statement each create a single space. The back ticks see it as a raw string so prints out the the f\n as a string literal, and the single quotes which take only a single character prints out the unicode for the \n escape character which is 10.
+
+
+
+********** Type Conversion **********
+
+Use the data type name as a function in order to do type conversion, like:
+    int(someVal)
+    float64(someVal)
+
+This also works for conversion to an array:
+    []byte(someStr)
+
+
+
+********** Loops **********
+
+Go only has one looping construct, a standard for-loop.
+Note that loops don't need parenthesss, but they do require braces.
+
+Syntax:
+  for init; condition; post { }
+
+Example:
+  for i:=0; i<10; i++ { }
+
+All three parts of the for-loop are optional. You can even drop the semi-colons, so in effect the for-loop can look and act like a while loop:
+  for i<10 { }
+Or you can make an infinite for-loop by dropping all three parts:
+  for { }
+
+The range form of for-loops (only used to loop over arrays/slices/maps):
+    for i, v := range sliceName {
+    }
+See Array and Slices section for more details on the for-range loop.
+
+
+
+********** Branching Statements **********
+
+If-statements, like for-loops, don't need parentheses, but they do require braces.
+
+  if x < 10 {
+  }
+
+The if-statment can actually have a variable declared by a statement ending in a semi-colon, just like the init statement in a for-loop. The variables declared there are only in scope inside the if-else-block.
+
+  if x := sum(a,b); x < 10 {
+  }
+
+Syntax for else-if and else are normal.
+
+  if condition {
+  } else if condition {
+  } else {
+  }
+
+Switch statements look pretty standard, with the addition as with other Go language constructs you don't use parentheses around the condition. Case statements break automatically without the need for a break statement, unless it ends with the 'fallthrough' keyword, in which case it will automatically run to the next case statement, regardless of the value. Use the 'default' case to handle all other values of the switch value.
+A switch statement can check the value of any data type, but all the case statements must be of the same data type in any given switch statement, which makes sense because if a case had a value that wasn't the same type as the switch value it could never match.
+
+    switch condition {
+    case value:
+      // code...
+    case value:
+      // code...
+      fallthrough               // this will always run the default case as well
+    default:
+      // code...
+    }
+
+A switch statement can optionally have an init statement with a semi-colon separating it and the value to check. You can then use the variable assigned in the init statement for the value to check in the switch.
+
+    switch init; condition {
+    }
+ie.
+    switch now := time.Now().Hour(); now {
+    case "12":
+      // code...
+    default:
+      // code...
+    }
+
+Case values are evaluated, which means they can be a function call or an expression, as long as it returns the data type given by the switch condition.
+
+Switch with no condition is the same as 'switch true', which means you are checking case statements for a boolean that equals true. This can be a good way to construct long if-then-else chains because since you are checking for the bool true, you can put conditions as the case values which get evaluated to a boolean, so in effect each case statement acts as an else-if-block.
+
+    switch {
+    case blah < yo:
+      // code...
+    case blah == yo:
+      // code...
+    case blah > yo:
+      // code...
+    }
+
+
+
+********** Functions **********
+
+Use the 'func' keyword to make functions.
+Functions are values too, so they can be passed around just like other variables, and they may be used as arguments and return values.
+Functions are closures in Go.
+
+If the parameters are of the same type, just like declaring a list of variables, you can set the data type once at the end of the parameter list
+Functions can return multiple values.
+
+    func myFunc(x int, y bool) {}
+    func myFunc(x, y int) {}           // x and y are both int
+
+The type of the function (its return value type) comes at the end of the function declaration, just like with variables.
+
+    func myFunc(x string, y int) int { return 4 }       // returns an int
+
+Return values can also be named, and follow the same Go naming/type syntax. When naming return values you must wrap the return value in parentheses. The names used for return values should simply serve to document the meaning of the return values.
+
+    func myFunc() (x int) { return }
+
+Go allows variable number of arguments using the syntax:   ...type
+
+    func myFunc(myArg ...int) { }
+
+Go allows multiple return values.
+In the code calling such a function, you just assign the function to a comma separated list of variables. Also note, a return statement without any arguments is known as a naked return and it will just automatically return the named return values, which means it can only be used when the return values are all named. Also you can't mix unnamed and named return value in a function, they have to either be all unnamed or all named. The named return values must be declared in the function, good practice is to initialize them at the top of the function.
+
+    func myFunc() (x bool, y int) {
+      x := true
+      y := 43
+      return                              // naked return, will return x,y
+    }
+    a, b = myFunc()                       // a = true, b = 43
+
+defer
+    The defer statement defers the execution of a function until the surrounding function returns. The deferred call's argument are evaulated immediately but the function call is not executed until the surrounding function returns. This would be for when you want to set the argument for an inner function in the middle of an outer function but don't want to call that inner function until the end of the outer function (immediately after it returns). You can put multiple defer statements in a function, they will execute after the function returns in the opposite order that they were reached in the code - they are put on a LIFO stack.
+
+        defer myFunc()
+
+    A possible use for the defer statement would be a function that opens a file, you could use a defer statement to close the file right after opening it, that way no matter how many return statements there might be in the function you know it will close the file after the function returns, instead of trying to put the line to close the file before each return statement.
+
+panic()
+    The panic() function basically causes the current function to stop executing and return, which then executes and deferred functions from that function, and all the outer functions run as panic functions and so keep returning immmediately until all the functions in the current goroutine have returned, at which point the program crashes.
+
+recover()
+    The recover function regains control of a panicking goroutine. Recover is only useful inside deferred functions since those are the only things still executing after panic has been called.
+    During normal execution a call to recover will return nil and have no other effect. If the current goroutine is panicking, a call to recover will capture and return the value given to the panic function and resume normal execution.
+
+
+Function as a parameter and return value:
+    func func1(funcName func(type1, type2) funcReturnType) funcReturnType { }
+  ie.
+    func func1(fn func(int, str) int) func(int) int { } 
+  You can also define a function as a data type and thereby more easily define a function as a parameter to another function.
+  Syntax:
+    type typeName func(inp1 iType1 , inp2 iType2 [, ...]) (res1 rType1 [, ...])
+
+
+
+********** Pointers **********
+
+Create a pointer:
+    var p *int
+
+The & operand generates a pointer to its operand:
+    a := 42
+    p = &a              // p is a pointer to a
+
+The * operator evalautes to the pointer's underlying value, called dereferencing the pointer.
+    a := 42
+    p = &a
+    p                   // the memory location the pointer points to
+    *p                  // 42
+
+Unlike C, Go has no pointer arithmetic.
+
+
+
+********** Type keyword **********
+
+The 'type' keyword is used anytime you want to define a new data type. You can use it either when defining a struct or when creating a new alias for a data type that already exists.
+
+Making a struct type:
+    type MyStruct struct { }
+
+Making an alias for a type:
+    type MyFloat float64
+
+When you make an alias for a type it is actually creating a separate type, so even though MyFloat's representation is as a float64, they are two different types and so are not interchangeable.
+
+
+
+********** Structs **********
+
+A struct is a collection of fields.
+Go does not have classes, however you can define methods on types, like structs. To see how to do this go to the Methods section below.
+
+Declare a struct using the 'type' and 'struct' keywords.
+    type structName struct {
+    }
+ie.
+    type Person struct {
+      name string
+      age int
+    }
+
+
+Create a new instance of the struct like so:
+      s := StructName{arguments}
+  ie.
+      s := Person{"Todd", 33}             // initialize values without field names
+      s := Person{name:"Todd", age:33}    // initialize values with field names
+      s := struct{name string; age int}{"Todd",33}    // make anonymous struct
+
+  When creating a new instance of a struct the values placed in the values in the constructor hash are assigned in the order that the fields are listed in the struct definition. If you initialize all the fields in the struct then these values can be unnamed, like shown above. Or you can name specific ones to initialize and the other fields will be assigned their 'zero' value (0, false, or "").
+      s := Person{age: 33}          // creates a struct of {name: "", age: 33}
+  An empty struct initializing hash means that all the fields in the struct will be initalized to the 'zero' values for their data types.
+      s := Person{}                 // creates a struct of {name: "", age: 0}
+
+
+Access fields in a struct using the dot opertor.
+      StructName.field
+  ie.
+      Person.name
+
+
+Accessing struts with pointers:
+  Go allows some syntactic sugar over dereferencing pointers to structs to make it less ugly. Normally to use a pointer on a struct it would have to look like (*p).X, but the allowed syntax lets you use p.X instead.
+      todd := Person{"Todd", 33}
+      p := @todd
+      p.name                      // "Todd"
+      p.name = "Kent"
+      p.name                      // "Kent"
+
+Struct literals:
+  Printing out a struct literal prints it out like:     {value value value}
+
+Embedded fields:
+  Embedded fields in structs are when you define a field without a name (by type only). When the embedded field is a struct itself, then the fields of the embedded struct will implicitly be directly in the outer struct.
+    ie.
+      type person struct {
+        name string
+        age int
+        weight int
+      }
+      type coder struct {
+        person
+        languages []string
+        experience int
+      }
+  In the above example, person is an embedded field in struct coder. So the name, age, and weight fields in the person struct are put directly in the coder struct along with the languages and experience fields.
+
+
+
+********** Arrays **********
+
+An array's length is part of its type, so you cannot resize an array.
+
+Declaring an array:
+    Syntax:     var arrName [size]type
+  ie.
+    var a [4]int              // declares an array of 4 "zero" ints [0,0,0,0]
+    var a [5]int{1,2,3,4,5}   // declares an array [1,2,3,4,5]
+    var a [5]int{1,2,3}       // declares an array [1,2,3,,0,0]
+    a := [2]int               // can use the variable declaration shorthand
+    a := [...]int{3,4,5}      // using ... instead of size lets Go calculate size
+
+Accessing array element:
+    arr[index]
+
+Two-Dimensional Array Example:
+    doubleArray := [2][4]int{[4]int{1,2,3,4}, [4]int{5,6,7,8}}
+  Or written more concisely:
+    doubleArray := [2][4]int{{1,2,3,4}, {5,6,7,8}}
+
+
+
+********** Slices **********
+
+  A slice is a dynamically sized, flexible view into the elements of an array. It's a reference that points to an underlying array. It doesn't have a fixed size. A slice can either be created by itself (without declaring an array first) or it can be made from a part of an already existing array.
+
+  Slices can be made from arrays with the following syntax.
+      var arr [size]type{}
+      var sliceName []type = arr[startIndex:endIndex]
+  When you make a slice the range created from the array is inclusive of the start element and exclusive of the end element.
+      var arr [6]int{0,1,2,3,4,5}
+      var slice = []int = arr[1:4]        // slice is [1,2,3]
+
+  Slices can be made without first making an array.
+      slice := []byte{'a','b','c','d'}
+
+  Slices don't actually store any data, they are like references to arrays. Changing the elements of a slice modifies the corresponding elements of its underlying array. Other slices that share that same section of the array will see those changes too.
+
+  You can make a slice literal with the same syntax as an array except you don't give a size to it.
+      var slice []int{1,2,3}          // this makes a slice, not an array
+
+  When making a slice you can specify the startIndex, then endIndex, both, or none. When you don't specify one it means the start or end of the array.
+      [0:5]
+      [:5]
+      [2:]
+      [:]
+
+Length and Capacity
+  Slices have both a length and a capacity. The length of a slice is the number of elements it contains. The capacity of a slice is the number of elements in the underlying array, counting from the first element of the slice.
+      len(slice)          // get length of slice
+      cap(slice)          // get capacity of slice
+  You can extend a slice's length by re-slicing it, provided it has sufficient capacity.
+
+Nil slices
+  The 'zero' values of a slice is nil. A nil slice has a length and capacity of 0 and has no underlying array.
+
+make()
+  The built-in make() function is used to make a slice. It makes a zeroed array and returns a slice that refers to that array.
+  Syntax:
+      make(slice, length, capacity)           // capacity argument is optional
+  ie.
+      a := make([]int, 5)
+      a := make([]string, 0, 10)
+
+Containing other slices:
+  Slices can contain any type, including other slices.
+      // Create a tic-tac-toe board.
+      board := [][]string{
+        []string{"_", "_", "_"},
+        []string{"_", "_", "_"},
+        []string{"_", "_", "_"},
+      }
+
+Append to a slice:
+  append(slice, newValue)
+
+Range of an array/slice:
+  The range form of a for-loop iterates over an array or slice or map. When ranging over a slice, two values are returned for each iteration - the index and a copy of the element at the index.
+
+      for i, v := range sliceName { }
+
+  If you want to skip the index or value you can assign it to _. If you only want the index you can just drop the value entirely.
+
+      for _, v := range arrayName { }           // value only
+      for i := range slicename { }              // index only
+
+
+
+********** Maps **********
+
+A map maps keys to values, it is what Go calls hashes/dicts.
+The 'zero' value of a map is nil. A nil map has no keys, nor can keys be added.
+The  make() function returns a map of the given type, initialized and ready for use. Maps are a reference type, if two maps point to the same underlying data then any change will affect them both.
+
+Create a map using map type or make():
+    var m map[keyType]valType{}
+  ie.
+    var m map[string]int{}                  // creates empty {string: int} map
+    var m map[string]int{"a": 12, "b": 89}  // creates the specified map
+
+  Use make(), passing in a map, to create an empty map.
+    var m = make(map[string]int)
+
+Access values in a map:
+    m[key]
+
+Output of a map:
+  Printing out a map variable prints like so:
+    m := map[string]int{"hello": 10, "blah": 99}
+    fmt.Println(m)                  // map[hello:10 blah:99]
+
+Mutating maps:
+  Insert or update:     m[key] = elem
+  Retrieve:             elem = m[key]
+  Delete:               delete(m, key)
+  Test key is there:    elem, ok = m[key]
+      If key is in m, ok is true. If not, ok is false and elem is the 'zero' value for that data type.
+
+
+
+********** Make and New **********
+
+The built-in make() function does memory allocation for built-in models, specifically for map, slice, and channel.
+So make(T, args) can be used to make a slice, map, or channel and returns a type T with an initial value. The reason for this is because the underlying data of these three types must be initialized before they point to them. The make() function returns non-zero values.
+
+The new(T) function is for type T's memory allocation. It allocates zero-value to a type T memory and returns its memory address which is the value of type *T. So it returns a pointer which points to T's zero-value.
+
+
+
+********** Methods **********
+
+Go does not have classes, but you can defined methods on user defined types/structs, but only on types that are defined in the same package as the method (so you can't define methods on, for example, built-in data types).
+A method is a function with a special receiver argument. The receiver appears in its own argument list between the func keyword and the method name. The receiver is the type/struct the method is defined on.
+
+But note that methods on structs that use the value as the reciever cannot mutate the fields on those structs, because the value (shown as 'self' in the syntax example below) is just a copy of the struct that is being operated on, because in Go function arguments are always pass-by-value. To actually mutate fields in a struct with methods on that struct the receiver must be a pointer to the struct. This is shown below after these first examples.
+
+Syntax:
+    func (self type) funcName(params) returnType { }
+ie.
+    // create a struct
+    type Coordinate struct {
+      x, y float64
+    }
+    // define the method on the struct
+    func (coord Coordinate) Print() {
+      fmt.Println()
+    }
+
+    // create an alias of a type
+    type MyInt int
+    // define the method on the alias
+    func (num MyInt) Double() int {
+      return num*2
+    }
+
+Methods can be declared with pointers receivers. This means that the receiver type has the literal syntax *T for some type T (given that T itself cannot be a pointer). Only when a method has a pointer receiver can a method on a struct mutate fields in the struct. The other reason to use a struct pointer receiver instead of a struct value receiver when defining a method is to avoid copying the value on each method call, it can be more efficient to use pointer receivers if the receiver is a large struct.
+
+Syntax:
+    func (self *type) funcName(params) returnType { }
+ie.
+    // create a struct
+    type Coordinate struct {
+      x, y float64
+    }
+    // define the method on the struct
+    func (coord Coordinate) edit(x, y float64) {
+      coord.x = x
+      coord.y = y
+    }
+
+When calling the method on a struct, the thing the method is being called on can be either the struct itself or a pointer to the struct no matter if the receiver is a struct or a pointer to a struct. Both work just fine. Which is different than when a function parameter is a pointer, which would cause a compiler error if a value and not a pointer is sent as an argument. So methods are a little bit less strict that way.
+
+It is better practice to use either only value receivers or only pointer receivers for all methods on a given type. So if you need methods on a struct that manipulates its fields then all your methods on that struct should have pointer receivers.
+
+
+
+********** Interfaces **********
+
+An interface type is defined as a set of method signatures.
+A value of interface type can hold any value that implements those methods.
+There is no explicit declaration of intent on behalf of a type to implement an interface. A type implements an interface simply by implementing its methods.
+
+Create an interface:
+    type InterfaceName interface {
+      MethodName() returnType
+    }
+
+NEED MORE NOTES ON INTERFACES and the rest of the slides in the interface Go tour section - slides 9 through 26
+
+
+
+********** Some Built-in Packages **********
+
+time
+fmt
+runtime
+math
+strings
+
+
+
+
+********** x **********
+********** x **********
+********** x **********
+********** x **********
+********** x **********

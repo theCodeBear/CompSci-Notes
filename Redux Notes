@@ -1,0 +1,238 @@
+Redux Notes
+
+
+Basic parts:
+
+  Store
+  Actions
+  Reducers
+  Action Creators
+  Views
+
+
+Store - a javascript object where the entire state for the application is held. This data should be immutable and as flat as possible. It is read-only, as it can only be updated through the use of actions.
+
+Actions - javascript objects that inform the store how it needs to be updated. These actions are sent out when the state needs to be changed. The only required key for an action object is the type, which just allows the action to let the reducer know what type of action it is and therefore how it should be handled.
+
+Reducers - functions that update the state based on actions. It's basically a big switch statement to handle each different type of action. It should be a pure function, meaning it does not edit the state but copies the state and changes that copy with however the state should change and then returns the new state, it should have no side effects, and the same input should always give the same output.
+
+Action Creators - functions that should exist outside of the views or reducers which handle the logic for creating actions, so that they can be used from anywhere in the application. They simply create the action object and return it. These are very good for documentation purposes because they represent a complete list of the ways the application state can be changed. Since the reducers should be pure functions, an Action Creator is a good place to put side effect or do async stuff before.
+
+Views - React components (or any other view layer)
+
+
+
+Sending an action to the reducer:
+  In order to change application state you must dispatch an action (using an Action Creator) to the reducer, which will then send out the new state to the view and the view will be updated.
+  In order to do this you call the dispatch() function which is built into the redux store object. The dispatch() function will take an Action Creator as its argument, which will return an action object to the dispatch() function, which sends that action to the reducer which will update application state.
+
+  For example,
+
+    HTML:
+      <button onclick='store.dispatcher(actionCreator(data))'></button>
+
+
+Reducer Composition:
+  So there will be a root reducer which is fine if there are a small number of types of actions for the application. But as the application grows it becomes unmaintainable to just have a single reducer, so the reducer can hand off certain types of incoming actions to more specialized reducers. This is called Reducer Composition.
+
+Creating Reducers:
+  A reducer is a function that takes the current state and the action as arguments. It is just a big switch statement to handle all the different types of actions. To use Reducer Composition you can just return an object from the root reducer that has a key for each different kind highest level key of the store object (all parts of the store must be returned from the root reducer because this is what makes the store (and updated it each time). The values for those keys are simply function calls to the other reducers, which return the state for each part of the store. In this case the other reducers would contain the actual switch statements for each type of actions they cover. Obviously if an action affects multiple parts of the application state multiple reducers can have case statements for the same action type.
+
+  For example, in a to-do application with to-do items and authors:
+
+    Root Reducer:
+
+      const todoApp = (currentState ={}, action) => {
+        return {
+          todos: todos(currentState.todos, action),
+          authors: authors(currentState.authors, action)
+        };
+      };
+
+
+    Other reducers:
+
+      const todos = (currentState = [], action) => {
+        switch(action.type) {
+          case 'ADD_TODO':
+            const nextState = [
+              ...currentState,
+              {
+                id: action.id,
+                task: action.task,
+                completed: false
+              }
+            ];
+            return nextState;
+            break;
+          default:
+            return currentState;
+        }
+      };
+
+      const authors = (currentState = [], action) => {
+        switch(action.type) {
+          case 'ADD_AUTHOR':
+            const nextState = [
+              ...currentState,
+              {
+                id: action.id,
+                name: action.name,
+                role: action.role
+              }
+            ];
+            return nextState;
+          default:
+            return currentState;
+        }
+      };
+
+
+
+
+
+Getting Started:
+
+After you've installed redux through npm you need to create three files to get started with the redux architecture. These files will be to create initializes and export the store object, creating a file for the root reducer, and a file to hold the action creators.
+
+store:
+  A file that initializes the store and exports it. I put this in the src/ directory as createStore/store.js. Here you import the createStore function from the redux package and call it with the rootReducer as its argument. This will connect the store with the root reducer and initialize the store (state) using the root reducer. In here I also dispatch any action creators meant to initialize data for the app, like getting data from a database.
+
+  i.e.      src/store/createStore.js
+      'use strict';
+      import { createStore } from 'redux';
+      import rootReducer from '../reducers/rootReducer';
+      import { initMoods, initRules } from './../actions/actions';
+      const store = createStore(rootReducer);
+      store.dispatch(initSomeData());
+      store.dispatch(initSomeOtherData());    // etc...
+      export default store;
+
+root reducer:
+  The root reducer file I put under the src/ directory as reducers/rootReducer.js. Here I import any sub-reducers I will be using and use them to populate the state object in the root reducer function. I also use this file to create an initial state to default the current state to on app load. Then export the rootReducer to be used in the createStore.js file, which is the only place it needs to be used. The state returned by the root reducer is just an object of the whole application state and it uses the sub-reducers to fill in its keys.
+
+  i.e.      src/reducers/rootReducer.js
+      'use strict';
+      import subReducer1 from './subReducer1';
+      import subReducer2 from './subReducer2';
+      // etc...
+
+      const initialState = {
+        key1: {},
+        key2: [],
+        // etc...
+      };
+
+      const rootReducer = (currentState = initialState, action) => {
+        var state = {
+          key1: subReducer1(currentState.key1, action),
+          key2: subReducer2(currentState.key2, action),
+          // etc...
+        };
+        return state;
+      };
+
+      export default rootReducer;
+
+action creator:
+  The action creator file, I put it in the src/ directory as actions/actions.js, which for big applications can be split up into multiple files, holds all the functions that are called by the app to create the action object sent to the store.dispatch() method which calls the root reducer, and then in turn each sub reducer is called and where ever the action type matches it creates a new state, meanwhile the other sub reducers not meant for that action just return the current state for that key of the store. So basically this is just a file that has a bunch of functions that get exported for use in the app so the app can send actions to the store.
+
+  i.e.        src/actions/action.js
+      'use strict';
+      import store from './../store/createStore';
+
+      // Action Creators
+
+      const initAppointments = (appointments) => {
+        return {
+          type: 'INIT_APPOINTMENTS',
+          appointments: appointments
+        };
+      };
+
+      const addAppointment = (appointment) => {
+        return {
+          type: 'ADD_APPOINTMENT',
+          date: appointment.date,
+          time: appointment.time,
+          eventType: appointment.type,
+          mood: appointment.mood,
+          rule: appointment.rule,
+          id: appointmentId++
+        };
+      };
+
+      export {
+        initAppointments,
+        addAppointment
+      };
+
+Now what's left is to create the sub reducers that the root reducers use to update the store. These are just typical redux reducers, basically a switch statement that return the new state. I put these in the src/reducers/ directory where the root reducer file lives. The reducer should set a default value for the current state, which could just be {} or it could have keys in it or whatever. Here is an example having something to do with calendar dates.
+
+  i.e.    src/reducers/subReducer1.js
+      'use strict';
+      import moment from 'moment';
+      import store from './../store/createStore';
+
+      const hoverReducer = (currentState = {appointments: []}, action) => {
+        let nextState;
+        switch(action.type) {
+          case 'SET_HOVER_DATE':
+            let appointments = store.getState().appointments.slice();
+            appointments = appointments.filter(el => {
+              return action.date === moment(el.date).format('MM/DD/YYYY');
+            });
+            nextState = {date: action.date, appointments};
+            return nextState;
+          case 'CLEAR_HOVER_DATE':
+            return { appointments: [] };
+          default:
+            return currentState;
+        }
+      };
+
+      export default hoverReducer;
+
+
+Once you have the sub reducers you currently are using in the root reducer then redux is all setup. Now you just import the store into index.jsx so that it runs the store code, which in turn runs the root reducer and in turn runs the sub reducers.
+
+      import store from './store/createStore';
+
+Now redux is up and running.
+
+
+
+
+
+
+Usage:
+
+To get the current state of the application at any time (the store), import the store into a file and run store.getState();
+        import store from './store/createStore';
+        console.log('state:', store.getState());
+
+To send actions to the store import the store/createStore file into a file and and the the store.dispatch() method and pass in an action creator with the data you want to send to the store to update the applciation state. This could called from some UI event in a component, for example.
+        import store from './store/createStore';
+        store.dispatch(someActionCreator({dataToUpdateStore}));
+
+To observe when the state changes, in order to update a view (React component, or any other type of view) use the store.subscribe() method in which you pass a callback that will be run anytime the store (state) has been updated. So in React in a component you can put the store.subscribe() method in the constructor of a component and use the updated store data, store.getState(), to update the internal state of the component, which will then cause React to re-render the component with the updated state.
+
+        import store from './store/createStore';
+
+        // inside constructor method of a React component:
+        store.subscribe(() => {
+          console.log('changed state', store.getState());
+          this.setState({
+            foo: store.getState().foo,
+            bar: store.getState().bar
+          });
+        });
+
+There is one action creator for each action type. That is to say that each action creator will update the store in its own way. So anytime you need to update the application state in a new way you have to make a new action create creator function in actions/actions.js, export it, and then add that action as a case statement to the appropriate reducer. Note that updating the state may update multiple parts (keys) of the store in which case you would need to add a case statement to each relevant sub reducers for that action type. Wherever you call store.dispatch() with that action creator you need to import that action creator from the actions/actions.js file.
+
+To add a whole new set of data to the application state (adding a new key to the store), you need to create a new sub reducer with whatever action types you want to start off with. You then import that reducer into the rootRecuder.js file and add that key-value pair to the root reducer's state object. You then add whatever action creators you want for that part of the application state to the actions/actions.js file, and export it. Wherever you will be updating that part of the store from in the code you will have to import the appropriate action creators to use them.
+
+
+
+That pretty much handles setup and basic usage of Redux!
+

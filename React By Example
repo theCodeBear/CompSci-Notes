@@ -1,0 +1,458 @@
+React By Example
+
+
+
+
+
+========== Make the simplest React Component ==========
+
+// jsx
+  import React from 'react';
+  import {render} from 'react-dom';
+
+  render(
+    <p> This is the simplest React component </p>,
+    document.getElementById('root')
+  );
+
+// html body
+  <div id='root'></div>
+
+Notes on the above example:
+  Components that will be placed directly in the HTML, as opposed to be placed within other components, must import the 'react-dom' module from npm. This gives you access to the render() function. Of course you must also import 'react' itself which in this example processes the HTML inside the component. Any React component that is mounted directly into the DOM, again meaning not placed within another component, must call ReactDOM's render method, which requires two arguments. First, either the HTML that will go within the component (without quotation marks) or a self-closing React component tag with the name of the variable that holds the component (an example of this will be the next example). Second, a reference to the element in the DOM you wish to mount the component to, usually use document.getElementById(). This method of making a React component can only be used when the only thing the component has is a template, and furthermore you cannot put this component inside of another component, so it can only be used for components that actually are rendered to the DOM directly. You can put other components in this component's template though using this method.
+
+
+
+
+
+
+
+
+========== Convert simple React Component into React.createClass ==========
+
+// jsx
+  import React from 'react';
+  import {render} from 'react-dom';
+
+  let SimpleComponent = React.createClass({
+    render() {
+      return (
+        <p> This is a React component made with createClass </p>
+      );
+    }
+  });
+  render(<SimpleComponent />, document.getElementById('root'));
+
+// html body
+  <div id='root'></div>
+
+Notes on the above example:
+  This is the primary way to build React components, as opposed to the first example in which all you can do is supply a template. So using this way allows you to compose components - build up components from child components. The key thing here is the createClass() method on the React object from the 'react' module. React.createClass() returns your component. So you assign it equal to a variable which you then use in the render method, instead of directly inserting the template into the render method as in the first example. React.createClass() takes one argument which is just a plain JavaScript object. The one requirement of this object is that you give it a render() method which returns the component's template. Also note that React components by convention are capitalized, to distinguish them from standard html elements.
+
+
+
+
+
+
+
+
+
+
+========== CSS classes, Commenting out JSX code ==========
+
+// jsx
+  import React from 'react';
+  import {render} from 'react-dom';
+
+  let SimpleComponent = React.createClass({
+    render() {
+      return (
+        <div>
+          <p className='main-p'> This tag has a class assigned on it. </p>
+          {/*<div> This is commented out in JSX </div>*/}
+        </div>
+      );
+    }
+  });
+  render(<SimpleComponent />, document.getElementById('root'));
+
+// html body
+  <div id='root'></div>
+
+Notes on the above example:
+  In JSX you have to use className instead of class to put CSS classes on tags. To comment out code in JSX the only thing that works is using block comments /* */ and wrapping it in curly braces like so, {/* */}, as shown in the example.
+
+
+
+
+
+
+
+
+
+
+========== Composing Parent-Child Components ==========
+
+// jsx
+  import React from 'react';
+  import {render} from 'react-dom';
+
+  let ParentComponent = React.createClass({
+    render() {
+      return (
+        <div>
+          <h1>Header of Parent Component</h1>
+          <ChildComponent />
+        </div>
+      );
+    }
+  });
+
+  let ChildComponent = React.createClass({
+    render() {
+      return (
+        <p> This is the child component </p>
+      );
+    }
+  });
+
+  render(<ParentComponent />, document.getElementById('root'));
+
+// html body
+  <div id='root'></div>
+
+Notes on the above example:
+  It is very easy to compose a component from other components by creating a component as normal and putting its tag inside the template for the parent component. Notice here I wrap the two HTML tags in the ParentComponent template inside a div tag, each component in React can only have a single root tag, so if you don't have a single root tag in a component you need to wrap a tag around everything. React component tags must be closed. Normally you can just make them a self closing tag with the syntax: <ComponentName />, but they can also have an opening and closing tag if you need give a component some inner content.
+
+
+
+
+
+
+
+
+========== this.props.children and providing innerHTML to a component ==========
+
+// jsx
+  import React from 'react';
+  import {render} from 'react-dom';
+
+  let ParentComponent = React.createClass({
+    render() {
+      return (
+        <div>
+          <h1>Header of Parent Component</h1>
+          <ChildComponent>
+            <p>This is between the Child tags</p>
+          </ChildComponent>
+        </div>
+      );
+    }
+  });
+
+  let ChildComponent = React.createClass({
+    render() {
+      return (
+        <div>
+          <p> This is the child component </p>
+          <p> {this.props.children} </p>
+        </div>
+      );
+    }
+  });
+
+  render(<ParentComponent />, document.getElementById('root'));
+
+// html body
+  <div id='root'></div>
+
+Notes on the above example:
+  Here when the ChildComponent is used inside the ParentComponent's template we use opening and closing tags instead of a self-closing tag. This allows us to give the ChildComponent some content. Since the content of a DOM element is considered children, within the ChildComponent you can access its content with this.props.children. The 'This is between the Child tags' content will be put in that second <p> tag in the ChildComponent, and both of those <p> tags will be rendered where the ChildComponent is used inside the ParentComponent. Also, in React every component has two main objects associated with it, the props object and the state object. Since they are objects on the component you have to reference the compoent with the 'this' keyword. The props object in React is passed into the component and it doesn't change unless new props are passed in, at which point the component will re-render. By this I mean the props object is immutable, if you try to assign a new value to a property on the props object React will throw an error. Props are passed into a component, meaning that the parent owns it, this is why changing it isn't allowed in that actual component where it is used. The only time it can change is when the component is re-rendered, for example you could set a props property of the child component equal to a state property of the parent (state will be explored in a few examples from now), so whenever that state property on the parent is changed it would update the props of the child component and so the child would re-render with different props. Basically the props object is external and is controlled by whatever renders the component. Other than passing in inner content for a component, props also gets stuff by assigning attributes to a component's tag in a template.
+
+
+
+
+
+
+
+
+========== Assigning attributes to components to use this.props ==========
+
+// jsx
+  import React from 'react';
+  import {render} from 'react-dom';
+
+  let ParentComponent = React.createClass({
+    render() {
+      return (
+        <div>
+          <h1>Header of Parent Component</h1>
+          <ChildComponent nickname='Little Billy' />
+        </div>
+      );
+    }
+  });
+
+  let ChildComponent = React.createClass({
+    render() {
+      let name = this.props.nickname;
+      return (
+        <div>
+          <p> {name} </p>
+          <p> {this.props.nickname} </p>
+        </div>
+      );
+    }
+  });
+
+  render(<ParentComponent />, document.getElementById('root'));
+
+// html body
+  <div id='root'></div>
+
+Notes on the above example:
+  Here we are passing in an attribute to the ChildComponent in the ParentComponent's template. The attribute is 'nickname' and its value is 'Little Billy'. So the props object in the Child component will have a 'name' property whose value is 'Little Billy', which we can access in the child with this.props.nickname. Notice in the ChildComponent I show two different methods of using a props variable. Either you can use it directly in the template as this.props.xxxx or you can assign it to a variable in the render() method and then use that varaible in the template. Either way, React's syntax for including variables in templates is surrounding it with single curly braces, as can be seen. There is more to the createClass() argument option than just the render() method, you can define your own methods on a component.
+
+
+
+
+
+
+
+
+========== Adding methods to Components ==========
+
+// jsx
+  import React from 'react';
+  import {render} from 'react-dom';
+
+  let ParentComponent = React.createClass({
+    render() {
+      return (
+        <ChildComponent nickname='Little Billy' />
+      );
+    }
+  });
+
+  let ChildComponent = React.createClass({
+    print(name) {
+      console.log(`${name} is my name!`);
+    },
+
+    render() {
+      let nickname = this.props.nickname;
+      return (
+        <button onClick={this.print.bind(null, nickname)}>{nickname}</button>
+      );
+    }
+  });
+
+  render(<ParentComponent />, document.getElementById('root'));
+
+// html body
+  <div id='root'></div>
+
+Notes on the above example:
+  Here we've added the print() method to the ChildComponent. As you can see you can add your own methods to any component simply be defining that method in the Component object passed to createClass(). We access a method on the component as expected in normal JavaScript, using this.methodName. So we assign the ChildComponent's print() method as its button's click handler (notice that we are just using the standard HTML attribute onClick for designating the click handler, except that here the event handler is camel-cased, whereas in HTML it would just be all lowercase, onclick. In this example I give the print() method a parameter that refers to the component's this.props.nickname property, so we have to use .bind() on the method when we set it as the click handler, passing in null for the context because it doesn't matter what it is, and the nickname. So you see how to pass arguments to component methods. Instead of passing in an argument we could have just used this.props.nickname directly in the print() method, thereby avoiding the need for the .bind() invocation. You can also pass in functions to component's this.props object in order to run some operation on a parent component when some user interaction occurs on the child component.
+
+
+
+
+
+
+
+
+
+========== Using state, passing parent methods to child components ==========
+
+// jsx
+  import React from 'react';
+  import {render} from 'react-dom';
+
+  let ParentComponent = React.createClass({
+    getInitialState() {
+      return { clicked: 0 };
+    },
+
+    updateNum() {
+      this.setState({clicked: ++this.state.clicked});
+    },
+
+    render() {
+      return (
+        <div>
+          <h1> Clicked: {this.state.clicked} times </h1>
+          <ChildComponent updateNum={this.updateNum} />
+        </div>
+      );
+    }
+  });
+
+  let ChildComponent = React.createClass({
+    render() {
+      return (
+        <button onClick={this.props.updateNum}>{nickname}</button>
+      );
+    }
+  });
+
+  render(<ParentComponent />, document.getElementById('root'));
+
+// html body
+  <div id='root'></div>
+
+Notes on the above example:
+  Introducing a few new things here including a React component's state object, the getInitialState() built-in component method, the this.setState() method, and passing a method into a component on its props object.
+  Along with the props object each component also has a state object. Whereas props are things that are passed into a component and can't change, state tracks the internal state of a component (the data associated with a component). Just like you reference props with this.props.xxxx, you reference the state object with this.state.xxxx. You set the initial state of a component using React's component's built-in getInitialState() method, this method is only run one time in the lifetime of a component, and that is directly before its initial rendering. Any state properties you intend to use must be initialized in the getInitialState() method. You simply return an object in which each key is a property on the component's state object. A component's state changing is what triggers a re-rendering of the component (the render method is called again), so changing state is what updates the UI. By default a state is re-rendered whenever its state or props changes, an example of props changing are if a prop passed to a child component is the a variable on the state of a parent, therefore when that state property on the parent updates the child's props would update, so the child would re-render. You update the state by using the built-in this.setState() method which takes an object as its argument whose keys are the properties on the state that you are updating. Note you can also force the component to re-render by calling this.forceUpdate().
+  Also as can be seen you can pass a function to a components props object by passing it in the template tag for that child component using the single curly brace syntax, like any other variable.
+  This example just updates the parent component's number state with whenever the child component's button is clicked, thereby causing the parent component to re-render with the updated state.
+  Overview or props and state:
+  Props are external data passed into a component and controlled by the parent of that component, they are immutable and React throws an error if you try to change something on this.props. State is data internal to a component, it tracks the interal state of the component, these are meant to change in the component because that is how the UI changes in React. Anytime a component's state changes, or its parent sends in changed props, that component will re-render, thus updating the UI.
+
+
+
+
+
+
+
+
+
+========== Using raw markup in React component ==========
+
+// jsx
+  import React from 'react';
+  import {render} from 'react-dom';
+
+  let Raw = React.createClass({
+    getInitialState() {
+      return { rawHTML: "<strong>This is doin' it raw!</strong>" };
+    },
+
+    rawMarkup() {
+      return { __html: this.state.rawHTML };
+    },
+
+    render() {
+      return (
+        <span dangerouslySetInnerHTML={this.rawMarkup()} />
+      );
+    }
+  });
+
+  render(<Raw />, document.getElementById('root'));
+
+// html body
+  <div id='root'></div>
+
+Notes on the above example:
+  What you return from the render method of each component in JSX is not actual HTML, it is HTML-like code where each element is actually a React component element just like any of the components you make yourself. React provides built-in components for all HTML tags. This would be obvious if we weren't using JSX. If you just use normal JavaScript instead of JSX the difference would look like this:
+      JSX:    <h1>This is a header in JSX</h1>
+      JS:     React.DOM.h1(null, 'This is a header in JS');
+  So as you can see JSX is just syntatic sugar that gives us something that looks like HTML so it is easier to code and read, but JSX compiles it down to raw JavaScript where each JSX element is actually a React component. This means you aren't actually putting HTML in the code, but React is taking your component templates and converting them to HTML. In doing this React takes steps to sanitize the HTML output in order to protect from XSS attacks (Cross-Site-Scripting). The purpose of this example, however, is to show that React does allow you to put raw HTML into a component template using the ominously named dangerouslySetInnerHTML attribute in order to warn you need to be careful when putting in raw HTML.
+  If we were to try to put this.state.rawHTML straight into the template with a line like this:
+        <span>{this.state.rawHTML}</span>
+  What we would get is the a string output to HTML that includes the HTML tags, rather than rendering it as HTML. So the webpage would display the literal rawHTML string. In order to have React interpret it as HTML you need to put the dangerouslySetInnerHTML attribute either in an elements opening tag or a self-closing tag, and set it equal to the invocation of a function we will make on the component called rawMarkup. The dangerouslySetInnerHTML tag expects to be assigned an object with a __html property whose value is a string that contains raw HTML. So our rawMarkup function simply returns this object as can be seen in the example. Now the component will render our raw HTML string.
+
+
+
+
+
+
+
+
+
+========== componentDidMount and AJAX calls ==========
+
+// jsx
+  import React from 'react';
+  import {render} from 'react-dom';
+
+  let Raw = React.createClass({
+    getInitialState() {
+      return { githubData: {} };
+    },
+
+    componentDidMount() {
+      $.get(this.props.url, (data) => this.setState({githubData: data}));
+    },
+
+    render() {
+      return (
+        <div>{this.state.githubData.name}</div>
+      );
+    }
+  });
+
+  render(<Raw url='https://api.github.com/users/theCodeBear' />, document.getElementById('root'));
+
+// html body
+  <div id='root'></div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+Notes on the above example:
+  Here we are introducing a component lifecycle method. These are methods that get automatically run on each component by React at different points in the lifecycle of that component. React has seven component lifecycle methods, componentDidMount() is one of them. It is invoked only once, immediately after the initial rendering of the component. In this example we use this lifecycle method as a good place to make an AJAX call to get the data we need.
+  React is just a library for building composable components, so it doesn't have built-in AJAX features like Angular, this keeps React a small library focused on just one thing, and you are free to use vanilla JavaScript or jQuery or any other library for all your functionality needs. Here we include jQuery in order to use its AJAX functions, specifically $.get() in this example. The Github API returns a JSON object of data for my Github user profile, and since the DOM won't render an object I'm just rendering my name from my Github user data.
+  Note that the seven React component lifecycle methods are: componentWillMount, componentDidMount, componentWillReceiveProps, shouldComponentUpdate, componentWillUpdate, componentDidUpdate, and componentWillUnmount.
+
+
+
+
+
+
+
+
+
+========== handling input ==========
+
+// jsx
+  import React from 'react';
+  import {render} from 'react-dom';
+
+  let FormComponent = React.createClass({
+    getInitialState() {
+      return { name: '', submitted: '' };
+    },
+
+    handleNameChange(e) {
+      this.setState({name: e.target.value});
+    },
+
+    handleSubmit(e) {
+      e.preventDefault();
+      let name = this.state.name;
+      this.setState({submitted: `submitted by ${this.state.name}!`, name: ''});
+    },
+
+    render() {
+      return (
+        <div>
+          <form onSubmit={this.handleSubmit}>
+            <input type='text' placeholder='Your name' value={this.state.name} onChange={this.handleNameChange} />
+          </form>
+          <p> Your name is: {this.state.name} </p>
+          <p> {this.state.submitted} </p>
+        </div>
+      );
+    }
+  });
+
+  render(<FormComponent />, document.getElementById('root'));
+
+// html body
+  <div id='root'></div>
+
+Notes on the above example:
+  Here we are just creating a simple one-textfield form and displaying the changes as you type. It's pretty simple, we just use the built-in HTML onChange attribute to reference a method on the component to run when the user makes changes in the textfield, except that (as stated in a previous example) in normal HTML it is just onchange, whereas in React it is camel-cased. In React all event attributes on the DOM are camelcased instead of lowercased like in HTML. That method just updates the state with what is currently in the textfield using the event's .target.value property. We also reference the state property 'name' as the value for the input field so that if we wanted we could give it an initial value when the component first renders, though here in getInitialState() we are just intializing this.state.name to an empty string.
+  Notice that the input tag, which is a self-closing tag in HTML, here must explicitly have /> to close it in React. This is because JSX uses an XML-type syntax in which self-closing tags have to be explicitly closed by ending with />. If you don't do this React will throw an error.
+  Also note that in React components should always represent the current state of the view, and not just at the point of initialization, it is for this reason that in React you should always use onChange on inputs so the DOM is updating everytime an input is changed. Put another way, the DOM should always display the current state of a component.
+  Additionally we gave this form an onSubmit handler and in that submit handler we clear the 'name' property on the state so the input field is cleared, and set the submitted state property to display that the person with the inputted name submitted the form.
+
+
+
+
+
+
+
+
+
+

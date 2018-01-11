@@ -1,0 +1,108 @@
+New React Notes
+
+
+These notes are taken in 2016 for learning React. Looks like some stuff has changed since I started learning React back in the summer of last year, so I'm taking some new notes here. Will use webpack here. My original React Notes are still good though and go into detail about more actual stuff in React, these new notes are more about getting the environment setup. I'll eventually combine the two notes.
+
+
+Getting started setting up React w/ Webpack project and rendering some HTML, but not a React component:
+
+  npm init
+
+  npm modules to install:
+    react, react-dom, webpack, babel-loader, babel-preset-es2015, babel-preset-react
+
+  app structure:
+    webpack.config.js
+    .gitignore
+    .babelrc
+    package.json
+    src/
+    ...client/
+    ......index.html
+    ......app/
+    .........index.jsx
+    ......public/   <-- here webpack will generate bundle.js & bundle.js.map
+
+
+  Make webpack.config.js file:
+    var webpack = require('webpack');
+    var path = require('path');
+    var BUILD_DIR = path.resolve(__dirname, 'src/client/public');
+    var APP_DIR = path.resolve(__dirname, 'src/client/app');
+    var config = {
+      entry: APP_DIR + '/index.jsx',
+      output: {
+        path: BUILD_DIR,
+        filename: 'bundle.js'
+      },
+      module: {
+        loaders: [
+          {
+            test: /\.jsx?/,
+            include: APP_DIR,
+            loader: 'babel'
+          }
+        ]
+      }
+    };
+    module.exports = config;
+
+
+  Make the .gitignore file:
+    node_modules
+    src/client/public
+    npm-debug.log
+    .DS_Store
+
+
+  Make the .babelrc file:
+    {
+      "presets": ["es2015", "react"]
+    }
+
+
+  Make index.html file:
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title></title>
+    </head>
+    <body>
+      <div id='app'></div>
+      <script src='public/bundle.js'></script>
+    </body>
+    </html>
+
+
+  Make index.jsx file:
+    'use strict';
+    import React from 'react';
+    import {render} from 'react-dom';
+
+    render(
+      <h1> Hello React World </h1>,
+      document.getElementById('root')
+    );
+
+  Add the following scripts to the package.json file (as explained below):
+    "dev": "webpack -d --watch",
+    "build": "webpack -p"
+
+
+The above code uses webpack to bundle dependencies and transpile the code with babel. It packages the app into a bundle.js file in the src/client/public folder. To run webpack and make this packaging happen run:
+    ./node_modules/.bin/webpack -d --watch
+This makes webpack run in watch mode, so that it will automatically re-run webpack when you make changes. You still need to refresh the page manually to see updates. To also have live-reload use react-hot-loader.
+Then use a web server like 'python -m SimpleHTTPServer' to run it and view the component in the browser, note that you need to run the http server in the src/client directory because that is where the index.html file is.
+
+In package.json can add the following scripts to run webpack in dev and production modes:
+  "dev": "webpack -d --watch",
+  "build": "webpack -p"
+Package.json I guess will first check it's own node_modules which is why this works even if you don't have webpack installed globally. The -p flag in webpack means production, which will just also minify the bundle.js file.
+
+
+
+
+To use React in Javascript files (.jsx files) you need to import from 'react' and import render from 'react-dom'. React.render() has been deprecated, you now use ReactDOM.render which is why you need the 'react-dom' import.
+      import React from 'react';
+      import {render} from 'react-dom';
+Now you can use React.

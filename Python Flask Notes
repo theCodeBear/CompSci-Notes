@@ -40,7 +40,7 @@ pip is a package manager for Python, like npm for Node.js and gems for Rails. pi
   Now use virtualenv to set up that isolated development environment, the argument for virtualenv is whatever you want your project folder to be called, in this example the name of the directory will be flaskapp, omitting the name will create the virtual files in the current directory:
           virtualenv flaskapp
 
-  virtualenv will create bin/, include/, and lib/ folders in your app directory as well as a .Python file. These folders and files are just what it needs to set up the isolated Python environment. You can also choose which version of Python you want to use by using the -p flag and giving it an argument of the path to the executable for the Python interpreter you would like to use if you have multiple version of Python installed, for example:
+  virtualenv will create bin/, include/, and lib/ folders in your app directory as well as a .Python file which is your project's own Python interpreter, separate from your system's interpreter. These folders and files are just what it needs to set up the isolated Python environment. You can also choose which version of Python you want to use by using the -p flag and giving it an argument of the path to the executable for the Python interpreter you would like to use if you have multiple version of Python installed, for example:
           virtualenv -p /usr/bin/python2.7 flaskapp
 
   Now cd into the directory and activate it by running the bin/activate file:
@@ -97,9 +97,9 @@ Once installed you need to go to your shell startup script (.bash_profile for Ma
 
 The first line sets up the directory in which all the virtual environments will be housed, instead of being in each individual project. So here we are creating a Envs/ directory in the home directory to house the virtual environments (workon is the command to work on a virtual environment using virtualenvwrapper, that is it activate the environment). The second line runs a shell script for the with a bunch of shell functions that act as the command line tools for virtualenvwrapper. Now the next time you open up the terminal you'll be able to use virtualenvwrapper.
 
-To create a virtual environment you use mkvirtualenv:
+To create a virtual environment and activate it you use mkvirtualenv:
         mkvirtualenv venvname
-To activate it so you can use it, or to switch to another virtual environment use workon:
+To to switch to another virtual environment or activate a previously made one use workon:
         workon venvname
 To see a list of virtual environments (if any exist) use workon with no arguments:
         workon
@@ -121,12 +121,13 @@ After you've created at least one virtual environment you can go into your ~/Env
 
 Whereas with virtualenv, passing an argument creates a project directory for you, with virtualenv using mkvirtualenv passing an argument just creates the virtual environment but doesn't create a project directory because virtualenv puts things locally so it doesn't create virtual environment names, it just operates in a local directory and so giving it an argument doesn't name the environment but just creates the directory for you will the environment is housed. But since virtualenvwrapper lets you manage multiple environments they must be named, and so mkvirtualenv doesn't create a directory for you because it doesn't put the environment files in a project directory, instead it just creates the named environment for you.
 
-So to use virtualenvwrapper to create a new environment you do the following:
-        mkdir nameOfProject
+
+So to use virtualenvwrapper to create a new environment and install Flask you do the following:
         mkvirtualenv nameOfVirtualEnv
-        workon nameOfProject
         pip install Flask
+
 And you create your project directory before or after your virtual environment, it doesn't matter, because a virtual environment isn't actually connected to a project, it's just a Python environment in which you can install Python packages in a specified environment rather than globally on your system. But it is probably a good idea to name your environment the same as your directory so that you know which virtual environment is used for which projects.
+
 
 To later work on your project again, just go into your project directory and connect to the virtual environment you are using with:
         workon nameOfEnv
@@ -173,7 +174,11 @@ The next line creates a new instance of the Flask class and assigns it to the ap
 
 The next section we setup our backend routes. It's pretty simple. Use the
     @app.route('url')
-syntax to tell Flask you are about to define a route with that url for the app. The next line for each route is then a function whose return value will be sent back to the browser. If you just return a string of text then that will be printed to the browser. However you can use the render_template function from the flask module to return an HTML file. By default Flask renders templates from a folder called templates so that is why we made a templates folder above.
+syntax to tell Flask you are about to define a route with that url for the app. The next line for each route is then a function whose return value will be sent back to the browser. If you just return a string of text then that will be printed to the browser. However you can use the render_template function from the flask module to return an HTML file. By default Flask renders templates from a folder called templates so that is why we made a templates folder above. Note that you can associate more than one url route with the same view function by putting two @app.route() lines of code in a row directly precending a view function. So if we wanted a '/' route and a '/index' route to both run the home() function we would do this:
+        @app.route('/')
+        @app.route('/index')
+        def home():
+          return render_template('home.html')
 
 The final part is where the application runs the web server. app.run() runs the web server and by setting debug equal to True we are telling it to run in development mode which will display any error messages that may occur (they are displayed on the webpage itself) and it lets the local server reload automatically after changes are saved.
 

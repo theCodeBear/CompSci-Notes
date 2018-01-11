@@ -222,7 +222,7 @@ NOTE:   You can access the value of any variable or constant, regardless of scop
         hash (#) character just before it.
 
 Global variables begin with $. Uninitialized global variables have the value nil and produce
-warnings with the -w option. It is no recommended to use global variables.
+warnings with the -w option. It is not recommended to use global variables.
         i.e.        $globalVar
 
 Instance variables are member variables of an object. Initialized with a @ before the variables

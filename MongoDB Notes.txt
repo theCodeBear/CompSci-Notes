@@ -81,6 +81,7 @@ Create documents:
 	db.collection.insert(theDoc);
 
 Update/Change a document:
+	// the {key: value} is the query for finding records to update
 	db.collection.update({key: value}, {updated info for document});
 
 Apparently the update method can sometimes delete an entire document. That’s no good! To avoid this you can use update operators to only modify parts of documents.
@@ -90,7 +91,11 @@ Update Operators in use:
 	db.collection.update({key: value}, { $addToSet: {key: value}});
    // Updates an existing field, or adds a new field to a document:
 	db.collection.update({key: value}, { $set: {key: value}});
-   // Push items from arrays:
+	 // Delete fields from a single record (the first matched record), the values of the unset fields doesn't matter, so just did '' here:
+	db.collection.update({key: value}, {$unset: {key: '', key2: ''}});
+	 // Delete fields from all records in the collection by adding the {multi: true} property:
+	db.collection.update({key: value}, {$unset: {key: ''}, {multi: true}});
+   // Push items to arrays:
 	db.collection.update({key: value}, { $push: {key: value}});
    // Pull items from arrays:
 	db.collection.update({key: value}, { $pull: {key: value}});

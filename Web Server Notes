@@ -1,0 +1,361 @@
+Web Server Notes (Apache and Nginx)
+
+
+
+Apache and Nginx are two of the most popular web servers.
+Apache is the most popular Web Server in the world (the most popular Web Servers are Apacha, Microsoft IIS, nginx, and Google Web Server).
+A web server's most job is basically to accept requests from clients and send responses for those requests.
+
+
+****************** Basics of Web Servers ******************
+
+
+A Web Server is a piece of software that sits on the server between the client and the Application Server. It can do things like load balancing, proxying, reverse proxying, and serving static files.
+
+Basically, a web server in its simplest form is a computer with special software and an internet connection that is used to connect it to other devices.
+
+The most basic use of a web server is to serve a website's static files, basically all the files for the front end of the applciation. Normally in development I use the python SimpleHTTPServer because it is a one line command in the console and is run locally in the application directory so you can have as many of them as you want (on different ports) for development on your local machine. Another option is serving static files from the backend, like for instance from Node. However this is very inefficient and slow so in production you want to use an actual web server like Apache and Nginx.
+
+One thing that differs between using a normal web server and using some simple server for development purposes is that when you set up Apache or Nginx or something like that it is system-wide. So instead of making it run in a specific application directory you configure it wherever it is installed to operate on a specific directory on the machine. This is why it isn't good for development, because it can only serve one application as it is configured to do on the machine. So it is fine running an application on an actual server somewhere because that is all it has to do. But on your computer, where maybe you have dozens of different applications you want to run, you'd have to reconfigure the web server everytime each time you want to run a different application. But in order to deploy a site into production, using anything but cookie-cutter deployment options like Heroku, you'll have to actually set up a web server on the server machine I think and do all the configuration for it, so you want to learn how to do that stuff on your local machine first.
+
+An application server, which consists of the server-side code for an application, written in Node.js, Ruby, Python or whatever runs behind the web server. On the web server you can set up things like load balancing and proxies and security stuff.
+
+
+
+****************** APACHE Intro ******************
+
+
+Note: In general these Apache notes will be for Apache as it is configured on a Mac (it is pre-installed on Macs) and it will differ a bit with a fresh install say on a Linux machine.
+
+
+Apache is the most popular web server in existence. It is open source and free to download.
+
+The basic core Apache software is fairly small and has limited features. Apache's power comes from its extensibility through adding on modules. There are many modules that can be installed or uninstalled that will make Apache more powerful. To use any of these modules you just download one and then restart Apache.
+
+Apache is set up to run through configuration files. In its idle state Apache listens to the IP addresses identified in its config file (HTTPd.conf). Whenever it receives a request it analyzes the headers, applies the rules specified for it in the config file, and takes action.
+
+One server can host many websites, through the use of virtual hosts (virtual hosts can be enabled by uncommenting out line 509 in the Apache config file /etc/WebServer/apache2/httpd.conf which has to do with the apache2/extra/httpd-vhosts.conf file), which allow websites assigned to different names to be served from one server. The browser, after connected to a DNS server to get the IP address for a domain name, sends a request to the IP and includes a 'Host' header with the request so that if the server is hosting multiple sites it will know which one to serve back.
+
+i.e.
+      GET / HTTP/1.1
+      Host: www.google.com
+
+A hosted website using Apache will typically have four main directories:
+    htdocs, conf, logs, cgi-bin
+
+htdocs
+    This is the default Apache web server document directory, meaning it is the public directory whose contents are usually available to clients connecting through the web. So this is where you put the files for your site when if you are using ftp to put files on the server. It contains all static pages and dynamic content to be served once an HTTP request for them is received. Correct handling of file permissions is very important in order to not compromise the server's safety and security.
+
+conf
+    This is the directory where all the server configuration files are located. Configuration files are just plain text files where directives are added to control the web server's behavior and functionality. Each directive is usually placed on a separate line, with comments specified by the hash key.
+
+logs
+    This is the directory where server logs are kept and includes Apache access logs and error logs. The Appache HTTP Server provides a variety of different mechnisms for logging everything that happens on it, from the initial request, through the URL mapping process, to the final resolution of the connection, including any errors that many have occurred in the process. In addition to this, third party modules may provide logging capabilities, or inject entires into the log files, and application scripts may also send messages to the server error log.
+
+cgi-bin
+    This is the directory where CGI scripts are kept. The CGI (Common Gateway Interface) defines a way for a web server to interact with external content-generating programs, which are often referred to as CGI scripts. These are programs or shell scripts that are written to be executed by Apache on behalf of its clients.
+
+
+
+
+****************** Apache Directories to Know ******************
+
+
+/etc/apache2
+    This is where the httpd.conf file is that handles the Apache server configuration. There's also a bunch of other files here. Depending on the Linux distro the httpd.conf file could be called apache2.conf.
+
+/var/log/apache2
+    Holds the log files for Apache. Includes access_log and error_log files.
+
+/Library/WebServer
+    Has the folders CGI-Executables, Documents, and share. The Documents directory holds the index.html.en file that loads up by default when you first start up Apache. On Raspberry Pi the default index.html file is at /var/www/html/index.html.
+
+
+
+In my Raspberry Pi with downloaded Apache:
+    /etc/apache2 has:
+        apache2.conf          the main apache configuration file
+        ports.conf            configuration for setting up the ports
+        envvars               sets all the apache environment variables
+        sites-available       has all the virtual host configuration files
+        sites-enabled         has symlinks to all the virtual host config files I want served
+        some other files/dirs
+
+
+
+****************** Getting Started with APACHE ******************
+
+
+Macs come with Apache installed. The Apache command line tool is:     apachectl
+
+The apachectl tool can operate in two modes, it can operate as a simple front end ot the httpd (http daemon) command and it can also act as a tool taking simple one-world arguments.
+
+The commands you can use with apachectl are:
+
+    apachectl start           starts up the apache server
+    apachectl stop            stops apache
+    apachectl graceful-stop   stops apache gracefully
+    apachectl restart         restarts apache server
+    apachectl graceful        gracefully restarts the apache server
+    apachectl fullstatus      displays a full status report, mod_status must be enabled
+    apachectl status          displays a brief status report, mod_status must be enabled
+    apachectl configtest      run a configuration file syntax test, reports Syntax OK or errors.
+                              equivalent to apachectl -t
+
+To run these comands require root user permission so you need to run them with sudo.
+
+So to start apache running run the command:
+    sudo apachectl start
+
+If you go to localhost in a browser it will now say "It works!", which is the default file Apache serves. On Macs Apache puts this file at /Library/WebServer/Documents/index.html.en
+
+If you want to change what the file says you can sudo vim it and edit it (since it requires root permission to write to it). You also need to change the filename from index.html.en to index.html for Apache to pick up the changes. And then you just restart Apache with:
+    sudo apachectl restart
+
+
+Apache places its configuration files in different places depending on the Linux distribution, sometimes it is in /etc/apache2 and sometimes it is in /etc/httpd. On Macs it is in /etc/apache2. Note that there are differences in the default configuration and quirks in the configuration depending on which Linux distro you have.
+
+
+apachectl -version
+  Prints out a couple lines about the Apache version.
+apachectl -V
+  Prints out more info about the Apache version.
+
+
+
+****************** Apache Logs ******************
+
+
+On Mac the log files will be contained in the /var/log/apache2 directory.
+This directory contains two files:    access_log        error_log
+
+The access_log file contains a log of http requesets.
+The error_log contains a log of errors obviously.
+
+
+
+****************** Apache Server Status ******************
+
+
+The 'apachectl status' or 'apachectl fullstatus' commands allow you to see status details on the server. This is a great way to see how the server is doing while running applications.
+
+The status is displayed in the web browser at 'http://localhost/server-status'.
+But by default seeing the status is disabled.
+
+In order to see the server status page you need to do two things:
+  1. To enable you need to go into the Apache config file at /etc/apache2/httpd.conf and make sure the line that contains 'mod_status' is not commented out as well as the line that has 'httpd-info.conf' in it is not commented out.
+  2. Then go into the /etc/apache2/extra/httpd-info.conf file and change lines 14-18 by replacing the '.example.com' part to be 'localhost' like so:
+
+    <Location /server-status>
+      SetHandler server-status
+      Require host localhost
+    </Location>
+
+Now restart apache with 'sudo apachectl restart' and the localhost/server-status page will load up. Note the 'Require host localhost' line above restricts access to localhost.
+
+In order to see the full status information you need to go uncomment the 'ExtendedStatus On', line in the /etc/apache2/extra/httpd-info.conf file. Then restart the apache server again. Though it so far seems to be exactly the same whether fullstatus is on or not.
+
+
+
+
+****************** Set Which Files to Serve with Apache ******************
+
+
+By default Apache is setup to serve the /Library/WebServer/Documents/index.html.en file, which is the "It works!" file.
+
+Obviously we need to change that so it serves up an application's files. Located on line 237 is the 'DocumentRoot' line in the /etc/apache2/httpd.conf file. Change this to point to whatever directory on the computer contains the index.html file for an application you want to serve with Apache.
+
+Then on the next line change the <Directory "/Library/WebServer/Document"> line to match with the DocumentRoot.
+
+Also make sure whatever directory your index.html file that you are serving lives in has execute permission given for 'other' or else Apache will give you a 403 Forbidden error when you go to localhost. Essentially you wan to give the directory you are serving a 755 permissions.
+
+Now restart Apache and the index.html should show up in the browser on localhost, being served by Apache!
+
+
+
+
+****************** Apache Virtual Hosts ******************
+
+
+Virtual Hosts are how you can make the web server be able to serve more than just one site per machine. Without using Virtual Hosts you just set the directory for Apache to serve in the configuration and that is the only directory it can serve from. But Virtual Hosts allow you to serve from multiple different directories on the computer, one virtual host per site, so you can serve as many sites as you want from one web server.
+
+A quick discussion on a few topics. Domain names, IP addresses, Web Servers, and machines are all different things that work together to serve web pages. Domain names are simply user-friendly name that gets associated with an IP address in the Domain Name System. IP addresses are the actual addresses of the internet the tell requests where to go. A Web Server, like Apache, is just software running on machines that accepts and responds to incoming requests and can do other networking operations as well such as load balancing and proxying and so security and so forth. While a machine is a specific physical computer, which runs a Web Server. You can have multiple domain names for a single Web Server and a single IP address, multiple IP addresses each with their own domain name on a single Web Server, and so on.
+
+There are two different types of Virtual Hosts offered by Apache. IP-based virtual hosting means that Apache will serve each site from a different IP address, while name-based virtual hosting means that you can have multiple domain names running on each IP address.
+
+While the pre-installed Apache on my Mac isn't set up for Virtual Hosts already (it's serving just the normal way from one spot) the Apache I installed on my Raspberry Pi, which presumably is how Apache normally installs(?) is set up to serve it'd default index.html file through a Virtual Host already.
+
+The basic configuration syntax for a virtual host is:
+
+    <VirtualHost *:portNumber>
+      ServerName <serverName>
+      ServerAdmin <serverAdmin>
+      DocumentRoot <directoryToServe>
+      LogLevel <logLevel> ssl:warn
+      ErrorLog ${APACHE_LOG_DIR}/error.log
+      CustomLog ${APACHE_LOG_DIR}/access.log combined
+      Include conf-available/serve-cgi-bin.conf
+    </VirtualHost>
+
+
+Example (virtual host to default /var/www/html on Raspberry Pi at /etc/apache2/sites-enabled/000-default.conf):
+
+    <VirtualHost *:80>
+        # The ServerName directive sets the request scheme, hostname and port that
+        # the server uses to identify itself. This is used when creating
+        # redirection URLs. In the context of virtual hosts, the ServerName
+        # specifies what hostname must appear in the request's Host: header to
+        # match this virtual host. For the default virtual host (this file) this
+        # value is not decisive as it is used as a last resort host regardless.
+        # However, you must set it for any further virtual host explicitly.
+        #ServerName www.example.com
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+        # error, crit, alert, emerg.
+        # It is also possible to configure the loglevel for particular
+        # modules, e.g.
+        #LogLevel info ssl:warn
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        # For most configuration files from conf-available/, which are
+        # enabled or disabled at a global level, it is possible to
+        # include a line for only one particular virtual host. For example the
+        # following line enables the CGI configuration for this host only
+        # after it has been globally disabled with "a2disconf".
+        #Include conf-available/serve-cgi-bin.conf
+    </VirtualHost>
+
+Here's another example:
+
+    <VirtualHost *:80>
+      ServerName example.com
+      ServerAlias www.example.com
+      DocumentRoot /var/www/example.com/trunk
+    </VirtualHost>
+
+
+Sites-Available and Sites-Enabled
+
+    The /etc/apache2/sites-enabled and /etc/apache2/sites-available directories both contain configuration files for virtual hosts. The sites-available directory holds all virtual host config files. The sites-enabled directory holds symbolic links to the config files in sites-available. The ones in sites-enabled are the virtual hosts that will actually be served by Apache. Ones that you don't want to currently be served just keep in sites-available but don't put their link in sites-enabled. When you edit a vhost's config you want to edit the sites-available file.
+
+
+Enabling a virtual host
+
+    So in order to make a new virtual host to serve a new site, you create its configuration file in sites-available and then go into sites-enabled and create a symlink like so:
+            ln -s ../sites-available/example.conf example.conf
+    Or better yet use the built in apache tool to enable a virtual host, and then restart apache:
+            sudo a2ensite
+                ( then choose which vhosts you want to enable )
+            sudo apachectl restart
+
+
+There are a few different ways you can set up how vhosts work. You can set vhosts to be served from non-80 ports, or you can use name-based serving so that multiple domain names can be hosted with a single server from a single IP, or IP-based serving so that a single server can host multiple IP addresses. You can also mix and match any of these on a single Apache server.
+
+
+CREATING A VIRTUAL HOST ON DIFFERENT PORTS (for development)
+
+    You can have an Apache server serve multiple sites on different ports. This would be good for localhost when doing development.
+
+    1.  Create a new directory wherever you want on the computer to hold you application, let's
+        say in /home/apps/example, put an index.html file in there and whatever else you want. Change the permission of the parent directory of the apps to allow the execute permission to the 'other' group or else apache will return a 403 error when trying to access the site.
+
+              chmod 755 /home/apps
+
+    2.  In the main apache config file (/etc/apache2/apache2.conf) set the apache security model
+        to allow access to the parent directory of the application's directory. Easier if you put all your applications to serve on apache in the same directory so you just have to do this step once instead of everytime you make want to serve a new application. This requires the Directory tag and putting three directives in it:
+
+              <Directory /home/apps/>
+                    Options Indexes FollowSymLinks
+                    AllowOverride None
+                    Require all granted
+              </Directory>
+
+    3.  Create a new virtual host to tell Apache how to serve the application. We will tell it
+        to serve on port 8080, as oppposed to the normal http port of 80. We will be putting our virtual host config file in /etc/apache2/sites-available. It will need to tell apache to listen on that port, and then describe the virtual host with the <VirtualHost> tag and some directives inside it, at the very least you need to identify the DocumentRoot for the application to be served. So in /etc/apache2/sites-available put a new file example.config:
+
+              Listen 8080
+              <VirtualHost *:8080>
+                    DocumentRoot /home/apps/example
+              </VirtualHost>
+
+    4.  Now create the symbolic link to this config file in the sites-enabled directory which
+        tells apache to actually serve this virtual host. Run the apache command to enable a vhost, then choose the vhost you want to enable, in this case it is 'example', then restart apache.
+
+              sudo a2ensite
+                ( type the vhost you want enabled when it gives you the option )
+              sudo apachectl restart
+
+    5. Open up a browser and go to localhost:8080 if you are using apache on your machine or if you are ssh'd in somewhere then go to that machine's IP with port 8080. Done!
+
+
+
+
+CREATING A VIRTUAL HOST WITH DIFFERENT DOMAIN NAMES (dev or production)
+
+    You can serve vhosts under a name-based strategy, meaning that you can serve multiple domain names from a single server using a single IP. This could be useful for production if you have more than one site that doesn't use many resoures or possibly other reasons. Anyways, it is easy to set up. It works because a client's request always includes the hostname it is requesting, so a domain name will be registered with an IP address and DNS will send it to your web server, the web server will then use the hostname to pass it on to the correct application. When a server has name-based vhosts if you try to go directly to the IP address instead of using the domain name you will get an error because the server needs the hostname to resolve the request to the correct application.
+
+    The steps to do this are mostly the same as setting up vhosts with different ports.
+
+    1.  Same as above
+    2.  Same as above
+    3.  Same as above except the vhost configuration file will be a little bit different, we
+        set the port to 80 as per usual, and don't need a Listen directive because Apache by default listens to port 80. We need to add a ServerName directive which tells Apache what the hostname is, optionally you can add the ServerAlias directive where you can list multiple space-separated aliases that should also resolve to this vhost.
+
+              <VirtualHost *:80>
+                    DocumentRoot /home/apps/example
+                    ServerName example.com
+                    ServerAlias www.example.com
+              </VirtualHost>
+
+    4.  Same as above
+    5.  You can skip this step if doing this in production because with your registered domain name you should have already provided it with the IP address to resolve to. If using this for development, you will need to edit the /etc/hosts file to add an entry that tells your computer to resolve the hostname you have chosen to your localhost's IP address. This is because your don't have an actual domain name registered, and so this will only work if you go to this domain name from the computer that you edited this /etc/hosts file on. It won't work from any other computer, but so it is fine for dev. The IP address for localhost is always 127.0.0.1, so in /etc/hosts just add this line of code:
+
+              127.0.0.1     example.com
+
+    6.  Open up a browser and go to www.example.com and it will load up!
+
+
+
+
+CREATING A VIRTUAL HOST WITH DIFFERENT IP ADDRESSES
+
+
+
+
+
+
+
+****************** Parts of Apache Config Explained ******************
+
+<Directory></Directory>
+    Used to enclose a group of directives that will apply only to the named directory, its sub-directories, and the files within.
+    i.e.
+          <Directory /home/apps/example>
+              #directives go here like:
+              Options Indexes FollowSymLinks
+              AllowOverride None
+              Require all granted
+          </Directory>
+
+
+
+
+*************************************************
+****************** NGINX Intro ******************
+*************************************************
+
+
+
+
+
+****************** xx ******************
+****************** xx ******************
+****************** xx ******************
+****************** xx ******************
+****************** xx ******************
+****************** xx ******************

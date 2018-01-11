@@ -1,0 +1,403 @@
+D3.js Notes
+
+
+
+D3.js is a data visualization library for the front end.
+
+
+
+The object you use to call methods of the D3 library is the d3 object.
+D3 can be used to do SVG (Scalar Vector Graphics).
+
+
+select()
+  d3.select('body')
+    This selects the body of the document. The select() method uses CSS selectors to grab DOM elements. It selects the first version of that tag in the document that it finds. After selecting a DOM element you can apply D3 operators to the element, which can get or set thigns like attributes, properties, styles, HTML, and text content.
+
+selectAll()
+  d3.selectAll('p')
+    Selects all the matching tags in the document.
+
+append()
+  d3.select('body').append('p')
+    The append operator can be used to append a DOM element to another one, here we append a <p> tag to the document body.
+
+attr()
+  d3.select('p').attr('width')              // returns width of first p tag
+  d3.select('p').attr('width', 50)          // sets width of first p tag to 50
+    The attr() method is used to get or set attributes on a DOM element.
+
+style()
+  d3.select('p').style('color')             // get
+  d3.select('p').style('color', 'red')      // set
+    The style method gets or sets a style on a DOM element.
+
+You can use SVG with D3.js, for example the following will create a purple svg circle:
+  d3.select("body").append("svg").attr("width", 50).attr("height", 50).append("circle").attr("cx", 25).attr("cy", 25).attr("r", 25).style("fill", "purple");
+This creates the following html:
+  <svg width="50" height="50">
+    <circle cx="25" cy="25" r="25" fill="purple" />
+  </svg>
+Which displays an svg purple circle on the webpage.
+
+data()
+enter()
+text()
+  d3.select('body').selectAll('p').data([1,2,3]).enter().append('p').text('hello')
+    The example creates three p tags with the text 'hello' in each of them. It selects the body, selects all the <p> tags, but in this example we are assuming there aren't any. Then the data operator joins the array [1,2,3] with the current empty selection. Because the <p> tags didn't exist, these 'missing' selections can be accessed with the enter operator that is returned by the data operator. Because there are three data points in the data array so we then append <p> tags for the three missing 'p' selections, and modify each of them with the text 'hello' for their text content.
+
+    The data operator joins an array of data with the current selection. If there is no key provided (as there isn't in the above example) then each element of the data array is assigned to each element of the current selection.
+    The d3 data() operator returns three virtual selections rathern than just the regular ones like other methods. These three virtual selections are enter, update, and exit.
+    The enter selection contains placeholders for any missing elements.
+    The update selection contains existing elements, bound to data.
+    Any remaining elements end up in the exit selection for removal.
+    If the select operator doesn't find anything, and therefore is empty, the virtual enter selection now contains placeholders for selected elements that weren't there, <p> elements in the above example.
+    
+    The enter() method returns the virtual enter selection from the data operator. The enter() method only works on the data operator because data() is the only thing that returns the three virtual selections. The enter() method will return a reference to the placeholder elements for each data element that did not have a corresponding existing DOM element.
+    This refernce only allows the append, insert, and select operators to be used directly on it. After one of these operators has been chained onto enter() then you can treat it just like any other selector to modify its content.
+
+    When data is assigned to an element through the data operator it is placed on a __data__ property of the element. This is what is meant by binding data to the DOM, that data is available on later re-selection of those elements because its on a __data__ property on the element.
+
+    But what we really want is to get back the data that we bound to those elements and display them as the content of those elements, so we want to display 1 and 2 and 3 in those p tags. We can throw a function in the text operator and give it a parameter that will be the data bound to the element, then we simply return that parameter to get it to display as the text of the element. So the above example can be changed to this:
+
+  d3.select('body').selectAll('p').data([1,2,3]).enter().append('p').text(function(d) {return d'})
+    So a function can be passed to the text operator and it will be evalauted and the return value will be set as the text of the selected element(s).
+
+Variables available inside D3 operators:
+  As shown in the above example of passing a function into the text operator and a parameter into that function which referred to the __data__ attribute, you can have variables inside D3 operators. In fact there are three variables provided.
+  The three variables you can use in operators are d, this, and i.
+  The d variable is for __data__, the i variable is for the index of the current DOM element being evaluated out of the selected elements, and the this variable refers to the current DOM element being evaluated.
+  i.e.
+    d3.select('body')
+      .selectAll('p')
+      .data([1,2,3])
+      .enter()
+      .append('p')
+      .text(function(d,i) { return `i = ${i} d = ${d} });
+
+
+The .data() operator places the value from each element in the array passed to data() in the __data__ property of the element it attaches that data to.
+
+Using the .data() operator on a selection without passing in an argument will display the data bound to __data__ for that selection in an array. So
+d3.select('p').data() will return ['somedata']
+
+After the .enter() method only the .append(), .insert(), and .select() operators can ben chained directly to it. But after one of those is used it is back to a normal D3 selection so any method can be chained on at that point.
+
+When using an anonymous function as the argument in an operator it has 3 arguments available to that function: the __data__ of the selection, this (the current DOM element being evaluated, and i which is the index in the selection.
+
+
+
+
+
+
+
+
+SVG:
+  SVG stands for Scalar Vector Graphics and uses paths instead of pixels to define graphical elements, which makes it able to scale without blurring unlike with pixel-based graphics. SVG is XML-based, so SVG elements can be edited in text editors or graphical editors. So SVG is a text-based image format.
+  Before creating any SVG objects you must create an SVG element with a width and height, this acts as the container for any graphical svg objects you will create in the page:
+
+      <svg width='100' height='100'></svg>
+
+  If you don't specify height and width of the svg element then it will act as a typical block element and take up as much room as it can. Pixels are the default dimentions units.
+
+  The svg element itself creates a box in which the svg graphical objects can live. You can style the svg element (box) itself in D3 by adding CSS style operators to it like border, background-color, etc. But if you do something like stroke then it will just apply that stroke color to all the contained svg objects.
+
+  SVG has several types of elements you can create, including rect, circle, ellipse, line, text, path, polyline, and polygon. Any shape can be made using polyline or polygon, where you just specify data points to be the vertices of the object (polygon just adds one more path from the last specified vertex to the first, whereas polyline doesn't).
+
+  svg circle
+      <svg width='50' height='50'>
+        <circle cx='' cy='' r='' />
+      </svg>
+
+      An SVG circle has three required attributes: cx, cy, and r. cx is the center x-position from the left of the svg container, cy is the center y-position from the top of the svg container, and r is the radius.
+
+  svg rect
+      <svg width='50' height='50'>
+        <rect x='' y='' width='' height='' />
+      </svg>
+
+      Rect has x and y attributes for the top left of the rectangle as well as width and height.
+
+  svg ellipse
+      <svg width='50' height='50'>
+        <ellipse cx='' cy='' rx='' ry='' />
+      </svg>
+
+      cx and cy are the center x and y points from the left and top of the svg container. rx and ry are the horizontal and vertical radii lengths.
+
+  svg line
+      <svg width='50' height='50'>
+        <line x1='' y1='' x2='' y2='' stroke='' stroke-width='' />
+      </svg>
+
+      Lines take x1, y1 and x2, y2 attributes for starting and ending points of the line from the top-left of the svg container. Also takes stroke and stroke-width attributes that define the color of the line and its width in pixels.
+
+  svg polyine
+      <svg width='50' height='50'>
+        <polyline fill='none' stroke='' stroke-width=''
+          points='0,10
+                  20,15
+                  25,40' />
+      </svg>
+
+      Polyine has attributes for stroke (color), stroke-width, fill (color), and a series of points for each vertex in the polyline in which x and y coordinates are separated by commas and point pairs are separated by white-space.
+
+  svg polygon
+      <svg width='50' height='50'>
+        <polygon fill='' stroke='' stroke-width=''
+          points='05,30
+                  15,10
+                  25,30' />
+      </svg>
+
+      A polygon is just like a polyline except it self closes by adding one more line from the last specified vertex to the first.
+
+  But making polylines and polygons as above is time consuming, so the much more powerful way to make any shape is to use SVG Paths.
+
+SVG Paths
+  An svg path is capable of making any shape or line or curve. A path represents the outline of a shape that can be stroked, filled, used as a clipping path, or any combination of those. A path is a line between points, and that line can be a straight line or a curve, and if a curve it can be an arc, a cubic Bezier curve or a quadratic Bezier curve.
+  
+  An SVG Path is defined by on attribute, "d", which contains a series of commands and parameters in the SVG-Path Mini-Language. These commands and parameters are a sequential set of instructions on how to make the path.
+
+  The instructions for the Path's "d" attribute are defined in case-sensitive terms of:
+    moveto - set a new current point
+    lineto - draw a straight line
+    curveto - draw a curve using a cubic Bezier
+    arc - elliptical or circular arc
+    closepath - close the current shape by drawing a line to the last moveto
+
+  i.e. Make a red right triangle
+    <svg width='100' height='100'>
+      <path d=' M 10 25
+                L 10 75
+                L 60 75
+                L 10 25'
+                stroke='red' stroke-width='2' fill='none' />
+    </svg>
+
+  SVG Path Mini-Language:
+      If you use capital letters, as in the example above, then you are using absolute positioning within the SVG Viewing Window, while lowercase commands use relative positioning.
+
+      Command     Parameters        Repeatable    Explanation
+
+      M/m         x,y               yes           Move pen to new location.
+      L/l         x,y               yes           Draw line from current to this x,y.
+      H/h         x                 yes           Draw horizontal line from current to x.
+      V/v         y                 yes           Draw vertical ine from current to y.
+      C/c         x1,y1,x2,y2,x,y   yes           Draw cubic Bezier curve from current (x,y)
+                                                  using x1,y1 as first control point and
+                                                  x2,y2 as second control point,
+      S/s         x2,y2,x,y         yes           Shorthand draw cubic Bezier curve. First
+                                                  control point is assumed to be the reflection
+                                                  of the last control point on the previous
+                                                  command relative to the current point.
+      Q/q         x1,y1,x,y         yes           Draw quadratic Bezier curve from current x,y
+                                                  using x1,y1 as the control point.
+      T/t         x,y               yes           Shorthand for quadratic Bezier curve. Assumes
+                                                  control point is reflection of the control
+                                                  point from the previous command relative to
+                                                  the current point.
+      A/a         rx,ry,x,y         yes           Draws elliptical arc from current point to x,y.
+                  x-axis-rotation,                Size and orientation are defined by two radii
+                  large-arc-flag,                 rx,ry and an x-axis-rotation, which indicated
+                  sweep-flag                      how the ellipse as a whole is rotated relative
+                                                  to the current SVG coordinate system. The
+                                                  center (cx,cy) of the ellipse is calculated
+                                                  automatically to satisfy constraints imposed
+                                                  by the other parameters. The large-arc-flag and
+                                                  sweep-flag contribute to automatic calculations
+                                                  to help determine how the arc is drawn.
+      Z/z         none              no            Closes the path. A line is drawn from the last
+                                                  point to the first point drawn.
+
+  Obviously using the SVG Path Mini-Language is a bit difficult, so D3 comes with helpful Path Data Generators!!
+
+  Path Data Generators:
+    These are a set of helper classes for generating SVG Path instructions.
+    Path generator for lines:       d3.svg.line()
+
+    So you append a 'path' to an svg container element and then set the "d" attribute to an accessor function which is the d3.svg.line() function with some operators on it, and you pass in your line data array to this accessor function, then you add the other attributes onto the appended path.
+    i.e.
+      var lineData = [{ x:1, y:5}, {x:20, y:20}, {x:40, y:10}, {x:60, y:40}];
+      // accessor function
+      var lineFunction = d3.svg.line()
+                               .x(function(d) { return d.x })
+                               .y(function(d) { return d.y })
+                               .interpolate('linear');
+      var svg = d3.select('body').append('svg')
+                                 .attr('width', 200)
+                                 .attr('height', 200);
+      var lineGraph = svg.append('path')
+                         .attr('d', lineFunction(lineData))     // <- here is the crucial part
+                         .attr('stroke', 'blue')
+                         .attr('stroke-width', 2)
+                         .attr('fill', 'none');
+
+    In the example above we use D3's 'linear' interpolation of a line. D3 provides 11 different kinds of line interpolations including:
+      linear, step-before, step-after, basis, basis-open, basis-closed, bundle, cardinal,
+      cardinal-open, cardinal-closed, and monotone
+
+    There are more path generators in D3 besides the line generator, here is the complete list:
+        d3.svg.line
+        d3.svg.radial
+        d3.svg.area
+        d3.svg.area.radial
+        d3.svg.arc
+        d3.svg.symbol
+        d3.svg.chord
+        d3.svg.diagonal
+        d3.svg.diagonal.radial
+
+
+
+Change size of SVG viewport:
+  You can change the size of the SVG viewport simply by updating its width and height attributes in real time.
+
+
+
+Linear Scaling:
+  To scale the svg viewport in order to keep all elements in the view (zoom in or out) D3 comes with a linear scaling function:
+
+        d3.scale.linear()
+
+  In D3 terminology the original scale is called the domain and the new scale is called the range, so there are .domain() and .range() methods to chain onto the end of the d3.scale.linear() function. The function by itself is the identity scaler, which means it just maps from [0,1] to [0,1] and so doesn't change anything. All d3.scale.linear() does is map one number to another number based on the difference between the domain and the range. Essentially it divides the difference in the range by the difference in the domain and multiplies the number you send to it by that factor.
+
+  So the linear() function returns a function that takes a single number and maps it as just mentioned. So set the d3.scale.linear() function equal to a javascript variable and then call it with each of the position coordinates you want to scale, which probably means all of the x,y,width,height,radius,etc numbers for all that graphical svg elements on the screen, and then you just set the result equal to that value. The X and Y planes may have different scaling functions needed based on whether or not they need to scale independently of each other.
+
+  Note that the svg container element stays the same size, the coordinates of all the objects inside it just get changed.
+
+    i.e. To halve the x plane and double the y plane
+      var svg = d3.select('body').append('svg').attr('width', 200).attr('height', 200);
+      var ellipse = svg.append('ellipse')
+                       .attr('cx', 100)
+                       .attr('cy', 100)
+                       .attr('rx', 30)
+                       .attr('ry', 30);   // makes a circle since rx and ry are the same
+
+      var scaleX = d3.scale.linear().domain([0,100]).range([0,50]);     // halves it
+      var scaleY = d3.scale.linear().domain([0,50]).range([0,100]);     // doubles it
+
+      ellipse.attr('cx', scaleX(ellipse.attr('cx')));   // halves x center
+      ellipse.attr('cy', scaleY(ellipse.attr('cy')));   // doubles y center
+      ellipse.attr('rx', scaleX(ellipse.attr('rx')));   // halves x radius
+      ellipse.attr('ry', scaleY(ellipse.attr('ry')));   // doubles y radius
+
+
+Other D3 Scaling:
+  D3 has other types of scaling besides linear. It has quantitative scaling (like linear) for continuous domains such as dates, times, real numbers, etc, and ordinal scaling for discrete domains like names, categories, colors, etc.
+
+  D3 has five different kinds of scaling functions to use:
+      Identity - a 1:1 linear scale, good for pixel values. input == output
+      Linear - transforms one value in the domain interval into a new value in the range interval
+      Power and Logarithmic - sqrt, pow, log, used for exponentially increasing values
+      Quantize and Quantile - for discrete sets of unique possible values for inputs or outputs
+      Ordinal - for non-quantitative scales, like names, categories, etc
+
+
+D3.max(array):
+  D3 has a build-in function to find the maximum value in an array. So you could ust that as the max value in the domain() method when scaling to get the current max position of an object in the svg viewport.
+
+D3.min(array):
+  Same as max but finds the minimum value in an array.
+
+
+
+SVG Group Element <g>
+  The svg group element <g></g> is used as a container to group together child svg elements, including nested <g> elements. Any transformation applied to the group element is applied to all of its children elements.
+
+  There are two major uses of the group element:
+    Grouping - to group a set of svg elements that share the same attribute
+    Transforming - to define a new coordinate system for a set of svg elements by applying a
+                   transformation to each coordinate specified in this set of svg elements.
+
+  Grouping:
+    If there are a lot of SVG elements in the code it can be hard to see how many there are and whatnot, so it can be helpful to group all elements of a kind (circles or rects, etc) together in their own group. This makes the code easier to read.
+
+  Transforming:
+    If you have a bunch of elements that all what to have the same tranformation applied to, normally you would have to loop through them all and apply the transformation to each one individually. But with the svg group element you can just apply the transformation to the group element and it will apply it to all its children svg elements!!
+
+    To do this you use the <g> element's transform attribute, and each transformation is separated by white space or commas. The transformations are applied from RIGHT TO LEFT, because they are treated as nested transforms.
+
+    i.e.
+        <g transform='translate(...) scale(...) rotate(..)'>
+          ...
+        </g>
+
+    In the example above all the group's elements would be rotated, then scaled, then translated.
+
+    There are six types of transforms available:
+        matrix(a,b,c,d,e,f) - specifies a transformation matrix of six values
+        translate(x,y) - specifies a translation by x and y, if y is not provided it's assumed to
+                         be zero.
+        scale(x,y) - specifies a scale operation by x and y, if y is not provided it's assumed to
+                     be equal to x.
+        skewX(a) - specifies a skew transformation along the x axis by 'a' degrees
+        skewY(a) - specifies a skew transformation along the y axis by 'a' degrees
+
+
+    Translating the group element doesn't actually change the individual element's values (like, cx, x1, cy, etc), but instead it simply translates the coordinate space for that element group, thereby moving all the elements in the group. So doing translate(40,0) on a group moves that group from being based on a (0,0) coordinate system to one based on (40,0).
+
+    i.e. using D3 to transform a group of elements
+        var svgG = d3.select('body')
+                     .append('svg')
+                     .attr('width', 300)
+                     .attr('height', 200)
+                     .style('border', '1px solid black')
+        var g = svgG.append('g');
+        g.selectAll('circle')
+         .data([1,2,3,4,5,6,7,8])
+         .enter()
+         .append('circle')
+         .attr('cx', function(d) { return d * 30 })
+         .attr('cy', 40)
+         .attr('r', 10);
+        g.attr('transform', 'translate(0,80)');     // here the group transformation takes place
+
+
+
+SVG Text Element:
+  The SVG Text Element defines a graphics element consisting of text. Its attributes and properties are for things like font, writing direction, and how to render and paint the characters. The text element can be transformed just like any other svg element. The x and y coordinates of the text element refer to where the first character is rendered (the lower left hand part of the first character will be rendered at this point, not the top-left of it). It's possible to massage the position of the text element in some way using the text-anchor property.
+
+  i.e.
+      <text x='20' y='20' font-family='sans-serif' font-size='20px' fill='blue'>Hello World</text>
+
+  One of the major uses of the text svg element is to add a text label to an existing SVG element.
+
+  The text-anchor property allows text to be anchored to an already existing svg graphical element by some strategy, i.e. 'middle'.
+
+  Use text element in D3 like so:
+
+      d3.select('body').append('svg').attr('width', 200).attr('height', 100)
+                       .append('text')
+                       .attr('x', 20)
+                       .attr('y', 30)
+                       .attr('fill', 'blue')
+                       .text('Yo man');
+
+
+D3 Axis Component
+  The Axis component will display a horizontal and vertical axis to any graph, so that you can visually represent data in a graph with Axes using D3. It'll draw a graph with axis lines, ticks, and labels.
+
+  The scale of the axis tells gives the following information: the minimum number, maximum number, whether the scale is inverted, what type of scale it is (quantitative, time, ordinal, etc), the units of the variable, etc.
+
+  We can get all this scale information to the axis because D3 allows us to pass the scale function, discussed above (i.e. d3.scale.linear()) to the axis function to provide this information in order to construct the axis.
+
+  To generate a D3 axis:              d3.svg.axis();
+
+  i.e.
+      var svgContainer = d3.select('body').append('svg').attr('width', 400).attr('height', 100);
+      var axisScale = d3.scale.linear().domain([0,100]).range([0,400]);
+      var xAxis = d3.svg.axis().scale(axisScale);
+
+  The function to make an axis returns a function, so xAxis in the above example is a function. In order to add the axis to the SVG graph, you have to call the axis function on a selection. Use the .call() operator, which always returns the current selection, to call the axis function.
+  The code below creates an svg group to hold all the elements that the axis function produces. This makes it easier to transform and style the group as a whole.
+
+      var xAxisGroup = svgContainer.append('g').call(xAxis);
+
+
+
+
+
+
+
+

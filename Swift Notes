@@ -60,6 +60,24 @@ Logical Operators:
     &&      // and
     !       // not
 
+All Swift Operators:
+    Precedence      Operators
+    --              .
+    --              ++ -- ! ~ + - &
+    160             << >>
+    150             * / % & &*
+    140             + - } ^ &^ &-
+    135             ..< ...
+    132             is as as? as!
+    131             ??
+    130             < <= > >= == != ~= === !==
+    120             &&
+    110             ||
+    100             ?:
+    90              = *= /= %= += -= <<= >>= ||= &&= ^= |= &=
+
+    You can extend Swift with operator overrloading and when doing so you have to assign a precedence level. That's why they left some numeric gaps between some precedence levels.
+
 
 ************************ iOS PLAYGROUND BASICS ************************
 
@@ -119,6 +137,54 @@ Special Characters:
     Can print out special characters by going to the top menu Edit...Special Characters... and then drag the special character or symbol you want into the code.
 
 
+Comments:
+    Comments in Swift are the standard // for single line comments and /* */ for multi-line comments. Also swift comments will nest, unlike other languages, so you can put multi-line comments inside of other multi-line comments. Like so:
+    /* This is a /* nested comment */ and its beautiful */
+
+    Doc Comments:
+        Doc comments can be used for classes and functions/methods.
+        A three-slash comment is a documentation comments. Whenever you click on a function or class in Xcode the inspector panel on the right has a Quick Help Inspector that gives some information about that function. Putting a documentation comment above a function/class makes the Description in the Quick Help section for that function/class be whatever you put in the doc comment! You can use markdown for doc comments, for example surrounding text with a single asteriks makes it italic, while surrounding it with two asteriks makes it bold. Using a hyphen at the beginning of a line makes that line an item in a bulleted list.
+            /// This *is* **my** doc comment
+            /// - feed pidgeons
+            /// - catch pokemon
+        In the above example "this" would be in italics, "my" would be in bold,  and there would be a bulleted list with "feed pidgeons" and "catch pokemon" in the Quick Help inspector.
+
+        Doc comments markdown can also specify what a function returns and it's parameters.
+        To do this use " - Returns: " and " - Parameters: ". To list the parameters you have to indent on the next line a parameter followed by a colon and a description of the parameter.
+            /// - Returns: some awesome value
+            /// - Parameters:
+            ///     - name: name of user
+            ///     - age: age of user
+        You can also document single parameters at a time like this:
+            /// - parameter name: name of user
+            /// - parameters age: age of user
+
+        In a function or class call you can see the documentation for that function/class by alt+clicking it, then you doc comments will pop up in the popup box.
+
+Also, if you start a comment off as:
+            // MARK:
+    in iOS that is a special type of comment that’s used to organize your code and to help you (and anybody else who reads your code) navigate through it. For example, the comment:
+            // MARK: Properties
+    indicates that this is the section of your code that lists properties.
+    While the comment below is for the section of the View Controller that specifies functions for actions.
+            // MARK: Actions
+
+
+
+#available and @available
+    You can use the #available statement to check if the code is running on a specified operating system and only run the code in that block if it is.
+
+    if #available(iOS 8.0, OSX 10.10, *) {
+        // code that only works with these OS environments
+    }
+
+    You can do the same thing for functions with @available:
+    @available(iOS 8.0, OSX 10.10, *)
+    func worksOnlyWithNewerOS() {
+        // code...
+    }
+
+
 
 
 ************************ FUNCTIONS / METHODS ************************
@@ -148,22 +214,36 @@ Use a plus "+" symbol to join things in the print function.
 ************************ VARIABLES ************************
 
 
-The types of variables are strings, ints, floats, doubles, booleans (true or false).
+The types of variables are strings, ints, unsigned ints, floats, doubles, booleans.
+String, Int, UInt, Float, Double, Bool
 
 To declare a variable use the var keyword:          var myVar = value
 To declare a constant use the let keyword:          let myConst = value
 
+For Ints, Int and UInt's size isn't specified, it depends on the operating system, but the Foundation library has a bunch of differently sized Ints and UInts for use in case you need to use a specifically size Integer, like if you need a really big Int:
+    Int8    Int16   Int32   Int64
+    UInt8   UInt16  UInt32  UInt64
+    UTF8    UTF16   UTF32   UTF64
+    Float80
+
+Data types in Swift are actually objects, so they have properties and methods associated with them. For example, Int.min and Int.max return the min and max integer values that it can hold.
+
 Can implicitly declare variables/constants just by using var or let keywords, fractional numbers when implicitly declared are of type Double, not float.
 But you can also explicitly declare variable types by putting a colon and the data type after the identifier:
-                    var myVar : Int = 34
-                    let str : String = "yo man"
-                    var someNum : Float = 23.29
-                    var aBool : Bool = true
+                    var myVar: Int = 34
+                    let str: String = "yo man"
+                    var someNum: Float = 23.29
+                    var aDubbs: Double = 9.99               // Double is the default for decimal point values
+                    var aBool: Bool = true
                     var myArr [String] = ["yo", "man"]
 
-String interpolation:
-    Can use a variable or constant identifier directly in a quotation by using a backslash and then putting the identifier in parentheses, like so:
-                    print("This is a variable: \(myVar)")
+If you don't want to assign a value to a constant/variable at declaration then you have to assign a type:
+                    let something: Int          // ok
+                    let something2              // error
+                    let something3 = 4          // ok
+
+Swift also has type aliasing so you can assign your own type name as an alias to a built-in type name, like:
+    typealias Unsigned = UInt16
 
 
 Type Casting:
@@ -172,6 +252,7 @@ Type Casting:
         Double(23)      // = 23.0
         Int(34.4)       // = 34, doesn't work on strings, instead use .toInt()
     
+    Swift does no type conversion, so adding a float and an int will cause a compiler error. You need to typecast one of them with stuff like Int(), Double(), etc.
     The .toInt() method for Strings, which returns an Optional since it might not be able to convert the string to a number. This means to safely unwrap what toInt() returns you need to use an if-let statement, as described in the section below on Optionals.
 
 
@@ -188,6 +269,57 @@ Equal sign and white space:
 
 
 
+************************ STRINGS ************************
+
+
+String vs NSString:
+    The String class is not built into Swift, it is part of the Foundation library. Objective-C uses the NSString type, and Swift's String type is just a subclass of NSString. So you can assign a String to an NSString variable but not the other way around since you can't assign a subclass type to a superclass type. But you can type convert with the "as" operator like so:
+            swiftString = objcNSString as String
+
+String interpolation:
+    Can use a variable or constant identifier directly in a quotation by using a backslash and then putting the identifier in parentheses, like so:
+                    print("This is a variable: \(myVar)")
+
+There is no length property directly on the String type, what you have to do is access the "characters" property and then call .count() on that:
+        var bird = "It's a bird"
+        bird.characters.count()
+
+Some other String methods:
+    .isEmpty
+    .hasPrefix()
+    .hasSuffix()
+
+Operators like += + < > work on Swift strings.
+
+To loop through a string use a for-in loop:
+    for character in s { // code... }
+
+You can extract utf versions instead of using unicode:
+    str.utf8
+    stf.utf16
+
+Can look at all the characters in a string as unicode scalars like so:
+    for scalar in s.unicodeScalers {
+        f(scalar.value)
+    }
+
+Accessing character in a string is a little annoying, you can't just use [index], instead you have to do this crap:
+    var str = "0123456789"
+    s[s.startIndex]                 <-- "0"
+    s[s.startIndex.successor()]     <-- "1"
+    s[s.endIndex.predecessor()]     <-- "9"
+    s[s.endIndex]                   <-- won't work, points one index past end of string, get error
+    s[advance(s.startIndex, 1)]     <-- 1
+    s[advance(s.startIndex, 3)]     <-- 3
+    s[advance(s.endIndex, -2)]      <-- -8
+    s.insert("q", atIndex: advance(s.startIndex, 4))        <-- s: "0123q456789"
+
+To remove a group of characters in a string, use a range. Here, we get the range of characters "456789", the last 6 characters) and then the removedRange() method is used to remove that substring from the main string so "s" then equals "0123":
+    let range = s.endIndex.advancedBy(-6) ..< s.endIndex
+    s.removeRange(range)
+
+
+
 ************************ ARRAYS ************************
 
 
@@ -197,8 +329,12 @@ Create an empty array:
             var myArr = []
 
 Explicitly declare array type:
-            var myArr : [String] = ["joman", "checkyo"]
-            var myArr : [Int] = [23, 34, 2]
+    var myArr = Array<String>()                     <-- ugly
+    var myArr = [String]()                          <-- ok
+    var myArr: [String] = []                        <-- better
+    var myArr: [String] = ["joman", "checkyo"]
+    var myArr: [Int] = [23, 34, 2]
+    var myArr = [String](count:3, repeatedValue:"yo")   <-- initialize elements with same value
 
 Adding to an array:
     You can add to an array that is either explicitly declared or is composed of elements of a single data type, using " += [value]".
@@ -218,28 +354,89 @@ Accessing array elements:
 Some Properties and Methods of arrays:
     myArr.count                 // gives number of elements in array
     myArr.append(value)         // appends new element to end of the array
+    myArr += ["a","b"]          // also appends
     myArr.removeAtIndex(index)  // removes and returns element at specified index
     myArr.removeAll()           // removes all elements of array, can choose to keep capacity
                                 // in the argument like so:   myArr.removeAll(keepCapacity: true)
     myArr.removeLast()          // removes and returns last element of array
     myArr.insert(value, atIndex: index)     // inserts a value at a certain index, pushing later
                                             // elements in the array back on index
+    myArr[1...2] = ["a","b"]     // this replaces elements at indices 1 and 2 with "a" and "b"
+    myArr[1...2] = ["a","b","c"]    // number of elements pushed into array doesn't have to match
+                                    // the number of elements replaced
 
+No support for Two Dimensional arrays, but it does support arrays of arrays:
+        var twoD: [[String]] = [["a","b","c"], ["d","e","f"]]
+        twoD[0]         <-- ["a","b","c"]
+        twoD[0] = ["A","B","C"]
+        twoD[0][0] = "x"
+
+
+
+************************ SETS ************************
+
+Sets are like arrays except that it is a unique list, in that no two elements can have the same value.
+
+// awkward syntax
+var mySet = Set<String>()
+var mySet = Set<String>(["a","b","c"])
+
+// good syntax
+var mySet: Set<String> = []
+var mySet: Set<String> = []
+var mySet: Set<String> = ["a","b","c"]
+
+Methods on Sets:
+    mySet.insert("A")
+    if let oldValue = a.remove("A") { /* code */ }      // remove returns an optional
+    mySet.removeAll()
+    mySet.isEmpty
+    mySet.count
+    mySet.contains("A")
+    mySet.isDisjointWith(b)
+    mySet.isSupersetOf(b)           // subset of b if all element of a are in b
+    mySet.isSubsetOf(b)             // vice versa
+    mySet.isStrictSupersetOf(b)     // strict subset of b only if they have none of same elements
+    mySet.isStrictSubetOf(b)        // vice versa
+// these return a set new set
+    mySet.exclusiveOr(b)            // all elements except those that are shared
+    mySet.intersect(b)              // only the shared elements
+    mySet.subtract(b)               // all elements mySet minus those that are also of b
+    mySet.union(b)                  // all elements, including shared
+// these modify the set in-place
+    mySet.exclusiveOrInPlace(b)
+    mySet.intersectInPlace(b)
+    mySet.subractInPlace(b)
+    mySet.unionInPlace(b)
 
 
 
 ************************ DICTIONARIES ************************
 
 
+Create a dictionary with the constructor:
+        var aDict = [KeyType:ValueType]()
+i.e.    var aDict = [String:Int]()                 // keys will be strings, values will be ints
+        var aDict = [String:Int] = [:]              // better syntax
+        var aDict = [String:Int] = ["age": 33, "weight": 150, "height": 183]
+
 Create a dictionary similar to creating an array, using square brackets:
         var myDict = [key: value, key: value, key: value]
 
-Accessing dictionary elements same as arrays:
+Accessing and editing dictionary elements same as arrays:
         myDict[key]
         myDict[key] = "new value"
 
+Can also update a value like this, checking for a value and returning an optional:
+        if let old = myDict.updateValue("some new value", forKey: "someKey") { /* ... */ }
+
 Adding a pair to a dictionary is the same syntax as changing a value of a current pair:
         myDict[newKey] = "value"
+
+Removing a value and its key from the dictionary, just assign nil to it:
+        myDict["someKey"] = nil
+If you want to remove the value and get the old value though, you can use a method that returns an optional:
+        if let old = myDict.removeValueForKey("someKey") { /* code... */ }
 
 Printing a dictionary value you print as: Optional(value)
         print(myDict[key])       // if value of the key is "yes" it will output:  Optional("yes")
@@ -247,7 +444,14 @@ Printing a dictionary value you print as: Optional(value)
 Some Properties and Methods of dictionaries:
     myDict.count                    // gives number of key:value pairs in dictionary
     myDict.removeValueForKey(key)   // removes and returns value for the given key
+    myDict.keys                     // get all keys from dictionary
+    myDict.values                  // get all values from dictionary
+    myDict.isEmpty
 
+Iterate over a dictionary with a for-in loop:
+    for (key, value) in dict {
+        // code...
+    }
 
 
 
@@ -268,7 +472,7 @@ while loop:
     while condition { }
 
 do-while loop:
-    do { } while condition
+    repeat { } while condition
 
 
 
@@ -276,7 +480,7 @@ do-while loop:
 ************************ CONDITIONAL STATEMENTS ************************
 
 
-if-statement:                           // Note that in Swift you MUST always use curly braces!
+if-statement:               // Note that in Swift you MUST always use curly braces!
     if condition {
 
     } else if condition {
@@ -285,26 +489,97 @@ if-statement:                           // Note that in Swift you MUST always us
 
     }
 
+    Swift will let you break out of an if-statement with a 'break' statement.
+
+
 switch statement:
-    Note that switch statements must handle all possible case statements or have a default statement, otherwise it will cause an error.
+    Note that switch statements must handle all possible case statements or have a default statement, otherwise it will cause an error. Also no 'break' statement is needed because switch will only ever execute a single case block.
 
-    switch variable {
-    case value:
-        // code
-    case value:
-        // code
-    default:
-        // code
-    }
+        switch variable {
+        case value:
+            // code
+        case value:
+            // code
+        default:
+            // code
+        }
 
-    Can also do number ranges or multiple values of any type in a case like so:
+    In Swift the case statement doesn't take a single value, but instead takes a pattern, so this makes it more powerful in that it could be a single value, or it could be multiple values, or it could be a range, etc. So it can do number ranges or multiple values of any type in a case like so to make up for the fact that every case statement has an implied break in it, so you can still have multiple values use the same case block this way:
         switch variable {
         case 1...5:
             // code
         case value,value,value:
             // code
+        case "aardvark"..."antelope"      // any string that would sort between these gets matched
+            // code
+        }
+    There is also a 'fallthrough' keyword which I guess is like the opposite of a 'break' statement in that since Swift implicitly has a break inside each case statement, the 'fallthrough' keyword allows the code to go to execute the next case statement, thereby not following the implicit break.
+
+    Switch statement in Swift can be a lot more complex than in JavaScript, you can check again other data types besides just strings, and you can use 'where' clauses in the cases:
+
+        let vegetable = "red pepper"
+        func switchCase(veggie: String) -> String {
+            switch veggie {
+            case "celery":
+                let veggieComment = "It's a celery"
+                return veggieComment
+            case "cucumber", "watercress":
+                let veggieComment = "Goes in a sandwich"
+                return veggieComment
+            case let x where x.hasSuffix("pepper"):
+                let veggieComment = "Is it a spicy \(x)"
+                return veggieComment
+            default:
+                let veggieComment = "Everything tastes good in a soup"
+                return veggieComment
+            }
+        }
+        switchCase(vegetable)
+        switchCase("celery")
+        switchCase("watercress")
+        switchCase("something else")
+
+        let num = 23
+        func switchNum(num: Int) -> String {
+            switch(num) {
+            case 23:
+                return "Michael Jordan"
+            default:
+                return "Some other num"
+            }
+        }
+        switchNum(num)
+
+
+if-statements with optional binding and where and commas and other weird stuff:
+    You can use a single if-statement to bind multiple values. A 'where' clause can be added to add another check on the condition. And you can use commas to add another optional binding:
+
+        var optName: String? = "Jonny Appleseed"
+        var greeting = "Hello"
+        var optionalHello: String? = "Hello"
+        if let hello = optionalHello where hello.hasPrefix("H"), let name = optName {
+            greeting = "\(hello) \(name)"
         }
 
+        let i = 5
+        if 1...10 ~= i {
+            // if i is 1 to 10 inclusive
+        }
+
+Both if and switch statements can use commas to add multiple conditions, but an if-block will only run if all conditions are met, while a switch case will run if any of the commas-separated conditions are met.
+
+
+You can label flow blocks like 'if' and 'while' like so:
+        whileLabel: while someCondition {
+            if otherCondition { continue whileLabel }
+            if someOtherCondition { break whileLabel }
+        }
+        outerLabel: if someCondition {
+            innerLabel: if otherCondition {
+                if someOtherCondition { break outerLabel }
+                if yetAnotherCondition { break innerLabel }
+            }
+        }
 
 
 
@@ -332,10 +607,23 @@ To create a function use the func keyword:
 To call a function:
         funcName()
 
+As shown above, in function declarations you must explicitly assign types to the parameters.
+
+
+Invoking functions:
+When calling functions the first argument doesn't need to include a name but the rest do.
+    func blah(yo: Int, bowsa: Double, grillpiece: Bool) { //code... }
+    blah(23, bowsa: 9.23, grillpiece: true)     // this works
+    blah(23, 9.23, grillpiece: true)            // this causes an error because second argument missing label/name
+
 
 Named Parameters:
-You can force the argument list of a function call to include labels (named parameters) by putting the named parameters before each parameter name in the function definitions. When you do this Xcode will display the named parameters when the function is called so the programmer. But if the local parameter and the named parameter are the same name there is a shortcut in which you don't need to write the same name twice, you just put:        #paramName
+You can force the argument list of a function call to include labels (named parameters) by putting the named parameters before each parameter name in the function definitions. When you do this Xcode will display the named parameters when the function is called to the programmer. But if the local parameter and the named parameter are the same name there is a shortcut in which you don't need to write the same name twice, you just put:        #paramName
 Named parameters are used to remove all ambiguity as to what the parameters are when calling a function.
+
+Named parameters is an extra name for a parameter. Not really sure why you would ever want to do this, just choose a good name! But the named param comes before the local param, and the named param is the name you use in the function invocation, while the local name is what you'd refer to the param inside the function definition.
+
+Has #namedParam been taken out of swift now?? Causes an error now. And it doesn't really seem to serve any purpose anyway as you would just use the one name anyways if the names were going to be the same instead of adding a # before it.
 
     Function definition Syntax:
         func myFunc(namedParam localParam: dataType, namedParam2 localParam: dataType) {
@@ -373,19 +661,19 @@ Returning tuples from a function:
 ************************ TUPLES ************************
 
 
-A tuple can hold different data types in a single tuple.
-
+A tuple can hold different data types in a single tuple, which is a list of things surrounded by parentheses.
+Tuples are first class objects in Swift, so they can be passed into and returned from functions.
 
 Create a tuple by assigning it to a single identifier:
     var tupleName = (value, value)
 
-Creating a tuple by assigning it to a tupe with each tuple value corresponding to a named value in the tuple it is being assigned to, so that you can directly access tuple values by name:
+Creating a tuple by assigning it to a tuple with each tuple value corresponding to a named value in the tuple it is being assigned to, so that you can directly access tuple values by name:
     var (name1, name2, name2) = (value1, value2, value3)
     i.e.
         let (found, name) = (true, "todd")
         print(found)                            // outputs: true
 
-    If you don't want to assign all the tuple values then use an underscore:
+    If you don't want to assign all the tuple values then use an underscore, and underscore basically says to ignore that tuple value:
         let (_, name) = (true, "todd")          // can't get access to the true value
         print(name)                             // outputs: "todd"
 
@@ -394,11 +682,143 @@ Access elements of a tuple by using dot notation and the index:
     myTups.0
     myTups.1
 
+Can also make the tuple values named values when assigning a tuple to a variable, you would then access those tuple values with the dot syntax and their name:
+    let tupleName = (name: 'Todd', age: 33)
+    tupleName.name
+    tupleName.age
+
+Returning tuples from a function:
+    To return a tuple from a function:
+        func myFunc(params) -> (dataType, dataType, dataType) { }
+
+    You can also return a tuple using named tuple values to access the values individually, but then still assign the return value to a single identifier and then instead of accessing the tuple values by their index you can access them by their names:
+        i.e.
+            func myFunc(params) -> (cat: String, age: Int, weight: Double) { // code... }
+            let result = myFunc()
+            result.cat                  // equivalent to result.0
+            result.weight               // equivalent to result.2
+
+
+An example using a tuple for a switch statement including using 'let' and 'where':
+        let aPoint = (1.0,2.0)
+        switch aPoint {
+            case (let x, 2.0):                      // first tuple value can be anything
+                print("\(x)")
+            case (1.0, let y):                      // second tuple value can be anything
+                print("\(y)")
+            case let(x,y) where x>0.0 && y>0.0:     // x and y must be greater than 0.0
+                print("\(x),\(y)")
+            case let(x,y):               // basically a default but can use x and y in the block
+                print("\(x),\(y)")
+        }
+
+
+
+************************ ENUMS ************************
+
+An enum in Swift is an actual type, so you can't, for example, convert easily between a number and an enum number.
+
+To make an enum you just set up a named block with the 'enum' keyword and list the enums for it with the 'case' statement. You can either put each listed enum on its own line with a 'case' or you can put a bunch on one line using commas.
+
+        enum CompassPoint {
+            case North
+            case South
+            case East, West
+        }
+        var direction = CompassPoint.North
+        direction = .East
+
+In the above example, CompassPoint.North is assinged to direction, and since the compiler then knows that direction is of the enum type CompassPoint, you don't even need to explicitly state CompassPoint if you want to change that value, you can just throw a dot syntax in there operating on nothing explicit (implicitly on CompassPoint) with another CompassPoint enum value attached.
+
+This looks similar to how you can use enums in switch statements:
+        switch direction {
+            case .East: print("East")
+            default:    print("Not East")
+        }
+
+Enums are not just simple lists of possible values, the enum can carry some data with it, called an associated value. There is some very compact syntax to do this:
+        enum PostalCode {
+            case US(Int,Int)
+            case UK(String)
+            case CA(code:String)
+        }
+In the above code US, UK, and CA are the enum values for the PostalCode enum, and using parentheses you can specify the data types that are the associated value for each enum value. You can also give the associated value a name, such as in the CA case above. If you include a label/name for an associated value then when setting that value you have to include the name. Set these like so:
+        var somewhere = PostalCode.US(78741,1234)
+        var somewhere = PostalCode.CA(code: "V5K 0A1")
+To access the associated data in an enum you have to either use a switch statement or a special version on an if-statement.
+        switch somewhere {
+            case .UK (let s):
+                print("\(s)")
+            case .US (let loc, var route):
+                print("\(loc)-\(route)")
+            case .CA break;
+        }
+
+When the data associate with every element on an enum type all have the same type it is called a raw value. So say we create an enum whose raw value is a Character:
+        enum ASCIIControls: Character {
+            case Newline = "\n"
+            case Carriage = \r"
+            case Tab = "\t"
+        }
+For enums that have a raw value, depending on the type of value, Swift will implicitly assign the rest of the elements values after you assign the first one. For example, with Ints, if you want the enum values to be 1,2,3,4,5... etc you only have to assign the 1 value and Swift takes care of the rest.
+        enum Planet: Int {
+            case Mercury = 1,
+                 Venus, Earth, Mars, Jupiter,           // Venus to Neptune are 2,3,4,5,6,7,8
+                 Saturn, Uranus, Neptune
+        }
+You can access the raw value of an enum element with dot notation and using the 'rawValue' property:
+            let x = Planet.Earth.rawValue                   // 3
+You can also access a raw value of an enum element with a if-let statement and parentheses syntax:
+            if let aPlanet = Planet(rawValue: 9) {
+                print("\(aPlanet.rawValue) exists")
+            }
+The above if-let statement will fail because there is no member of the Planet enum whose rawValue is 9, so aPlanet will be nil so the if-block will not run.
+
+You can also put functions inside enum definitions, but they are restricted in what they can do. It can also have an init() constructor, which has restrictions as well, like it must assign to 'self'.
+
+        enum Dimension {
+            case DISTANCE(Int)
+            init(distance: Int) {
+                self = DISTANCE(height + 100)           // init() function must assign to self
+            }
+            fun value() -> Int {
+                switch self {
+                    case .DISTANCE (let value): return value
+                }
+            }
+        }
+    // use standard way to create an enum
+        let aDistance = Dimension.DISTANCE(10)
+        aDistance.value()                           // 10
+    // using the constructor results in a different value
+        let anotherDistance = Dimension(distance: 10)
+        anotherDistance.value()                     // 110
+
+Example of using an enum to implement a simple state machine:
+        enum ConnectionState {
+            case closed, opening, open, closing
+            mutating func next() {
+                switch self {
+                    case closed: self = opening
+                    case opening: self = open
+                    case open: self = closing
+                    case closing: self = closed
+                }
+            }
+        }
+        var state = ConnectionState.closed
+        state.next()            // opening
+        state.next()            // open
+        state.next()            // closing
+        state.next()            // closed
+
 
 
 
 ************************ OPTIONALS ************************
 
+
+Optionals handles situations where a particular variable doesn't have a legitimate value.
 
 Swift has something called Optionals which allows you to return from a function a value or indicate the absence of a value by specifying nil. So an Optional just allows something to either be a normal data type value or nil, instead of just a normal data type.
 
@@ -430,11 +850,317 @@ Optional Chaining
             // code...
         }
 
+    You can chain a bunch of optionals together. This is the equivalent of fixing the "cannot find ____ of undefined" error in Javascript. Here, if some property is nil, if you've used optional chaining on each property that could be nil then there will be no error because when the optional is nil it just exits the statement. Works on dot syntax or bracket syntax.
+
+            if let blah = obj.a?.b?.c?.d { /* ... * /}
+            if let blah = obj.a?["someKey"]?.c?.d
+
+If you have an object that could be nil and want to call a method on it you can use the ! or the ?. Using ! means that if the object is nil then the program will terminate (obviously don't use the ! in this case). Using the ? on the optional object will short circuit the statement if the object is nil so the method doesn't get called, and the program keeps running. or of course you can handle things more elegantly and use an if-let statement to decide what to do if the thing fails due to a nil.
+            optObj!.someMethod()
+            optObj?.someMethod()
+
+
+Another set of notes on optionals:
+
+Optionals are used for variables/constants whose value may or may not be there. It is used as a safety procedure in order to avoid program crashes. An optional value either contains a value or nil to indicate the value is missing. The use of optionals involves using questions marks and exclamation marks.
+The idea behind optionals is that Swift will throw an error if you try to use a variable that has no value (a nil value), so if you are declaring a variable that might not have a value at some point when it could be accessed then you need to make it an optional to avoid Swift throwing an error.
+
+To specify a value as optional mark it with a question mark (?) on declaration after the type
+    i.e.        let optionalInt: Int? = 9
+
+To get at the underlying value of an optional you must unwrap it. The most straightforward way to do this is to use the force unwrap operator, the exclamation mark (!). Only use the unwrap operator if you are sure the underlying value isn't nil.
+    i.e.        let actualInt: Int optionalInt!
+
+Another way to get at the underlying value of an optional is using optional binding, which is where you use an if-statement to check if the optional value has a value or is nil. In the code below the 'name' constant can only be used inside that if-statement, and the if-block will only run if optName is not nil.
+    i.e.        var optName: String? = "Johnny Appleseed"
+                var greeting = "Hello"
+                if let name = optName {
+                    greeting = "\(greeting) \(name)"
+                }
+
+if-statements with optional binding and where and commas:
+    You can use a single if-statement to bind multiple values. A 'where' clause can be added to add another check on the condition. And you can use commas to add another optional binding:
+
+    var optName: String? = "Jonny Appleseed"
+    var greeting = "Hello"
+    var optionalHello: String? = "Hello"
+    if let hello = optionalHello where hello.hasPrefix("H"), let name = optName {
+        greeting = "\(hello) \(name)"
+    }
+
+An implicitly unwrapped optional is an optional that can also be used like a non-optional value without the need to unwrap it each time it is accessed because an implicitly unwrapped optional is assumed to always have a value after a value is initially set, although the value can change. To do this you use an exclamation mark (!) instead of a question mark when declaring the value. Usually the only time you use implicitly unwrapped optionals is for tracking outlets between an interface and source code.
+
+    i.e.        let implicitlyUnwrappedOptionalInt: Int!
+
+
+Overview of using ! and ? for optionals:
+    ?
+    declaring an optional value:                    var opt: String?
+    create a failable initializer in a class:       init?(args: Types) {}
+    !
+    unwrapping an normal optional value:            opt!
+    declaring an implicitly unwrapped optional:     var opt: String!
+
+
+
+
+************************ Structs ************************
+
+A Struct, unlike in C++, can have methods assigned to it. One crucial difference between a Struct and a Class is that Structs are always pass-by-value, whereas Classes are always pass-by-reference.
+
+A struct, like a class, can have an init() method, however it can't have a deinit block.
+
+In a struct, if a method is going to modify the value of the struct, then it needs to be declared with the 'mutating' keyword, because Structs are constant by default. Only mutating functions can change the value of the struct.
+
+You can change the value of the entire struct like so:
+    mutating func reset() { self = Circle() }
+Here 'self' refers to the struct we are currently inside, when the reset() method on the struct is called it assigned a new struct to be the value for this struct.
+
+struct Point {
+    var x=0,
+    y=0
+    mutating func changeSomething(a: Int) {
+        self.x = a
+    }
+}
+var newStruct = Point()
+newStruct.x = 10
+func f(var a: Point) {
+    a.x = -1
+}
+
+Structs can have other classes and structs nested inside of them like:
+    class NestedClass { }
+    struct NestedStruct { }
+    enum Nested { }
+But these are not inner classes, in that they don't have access to the fields of the outer class/struct. You would access the nested class/struct like any other property on it:
+    OuterThing.NestedThing
+
+
+
+************************ Classes ************************
+
+class NameOfClass {
+    let classConstantProperty: Bool
+    var classVariableProperty: Double
+    var blah: Int
+
+    init(blah: Int, jams: String) {
+        // initialize class
+        self.blah = blah
+        classVariableProperty = jams
+    }
+
+    func someMethod(blah: Int) {
+        // code...
+    }
+}
+
+class NameOfClass: ParentClass {
+    
+}
+
+Constructors in Swift are done with the init() method. You can have more than one constructor in a class but they have to take different parameters. With the init() constructor no 'func' keyword is needed. Every property of a class needs to be initialized either in the class definition or in the init() method. When calling the initializer to create a new object you have to put the parameter name for all the arguments, including the first.
+
+In Swift there are "failable initializers". Sometimes you might want a class initilizer to fail if bad data is given to it during object instantiation. For example if some property of the object must be within a given range or else the object shouldn't be created, you use a failable initializer, which will return nil and not create the object. Use init? to declare a failable initializer.
+
+    i.e.        init?(prop: String, prop2: Int) {
+                    if prop2 < 0 {
+                        return nil
+                    }
+                }
+
+The 'self' keyword refers to the class. If there is no name conflict between the properties of the class and the parameter then you don't need to use 'self' because the compiles will do it for you.
+
+Just as there are initializers in a class there are de-initializers, using a deinit block. These are the same as destructors from other languages.
+    class Blah {
+        init() { /* ... */ }
+        deinit { /* ... */ }
+    }
+There is no garbage collection in Swift, so the deinit function is very predictable. For example, if an object is created inside a function, the deinit will be called when that function exits, instead of waiting for garbage collection to get rid of it at some point later.
+
+When making methods in a class, if you use declare the function with the 'final' keyword, that means subclasses cannot override it.
+    final func aClassMethod() { /* ... */ }
+
+There is also the 'lazy' keyword that can be put on properties of a Class. The 'lazy' keyword means that variable's assignment gets deferred until that variable is actually called as a property on an instance of the class, instead of being initialized when the object is instantiated.
+    class Circle {
+        var centerX:Float
+        var centerY:Float
+        lazy var radius = getDefault()
+        init() { /* ... */ }
+        func setCenter(x: Float, y: Float) {
+            self.centerX = x
+            self.centerY = y
+        }
+    }
+    var hole = Circle()
+    hole.setCenter(12.3, 20.99)
+    print(hole.radius)                  // getDefault() is called here to initalize radius
+
+Swift also has class level properties and methods using the 'static' keyword for class level properties and 'class' for class level methods.
+    static var count = 0
+    class func expand() { /* ... */ }
+    static func blah() { /* ... */ }
+You would then access these class level things by accessing them straight off the class, rather than from an object. So a class that is called Circle you would access the two above class level properties of it as:
+    Circle.count
+    Circle.expand()
+In addition to class level methods being assigned by the 'class' keyword, you can also use the 'static' keyword to create a class level method. The difference being that the 'class' keyword means the method can be overridden by a subclass, whereas the 'static' keyword on a method means it cannot be overridden. So a static method like combining 'class' and 'final' together.
+Note that a static field is also lazy by default, so it won't be initialized until the first time it is used.
+
+
+
+************************ Pass-by ************************
+
+In Swift, normal data types and structs are pass-by-value, and so when passing them into functions or assigning them to other variables only a copy of the original gets passed. But Classes are pass-by-reference, so assign an object to another variable or passing an object into a function passes it by reference and so altering the other variable or the parameter in a function will alter the original.
+
+In Swift assigning variables is pass-by value, so a variable gets a copy of another variable.
+        var a = 10
+        var b = a
+        b = 5               // a = 10, b = 5
+
+Functions are pass-by-value or pass-by-reference depending on if the arguments are pass-by value or reference, so changing the value of a normal data type parameter in a function does not change the value of the argument passed in from outside the function
+        var a = 10
+        func f(a: Int) {
+            a = 2
+        }
+        print(a)            // 10
+
+Structs are also pass-by value, so assigning a struct to another variable, that second variable can't change the value of the original variable, it is just assigned a copy of the struct instance.
+        struct Blah { var x=0, y=0 }
+        var a = Blah()                      // a.x = 0, a.y = 0
+        var b = a
+        b.x = 10                            // a.x = 0, b.x = 10
+
+Classes, however, are reference objects. So assigning an object to another variable makes both those variables point to the same reference.
+        class Blah { var x=0, y=0 }
+        var a = Blah()
+        var b = a
+        b.x = 10                            // a.x = 10, b.x = 10
+        func f(a: Blah) {
+            a.x = -1
+        }
+        f(a)                                // a.x = -1, b.x = -1
+
+
+
+
+************************ Protocols ************************
+
+A protocol is a list of methods that specify a contract or interface. Use the 'protocol' keyword to define named block for the protocol. So a protocol is basically a class interface which a class can subscribe to.
+
+i.e.
+    protocol Speaker {
+        func Speak()
+    }
+
+Any class that conforms to this protocol must implement the methods in the protocol (otherwise it'll throw a compiler error), in the case of this example, the Speak() method. The protocol is added to the class definition header the same way a parent class would be added, with ": protocolName". If the class inherited from another class then the protocol goes after the name of the super class.
+
+Classes that conform to the Speaker protocol:
+    class Vicki: Speaker {
+        func Speak() {
+            print("Hello, I am Vicki!")
+        }
+    }
+    class Ray: Speaker {
+        func Speak() {
+            print("Yo, I am Ray!")
+        }
+    }
+
+You can only inherit from one class in Swift but you can conform to multiple protocols.
+An example of a superclass and a protocol:
+    class Animal {}
+    class Dog: Animal, Speaker {
+        func Speak() {
+            print("Woof!")
+        }
+    }
+
+You can have options methods in a protocol that the classes which conform to the protocol don't have to inherit. To do this you put the "optional" keyword in front of the method declaration in the protocol body, but you also have to put the @objc tag in front of the protocol declaration. Additionally all protocol method definitions in classes for that protocol must have the @objc tag prepended to them inside the class bodies.
+i.e.
+    @objc protocol Speaker {
+        func Speak()
+        optional func TellJoke()
+    }
+    class Vicki: Speaker {
+        @objc func Speak() {
+            print("Hi my name is Vicki")
+        }
+    }
+    class Roger: Speaker {
+        @objc func Speak() {
+            print("Hi my name is Roger")
+        }
+        @objc func TellJoke() {
+            print("What is red and white and runs in circles?")
+        }
+        func someClassMethod() {
+            // code...
+        }
+    }
+
+    var speaker: Speaker
+    speaker = Roger()
+    speaker.Speak()
+    // speaker.WriteTutorial()              // error because speaker we declared as a Speaker and not Roger
+    (speaker as! Roger).WriteTutorial()     // temporarily cast speaker as Roger
+    speaker = Vicki()
+    speaker.Speak()
+    speaker.TellJoke?()         // question mark is optional chaining, will check if method exists before calling
+    speaker = Dog()
+    speaker.TellJoke?()
+
+
+
+
+************************ Delegates ************************
+
+A delegate is a variable that conforms to a protocol, which a class typically uses to notify of events or perform various subtasks. It's like a boss giving his minions status updates or asking him to do something, where the boss is the class and the minion is the delegate.
+
+Delegation is an object-oriented approach to callbacks. If an object has more than one callback, for say two different events, there is no way for more than one callback to coordinate and share information. This is the problem addressed by delegation. You supply a single delegate to receive all of the event-related callbacks for a particular object. This delegate object can then store, manipulate, act on, and realy infomration form the callbacks as it sees fit.
+
+For example, for a number text field you only want to allow a single decimal point to be entered, so whenever the text field input changes the text field will ask its delegate to accept the changes the user has made, but if there is already a decimal place in the input then the delegate will deny that change. The view controller object would act as the text field's delegate.
+
+For every delegate role there is a corresponding protocol that declares the methods that an object can call on its delegate. The object that acts as the delegate will conform to a protocol.
+
+You cannot create instances of a protocol. A protocol is simply a bunch of methods and properties. The implemention is left to each type that conforms to the protocol.
+
+In a class's declaration, the protocols it conforms to are in a comma-delimited list following the superclass (if there is one), i.e.
+    class blahController: UIViewController, UITextFieldDelegate { ... }
+
+Protocols used for delegation are called delegate protocols, and the naming convention is the name of the delegating class plue "Delegate". There are other types of protocols beyond delegate protocols as well.
+
+The UITextFieldDelegate protocol is part of the iOS SDK, but you can write your own protocols as well.
+
+By default protocol methods are required, meaning a class conforming to that protocol must implement all of them. Protocol methods can be marked as optional however with the 'optional' keyword.
+
+
+
+
+************************ Connecting UI to Code ************************
+
+The storyboard contains scenes, which is each page of the application. A scene is made up of a content view which contains other views (UI elements). A View Controller is the code that runs in connections with a scene. To make user interaction possible we must connect the view elements of the scene to the View Controller. There are two types of connections to do this - outlets and actions.
+
+Outlets:
+    An outlet is an object in the View Controller that provides a way to reference a UI element in the storyboard. To create an outlet just Ctrl+Drag from a UI element in the storyboard to a line in the View Controller and it will create the Outlet object declaration. This outlet lets the code access and modify that view element. Use the Xcode Assistant Editor to display the View Controller while the Storyboard is up, then Ctrl+Drag from a view element to the code in the Assistant Editor. After dragging a dialog box will pop up where you can edit things about that Outlet, change the name to be whatever you want and click connect.
+
+    An example of an outlet declaration is:
+
+            @IBOutlet weak var nameTextField: UITextField!
+
+    Where IBOutlet stands for Interface Builder Outlet and it tells Xcode that the variable nameTextField is to be connected to the interface builder. The 'weak' keyword means that it's possible for it to have no value, be nil, at some point in its life. Note that it is of type UITextField and is an implicitly unwrapped optional so that it won't have to be unwrapped everytime you want to access it in the code and it is assumed to always havea  value after the value is first assigned.
+
+Actions:
+    An action is a function in the View Controller that defines what should happen as a result of a user interaction. You create an action in the same way that you create an outlet, by Ctrl+Drag from the Storyboard to the View Controller, except then in the dialog box that pops up choose 'Action' for the Connection and choose the appropriate Type and Event for the Action. The code that will be generated will look like this:
+
+            @IBAction func someButtonAction(sender: UIButton) {
+            }
+
+    The 'sender' argument is the view element object that triggered the action.
+
 
 
 
 ************************ x ************************
-
 ************************ x ************************
-
 ************************ x ************************

@@ -1,0 +1,181 @@
+Ruby Sinatra Notes
+
+
+Notes on getting started using Ruby on the server and using the Sinatra framework.
+Sinatra is a lightweight, unopinionated, micro-framework for Ruby.
+It's the second most popular Ruby server-side framework, in a distant distant second to Rails. But being a micro-framework, it is much better for getting started with backend Ruby programming than Rails because there is no magic behind it, you build everything from scratch.
+Sinatra by default will start up a WEBrick server (just like Rails) on port 4567.
+Sinatra runs on top of Rack, Rails does too. Rack is just middleware between the client and server that makes a common interface for handling HTTP requests.
+
+
+********** Ruby Gems **********
+
+Ruby gems are the module system in Ruby.
+You can install gems globally with:             gem install gemName
+
+To use gems in a file you must require them:    require 'gemname'
+
+
+
+
+********** Basic Usage of Sinatra **********
+
+The simplest way to get started using Ruby on the backend with Sinatra is:
+
+  1. create a new project
+  2. do 'gem install sinatra' to install the sinatra gem globally
+  3. create an app.rb file in the project.
+  4. In the app.rb file put the following:
+        require 'sinatra'
+        get '/' do
+          'Hello Sinatra World!'
+        end
+  5. Run the Sinatra server:        ruby app.rb
+
+That's it! Go to the localhost port (4567 by default) that Sinatra says it is serving on and check out your working Sinatra RESTful API!!
+
+
+
+
+********** Bundler **********
+
+The bundler gem is a way to create local depedencies for your app, instead of just using globally installed gems.
+Most gems you want to install locally in your project rather than globally.
+To install gems locally in a project you use a Gemfile and the bundler gem.
+You can create a new Gemfile with:      bundle init
+The Gemfile is just a file named 'Gemfile', with no extension.
+You then use 'bundle install' or just simply 'bundle' to install the gems. Running bundle install creates a Gemfile.lock file.
+
+The Gemfile is just a file that consists of the source for gems and then a list of gems:
+i.e.
+  source 'http://rubygems.org'
+  gem 'sinatra'
+  gem 'slim'
+
+You need to re-run 'bundle install' (or just 'bundle') everytime you add a gem to the Gemfile.
+You can append a gem to the Gemfile and run 'bundle install' from the command line with this line:
+    echo 'gem "gemname"' >> Gemfile && bundle install
+
+To compare the ruby way of project module dependency to node.js, gems are like npm packages, bundle is like npm (bundle init, bundle install), Gemfile and Gemfile.lock are like package.json, the equivalent of node_modules is vendor/cache which you can get by running 'bundle pack' though you don't need to do this as the gems are stored in a subdirectory of the .rvm directory for the current user.
+
+bundle show
+  Shows the gems that are included in this project's bundle, including dependencies of gems that are in the Gemfile.
+bundle show <gemname>
+  This shows where a gem for this bundle is stored.
+bundle pack
+  This creates a local repository to hold the gems from the Gemfile.lock. This is not needed, but if you want to be able to run the app without access to the internet then you need to do this. This will create a 'vendor' directory and inside it a 'cache' directory. In this 'vendor/cache' directory is where all the gems are stored. You want to put the vendor directory into .gitignore so it doesn't bloat the git project with all the gems.
+bundle update
+  Updates all gems in the Gemfile to their latest versions, ignoring the versions already in Gemfile.lock.
+bundle update <gemname>
+  Updates a specific gem to its latest version and updates all dependencies of that gem as well.
+bundle install --deployment
+  To get the app ready for deployment run this command, which just creates a 'bundle' directory in the 'vendor' directory. When you run this command it sets the Gemfile as being deployed, so anytime you do 'bundle install' after you've set the deployment flag it will create the 'vendor/bundle' directory.
+bundle install --no-deployment
+  To go back to the app being set for development and not deployment.
+
+
+Alternative way to bundle:
+  Another way to bundle the gems up for the app, instead of running 'bundle install', it just to put
+        require 'bundler/setup'
+  at the top of your app.rb file (the entry point file into the application). This will run the bundler for you whenever the app starts up, making sure it can get all the gems and creating the Gemfile.lock file.
+
+  If you have a lot of gems to require in your main app.rb file then immediately after requiring 'bundler/setup' use the following to require all the gemfiles in that file instead of having to list each required gem in the code:
+      Bundler.require(:default)
+  Doing it this way, if you have a gem that needs a different require string than what the gems name is
+      i.e. the 'rack-cache' gem needs to be required with "require 'rack/cache'" and not "require 'rack-cache'"
+  then in the Gemfile you need to use a require directive for that gem:
+      i.e.  gem 'rack-cache', require: 'rack/cache'
+  Basically, only use 'Bundler.require(:default)' if you have a ton of gems that need to be loaded up in the file.
+
+
+  You want to INCLUDE the Gemfile.lock in your git commits. That way the repo has a snapshot of all the dependencies the last time it was working, because the Gemfile.lock file specifies the specific versions of each gem used, so if a later update breaks something you can see in the repo what version was being used when it was working.
+
+
+
+********** What to .gitignore **********
+
+DO NOT gitignore:
+  Gemfile
+  Gemfile.lock
+
+DO gitignore:
+  vendor/         <-- exists if used 'bundle pack' or set up for deployment
+  .bundle/        <-- might exist
+
+
+
+
+********** Using Rack **********
+
+You can start up a Sinatra server, as shown above, simply by running the main application file with ruby:       ruby app.rb
+This starts up a WEBrick server.
+
+But that is the old way of doing things in Sinatra.
+
+Sinatra is a Rack compatible framework. So the better way to run a Sinatra app is to run it with Rack. Also when you deploy a Sinatra app you want to deploy it with Rack.
+
+Rack is just a piece of middleware that sits between the client and the server that standardizes the interface for dealing with HTTP requests. Rack is used by both Sinatra and Rails.
+
+Rack requires a config.ru file or a Procfile.
+The simplest way to get started with running a Sinatra app with Rack is to make a config.ru file in the root of the project directory that contains the following:
+
+    require './app'         # assuming the main app file is called app.rb
+    run Sinatra::Application
+
+Then just run the command:          rackup
+
+The 'rackup' command will start the server with rack, by default on port 9292.
+
+
+
+
+********** Reload app on change **********
+
+Running the ruby command or rackup won't auto reload the app when changes are saved. To do this there are a few different gems to enable auto-reload. Two popular ones are:
+
+    rerun    or    shotgun
+
+To use rerun all you need to do is install the rerun gem globally:
+    gem install rerun
+Then instead of doing 'ruby app.rb' or 'rackup', you do:
+    rerun ruby app.rb      or      rerun rackup
+
+This won't reload the browser on save, but it will reload the application on save, so you don't have to stop and start the server everytime you make a change!
+
+Haven't tried using Shotgun yet, can look at this: https://learn.co/lessons/sinatra-shotgun-server
+
+
+
+********** URL Params **********
+
+Get access to url parameters using the 'params' hash in the route handler.
+
+get '/:something' do
+  @blah = params[:something]
+  puts @blah
+end
+
+This route handler sets the value passed in the 'something' url param to the instance variable @blah, then prints that. Instance variables are nice in that they can be referenced in the views.
+
+
+
+
+********** Slim Template Language **********
+
+Slim is a template language, like Jade or Haml or erb. It looks very similar to Jade.
+
+To use an instance variable from a route handler inside a template that it calls you just do something like this:
+    = @blah_var
+
+In Slim the '=' equals sign means that any Ruby after that will be evaluated. So for an instance variable it outputs the value.
+
+
+
+
+********** x **********
+********** x **********
+********** x **********
+********** x **********
+********** x **********
+********** x **********
+********** x **********

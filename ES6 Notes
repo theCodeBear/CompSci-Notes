@@ -51,7 +51,7 @@ If there are no parameters then you have to use an empty parenthesis.
 i.e. make a squared function:
                   var squared = x => x * x;
 i.e.
-                  var myFunc = (arg1, arg2) => {p
+                  var myFunc = (arg1, arg2) => {
                     // some code...
                   }
 
@@ -570,7 +570,7 @@ Also all functions now have an internal 'name' property which gives the name of 
 
 Block Level Functions
 
-ES5 woul not allow the declaration of a function in a block, for example inside an if-statement. But in ES6 this is allowed and the function is hoisted to the top of the block and only exists within the scope of the block.
+ES5 would not allow the declaration of a function in a block, for example inside an if-statement. But in ES6 this is allowed and the function is hoisted to the top of the block and only exists within the scope of the block.
 
 
 

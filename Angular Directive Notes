@@ -1,6 +1,41 @@
 Angular Directives
 
 
+Directives are JavaScript functions that maniuplate or extend the DOM that are placed in the DOM as attribute or custom elements (or classes or comments).
+
+A directive is declared like so:
+
+  angular.module('example')
+  .directive('dirName', () => {
+    return {
+      // directive object goes here
+    };
+  });
+
+So a directive is a JavaScript factory function (a function that returns an object) that returns an object specifying all the properties of the directive. A directive can include the following 11 properties:
+    restrict
+    require
+    transclude
+    scope
+    bindToController
+    controller
+    controllerAs
+    compile
+    link
+    template
+    templateUrl
+
+In general you want to use a directive as an attribute or a custom element. The name of your directive specified as .directive('nameGoesHere') is what goes in the DOM, but the name in the DOM is kebob-cased and the kebab-case gets translated to camel-casing in the JavaScript directive definition. So a directive named 'myDir' would be used in the DOM the following way:
+    element:      <my-dir></my-dir>
+    attribute:    <div my-dir></div>
+However, you want to namespace all of your custom directives so that it is unlikely they will ever be confused with other third party directives in case you use other angular modules in your app or make your own public angular module for other people to use. For example all of Angular's built in directives are namespaced with the 'ng' prefix, so if we were to namespace a directive with 'tk' an example would be 'tkMyDir' which would be used in the DOM as:
+    element:      <tk-my-dir></tk-my-dir>
+    attribute:    <div tk-my-dir></div>
+
+Directives are basically of the web component paradigm, in that you are creating a re-usable custom element in the DOM. You can use a directive anytime you want to create a piece of UI, and you define the HTML template and any functionality for that UI piece in the directive. Directives are especially useful when you have a some HTML code and funtionality that you need to use multiple times in an application, that way you define the directive once and use it anywhere you need to, without having to rewrite code. You can also create your application entirely out of directives and completely avoid using views and controllers (though you still use controller inside directives) in your angular application, which is what Angular 2 will do anyways as it is changing the directive name to components because Angular 2 is going the full web component route to front end development.
+
+
+The properties of directives:
 
 restrict: 'AECM'
   'A'   -   attribute
@@ -120,7 +155,7 @@ bindToController:
       controller: () => { //code... },
       controllerAs: 'vm'
 
-  Start in Angular 1.4 you can use bindToController not only just for isolated scopes and you give it not just a boolean value, but you can use it in directives when there is any new scope created and you can specifically specify the properties to be bound to the controller by specifying an object literal as the value for bindToController instead of putting those properties on the scope.
+  Starting in Angular 1.4 you can use bindToController not only just for isolated scopes and you give it not just a boolean value, but you can use it in directives when there is any new scope created and you can specifically specify the properties to be bound to the controller by specifying an object literal as the value for bindToController instead of putting those properties on the scope.
 
   That means the bindToController can be used in Angular 1.4 for both isolated and shared scopes. And instead of setting bindToController to true you can put the values straight on it, like so:
       scope: {},              // could be set to true for shared scope
@@ -133,3 +168,77 @@ bindToController:
       controllerAs: 'vm'
 
 
+compile
+  The compile function allows the directive to manipulate the DOM before it is compiled and linked, thereby allowing it to add, remove, change directives or other DOM elements. Basically the compile function attaches event-listeners to DOM elements. It is actually defined as an object, not a function. It can run its operations and can also return the pre-link and post-link functions.
+        compile: {
+          // operations
+          pre: () => {},
+          post: () => {}
+        }
+
+
+require
+  Require is used when you want your directive to be able to communicate with a parent directive.
+  When you want to use use a parent scope in your directive's link function in order to communicate with it you use the require property. To require a parent directive's scope in your link function you give the require property a string that is the name of a parent directive, prefixed by a carrot symbol, which tells the directive to search up the scope tree for that directive name. For example if your directive has a parent directive called 'ppDir' you would set your directives require property as such:
+      require: '^ppDir'
+  and then in your link function the fourth parameter is the scope of that parent directive:
+      link: (scope, elem, attrs, parentScope) => {}
+
+
+translude
+  Transclude takes a boolean value, so when you use transclude you will set it to true. You would use transclude when you want to put some HTML as the inner content of your directive and have that HTML passed to the directive.
+  For example:
+      <my-dir>
+        <h1> This is transcluded! </h1>
+        <p> It is passed to the directive when transclude is set to true </p>
+      </my-dir>
+  The h1 and p DOM element are then passed to the directive and can be included in the directive's template using the ng-transclude directive. So if the directive's template was:
+      <div>
+        <section ng-transclude></section>
+      </div>
+  Then the resulting HTML for the directive when run in the browser would be:
+      <my-dir>
+        <div>
+          <section>
+            <h1> This is transcluded! </h1>
+            <p> It is passed to the directive when transclude is set to true </p>
+          </section>
+        </div>
+      </my-dir>
+  In summary, transclude is when you want to bring content from the HTML template into your directive's template by putting that content between the opening and closing tags of your directive.
+
+
+
+The functions of directives:
+
+There are four functions associated with a directive:
+    compile
+    controller
+    pre-link
+    post-link
+
+The link directive property is the post-link function, so the compile, controller, and link directive properties refer to the compile, controller, and post-link functions. The pre-link function is defined inside the compile function, additionally the post-link function can be defined inside the compile function, they are defined in the compile function as pre and post.
+    i.e.
+        compile: {
+          // compile code here...
+          return {
+            pre: () => {},
+            post: () => {}
+          };
+        }
+Again, defining the post-link function in the compile function (as 'post') is the same as defining the directive property 'link'. In most directives only the link or controller functions are needed.
+
+The compile function allows the directive to manipulate the DOM before it is compiled and linked, thereby allowing it to add, remove, change directives or other DOM elements. Basically the compile function attaches event-listeners to DOM elements.
+
+The controller function is for directive-to-directive communication. Child and sibling directives can request the controller of their parent and sibling directives to communicate data. It is best to only use the controller for methods and properties that are to be passed to child directives, anything else should go in the link function. Also transcluded content is not available when the directive controller runs, because the controller's purpose is not to alter the directive's content, only to pass data or functions to children directives.
+
+The pre-link function allows for private $scope manipulation before the post-link process begins. The pre-link function is where you would put code that you do not want to be used by child and sibling directives because it executed private code involving the $scope. It can be used to execute code that modifies the $scope of its directive. ng-init uses pre-link.
+
+The post-link function is the primary method to handle operations of the directive.
+
+The controller and link functions can be used interchangeably, but you only need to choose the controller function over the link function when you need to communicate with other directives. If no communication is required, just use the link function.
+
+The order of these functions execution is as follows:
+  Execution order:
+      compile, controller, pre-link, post-link
+All compile functions will execute (for parent and child directives) before anything else (from parent to child), then parent controller and pre-link functions will execute before child controller and pre-link functions. Finally after all that post-link functions will execute (from child to parent). Note that post-link functions are executed from in the children first before the parents.
